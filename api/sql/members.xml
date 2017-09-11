@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+  <sql-requests desc="会员数据">
+    <sql-request id="QUERY_MEMBER_ALL" desc="会员特征全量数据">
+       <![CDATA[
+        SELECT * FROM `hemiao-data`.report_store_portrait WHERE store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_MEMBER_FEATURE" desc="会员特征数据">
+       <![CDATA[
+        SELECT * FROM `hemiao-data`.report_store_portrait WHERE store_code=:storecode AND hemiao_type=:type
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_MEMBER_DETAIL" desc="会员详细信息">
+       <![CDATA[
+       SELECT hemiao_name,hemiao_sex,hemiao_number FROM `hemiao-data`.report_store_rebuy_days WHERE store_code=:storecode AND hemiao_type=:type
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_MEMBER_TOTAL" desc="total">
+       <![CDATA[
+       SELECT count FROM `hemiao-data`.report_store_rebuy_days WHERE store_code=:storecode AND hemiao_type=:type
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_MEMBER_REBUY" desc="会员复购">
+       <![CDATA[
+       SELECT hemiao_count,hemiao_rate,hemiao_type FROM `hemiao-data`.report_store_rebuy_days WHERE store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_REBUY_GOODS" desc="复购商品">
+       <![CDATA[
+       SELECT hemiao_count,hemiao_rate,hemiao_type FROM `hemiao-data`.report_store_rebuy_days WHERE store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_REBUY_TYPE" desc="复购品类">
+       <![CDATA[
+       SELECT hemiao_count,hemiao_rate,hemiao_type FROM `hemiao-data`.report_store_rebuy_days WHERE store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_REBUY_BRAND" desc="复购品牌">
+       <![CDATA[
+       SELECT hemiao_count,hemiao_rate,hemiao_type FROM `hemiao-data`.report_store_rebuy_days WHERE store_code=:storecode
+      ]]>
+    </sql-request>
+</sql-requests>
+</root>

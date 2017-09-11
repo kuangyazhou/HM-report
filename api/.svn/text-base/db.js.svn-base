@@ -1,0 +1,70 @@
+import mysql from 'mysql'
+import fs from 'fs'
+
+const state = {
+  pool: null,
+  mode: null,
+  'dboptions': {
+    'username': 'hemiaoserverbak',
+    'password': 'Hemiao188bak',
+    'host': 'rdstkqsa4x4fa684rkmwo.mysql.rds.aliyuncs.com',
+    'database': 'hemiao'
+  }
+}
+
+exports.connect = function (done) {
+  state.pool = mysql.createPool({
+    connectionLimit: 10,
+    host: state.dboptions.host,
+    user: state.dboptions.username,
+    password: state.dboptions.password,
+    database: state.dboptions.database,
+    debug: true
+  })
+  done()
+}
+
+const query = exports.query = function ({
+  sql,
+  timeout = 40000,
+  values = [],
+  done
+}) {
+  const pool = state.pool
+  if (!pool) { return done(new Error('Missing database connection.')) }
+  pool.getConnection((err, connection) => {
+    if (err) {
+      done(err)
+      return console.log(err)
+    } else {
+      // Added to have :params :like :these.
+      connection.config.queryFormat = function (query, values) {
+        if (!values) return query
+        return query.replace(/\:(\w+)/g, function (txt, key) {
+          if (values.hasOwnProperty(key)) {
+            return this.escape(values[key])
+          }
+          return txt
+        }.bind(this))
+      }
+      connection.query({
+        sql,
+        timeout,
+        values
+      }, (error, results, fields) => {
+        connection.release()
+        if (error) return done(error)
+        done(results)
+      })
+    }
+  })
+}
+
+// 读取SQL文件里面的SQL语句
+exports.queryFile = function ({
+  file,
+  values = [],
+  done
+}) {
+  query({ sql: fs.readFileSync(file).toString(), values, done })
+}

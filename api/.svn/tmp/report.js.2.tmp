@@ -1,0 +1,229 @@
+<<<<<<< .mine
+import db from './db'
+const router = require('express').Router()
+const path = require('path')
+=======
+import moment from 'moment'
+import { extendMoment } from 'moment-range'
+const momentRange = extendMoment(moment)
+>>>>>>> .r2693
+
+<<<<<<< .mine
+const STORE_SQL_PATH = path.join(__dirname, '/statements', 'store.sql')
+=======
+const router = require('express').Router()
+
+const datas = [
+  {
+    date: '一月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '二月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '三月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '四月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '五月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '六月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '七月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '八月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '九月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '十月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '十一月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '十二月',
+    toiyo: '48.9',
+    nyoci: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }
+]
+>>>>>>> .r2693
+
+/* 门店订单数, 销售额, 客单价, 销售占比, 订单占比. */
+router.get('/report/store', function (req, res, next) {
+  const storecode = req.query.storecode
+  db.queryFile({
+    file: STORE_SQL_PATH,
+    values: { storecode },
+    done: (rows) => {
+      const datas = []
+      if (rows.length > 0) {
+        for (var i = 0; i < rows.length; i++) {
+          datas.push({
+            store: rows[i]['门店'],
+            orders: rows[i]['订单数'],
+            amount: rows[i]['销售额'],
+            customer: rows[i]['客单价'],
+            sales: rows[i]['销售占比'],
+            orderAmount: rows[i]['订单占比']
+          })
+        }
+        res.status(200).json({ rows: datas })
+      } else {
+        res.status(200).json({})
+      }
+<<<<<<< .mine
+    }
+  })
+=======
+    ]
+  },
+  {
+    id: 2,
+    label: '城市',
+    parent: true,
+    fixed: '0',
+    children: [
+      {
+        id: 4,
+        label: '东京',
+        prop: 'toiyo',
+        width: '150',
+        fixed: false
+      },
+      {
+        id: 5,
+        label: '纽约',
+        prop: 'nyoci',
+        width: '150',
+        fixed: false
+      },
+      {
+        id: 6,
+        label: '伦敦',
+        prop: 'lpdon',
+        width: '150',
+        fixed: false
+      },
+      {
+        id: 7,
+        label: '柏林',
+        prop: 'poling',
+        width: '150',
+        fixed: false
+      }
+    ]
+  }
+]
+
+/* 获得所有的维度. */
+router.get('/dimensions', function (req, res, next) {
+  res.json({ data: dimensions })
+>>>>>>> .r2693
+})
+
+<<<<<<< .mine
+=======
+/* 获得分析所需数据样本. */
+router.get('/datas', function (req, res, next) {
+  res.json({ data: datas })
+})
+
+router.get('/date', function (req, res, next) {
+  const result = req.query.date.replace(/\s/ig, '')
+  const startDate = result.slice(0, 10)
+  const endDate = result.slice(11)
+  const range = moment.range(startDate, endDate)
+  const years = Array.from(range.by('year'))
+  const months = Array.from(range.by('month'))
+  const yearList = years.map(m => m.format('YYYY'))
+  const monthList = months.map(m => m.format('MM'))
+  const dateList = []
+  // 当选择为一年内
+  if (yearList.length === 1) {
+    yearList.map(function (item) {
+      const startMonth = parseInt(monthList[0])
+      const endMonth = parseInt(monthList[monthList.length - 1])
+      for (let i = startMonth; i <= endMonth; i++) {
+        dateList.push(item + '-' + i)
+      }
+    }
+    )
+    // 把生成的日期表push进datas表
+    for (let key in dateList) {
+      datas[key].date = dateList[key]
+    }
+  } else { // 当选择了多年
+    const arr = []
+    let isNewYear = true
+    let yearMonthArray = null
+    for (let index in monthList) {
+      if (isNewYear) {
+        yearMonthArray = []
+        arr.push(yearMonthArray)
+      }
+      yearMonthArray.push(monthList[index])
+      if (monthList[index] === 12) {
+        isNewYear = true
+      } else {
+        isNewYear = false
+      }
+    }
+    for (let i = 0; i < arr.length; i++) {
+      const arrTmp = arr[i]
+      const year = yearList[i]
+      for (let j = 0; j < arrTmp.length; j++) {
+        const time = year + '-' + arrTmp[j]
+        dateList.push(time)
+      }
+    }
+    for (let key in dateList) {
+      datas[key].date = dateList[key]
+    }
+  }
+  res.json({ data: datas })
+})
+
+>>>>>>> .r2693
+module.exports = router

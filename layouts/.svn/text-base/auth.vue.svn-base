@@ -1,0 +1,17 @@
+<template>
+  <div class="hm-protal-container">
+    <el-row :gutter="20">
+      <el-col :span="24">
+        <div class="grid-content bg-transpant">
+          <nuxt/>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+
+<script>
+  export default {}
+</script>
+
+<style></style>

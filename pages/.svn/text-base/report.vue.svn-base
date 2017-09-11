@@ -1,0 +1,426 @@
+<template>
+<div class="container">
+  <el-row class="hm-container">
+    <el-row>
+      <el-col :span="24">
+        <div class="grid-content">
+          <div class="grid-date">
+            <div class="grid-filter-block">
+              <span class="demonstration"></span>
+              <el-date-picker
+                v-model="dateMonth"
+                type="month"
+                placeholder="选择具体月份"
+                format="yyyy/MM/dd"
+                @change="onDateChange"
+              >
+              </el-date-picker>
+            </div>
+            <div class="grid-filter-block">
+              <span class="demonstration"></span>
+              <el-date-picker
+                v-model="dateYear"
+                type="year"
+                placeholder="选择具体年份"
+                format="yyyy/MM/dd"
+                @change="onDateChange"
+              >
+              </el-date-picker>
+            </div>
+            <div class="grid-filter-block">
+              <span class="demonstration"></span>
+              <el-date-picker
+                v-model="dateRange"
+                type="daterange"
+                placeholder="选择日期范围"
+                format="yyyy/MM/dd"
+                @change="onDateChange"
+              >
+              </el-date-picker>
+            </div>
+            <div class="grid-filter-block"></div>
+          </div>
+          <div class="flex-box">
+            <div class="flex-item">
+              <h3 class="flex-title">销量前五门店</h3>
+              <el-table
+                border
+                :data="top5BySale"
+                style="width: 100%"
+              >
+                <el-table-column
+                  type="index"
+                  width="50">
+                </el-table-column>
+                <el-table-column
+                  show-overflow-tooltip
+                  prop="store"
+                  label="门店">
+                </el-table-column>
+                <el-table-column
+                  prop="orders"
+                  label="订单数">
+                </el-table-column>
+                <el-table-column
+                  show-overflow-tooltip
+                  prop="amount"
+                  label="销售额">
+                </el-table-column>
+                <el-table-column
+                  show-overflow-tooltip
+                  prop="customer"
+                  label="客单价">
+                </el-table-column>
+                <el-table-column
+                  prop="sales"
+                  label="销售占比">
+                </el-table-column>
+                <el-table-column
+                  prop="orders"
+                  label="订单占比">
+                </el-table-column>
+              </el-table>
+            </div>
+            <div class="flex-item">
+              <h3 class="flex-title">订单数前五门店</h3>
+              <el-table
+                border
+                :data="top5ByOrder"
+                style="width: 100%"
+              >
+                <el-table-column
+                  type="index"
+                  width="50">
+                </el-table-column>
+                <el-table-column
+                  show-overflow-tooltip
+                  prop="store"
+                  label="门店">
+                </el-table-column>
+                <el-table-column
+                  prop="orders"
+                  label="订单数">
+                </el-table-column>
+                <el-table-column
+                  show-overflow-tooltip
+                  prop="amount"
+                  label="销售额">
+                </el-table-column>
+                <el-table-column
+                  show-overflow-tooltip
+                  prop="customer"
+                  label="客单价">
+                </el-table-column>
+                <el-table-column
+                  prop="sales"
+                  label="销售占比">
+                </el-table-column>
+                <el-table-column
+                  prop="orders"
+                  label="订单占比">
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+          <div class="flex-box">
+            <div class="flex-item full">
+              <h3 class="flex-title">所有门店</h3>
+              <el-table
+                border
+                :data="handleCurrentChange(currentPage)"
+                @expand="handleTableExpand"
+                height="410"
+                style="width: 100%"
+              >
+                <el-table-column
+                  type="expand"
+                  width="60"
+                >
+                  <template scope="props">
+                    <highcharts :options="chartOptions" ref="highcharts"></highcharts>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="store"
+                  show-overflow-tooltip
+                  label="门店">
+                </el-table-column>
+                <el-table-column
+                  prop="orders"
+                  label="订单数">
+                </el-table-column>
+                <el-table-column
+                  prop="amount"
+                  label="销售额">
+                </el-table-column>
+                <el-table-column
+                  prop="customer"
+                  label="客单价">
+                </el-table-column>
+                <el-table-column
+                  prop="sales"
+                  label="销售占比">
+                </el-table-column>
+                <el-table-column
+                  prop="orderAmount"
+                  label="订单占比">
+                </el-table-column>
+              </el-table>
+              <div class="flex-box center" style="margin-top: 5px;">
+                <span style="margin-right: 10px; color: rgb(81, 72, 106);">总共{{totalPages}}页</span>
+                <el-pagination
+                  @current-change="handleCurrentChange"
+                  :current-page="currentPage"
+                  :page-size="pageSize"
+                  layout="prev, pager, next, jumper"
+                  :total="total"
+                  style="margin-bottom: 15px;">
+                </el-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+  </el-row>
+</div>
+</template>
+
+<script>
+import Vue from 'vue'
+import VueHighcharts from 'vue-highcharts'
+import collection from 'lodash/collection'
+import array from 'lodash/array'
+import moment from 'moment';
+import {
+  Button,
+  Col,
+  Row,
+  Loading,
+  DatePicker,
+  Table,
+  TableColumn,
+  Tooltip,
+  Pagination,
+} from 'element-ui'
+
+Vue.use(Button)
+Vue.use(Col)
+Vue.use(Row)
+Vue.use(Loading)
+Vue.use(DatePicker)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Tooltip)
+Vue.use(Pagination)
+Vue.use(VueHighcharts)
+
+export default {
+  layout: 'master',
+  middleware: 'check-auth',
+  components: {
+    VueHighcharts
+  },
+  mounted() {
+    const now = moment();
+    const beginDate = now.startOf('month').format('YYYY-MM-DD')
+    const endDate = now.endOf('month').format('YYYY-MM-DD')
+    this.$store.dispatch('report/getDatasource', {storeCode: this.$store.state.storeCode, beginDate, endDate})
+  },
+  watch: {
+    dateMonth: function (val) {
+      if ( !val ) return ''
+      const date = moment(val, 'YYYY/MM')
+      this.dateToQuery = [date]
+    },
+    dateYear: function (val) {
+      if ( !val ) return ''
+      const date = moment(val, 'YYYY')
+      this.dateToQuery = [date]
+    },
+    dateRange: function (val) {
+      if (!val[0] || !val[1]) return ''
+      const start = moment(val[0])
+      const end   = moment(val[1])
+      const range = moment.range(val[0], val[1])
+      let months = []
+      for (let month of range.by('month')) {
+        months.push(month)
+      }
+      this.dateToQuery = months
+    }
+  },
+  computed: {
+    orderDatas() {
+      return this.$store.state.report.orderamount
+    },
+    storeCode() {
+      return this.$store.state.storeCode
+    },
+    total() {
+      return this.$store.state.report.datasource.length
+    },
+    totalPages() {
+      return Math.ceil(this.$store.state.report.datasource.length / this.pageSize)
+    },
+    top5BySale() {
+      const ds = this.$store.state.report.datasource
+      if(ds && ds.length > 0) {
+        const orderd = array.reverse(collection.sortBy(ds, ( data ) => ( data['amount'] )))
+        return [orderd[0], orderd[1], orderd[2], orderd[3], orderd[4]]
+      }
+      return []
+    },
+    top5ByOrder() {
+      const ds = this.$store.state.report.datasource
+      if(ds && ds.length > 0) {
+        const orderd = array.reverse(collection.sortBy(ds, ( data ) => ( data['orders'] )))
+        return [orderd[0], orderd[1], orderd[2], orderd[3], orderd[4]]
+      }
+      return []
+    },
+    chartOptions() {
+      const xAxisCategories = []
+      const series = [{
+        name: this.orderDatas.length > 0 ? this.orderDatas[0]['name'] : '',
+        data: []
+      }]
+      this.orderDatas.forEach((order) => {
+        xAxisCategories.push(moment(order.addtime).format('YYYY-MM-DD'))
+      }, this);
+      this.orderDatas.forEach((order) => {
+        series[0].data.push(order.orderamount)
+      }, this);
+      return {
+        chart: {
+          type: 'area'
+        },
+        title: {
+          text: '门店月销量'
+        },
+        xAxis: {
+          categories: xAxisCategories
+        },
+        yAxis: {
+          title: {
+            text: '销量'
+          },
+          labels: {
+            formatter: function () {
+                return `${this.value}元`
+            }
+          }
+        },
+        tooltip: {
+          pointFormat: '{series.name} 销量 <b>{point.y:,.0f}</b>元'
+        },
+        series
+      }
+    }
+  },
+  data() {
+    return {
+      dateToQuery: [],
+      pageSize: 9,
+      currentPage: 1,
+      dateRange: '',
+      dateYear: '',
+      dateMonth: '',
+    }
+  },
+  head() {
+    return {
+      title: '报表'
+    }
+  },
+  methods: {
+    handleTableExpand(row, expanded) {
+      const now = moment()
+      let beginDate, endDate
+      if (expanded) {
+        if (this.dateToQuery.length > 0) {
+          beginDate = this.dateToQuery[0].startOf('month').format('YYYY-MM-DD')
+          endDate = this.dateToQuery[1] ? this.dateToQuery[1].format('YYYY-MM-DD') : this.dateToQuery[0].endOf('month').format('YYYY-MM-DD')
+        } else {
+          beginDate = now.startOf('month').format('YYYY-MM-DD')
+          endDate = now.endOf('month').format('YYYY-MM-DD')
+        }
+        this.$store.dispatch('report/getOrderAmountDatasource', {storeCode: this.$store.state.storeCode, beginDate, endDate, storeName: row['store']})
+      }
+    },
+    onDateChange(date) {
+      let beginDate, endDate
+      if ( !date ) { return; }
+      if ( this.dateToQuery.length === 1 ) {
+        beginDate = this.dateToQuery[0].format('YYYY-MM-DD')
+        endDate = this.dateToQuery[0].endOf('month').format('YYYY-MM-DD')
+      } else {
+        beginDate = this.dateToQuery[0].format('YYYY-MM-DD')
+        endDate = this.dateToQuery[1].format('YYYY-MM-DD')
+      }
+      this.$store.dispatch('report/getDatasource', {storeCode: this.$store.state.storeCode, beginDate, endDate})
+    },
+    handleCurrentChange(currentPage) {
+      const pageSize = this.pageSize
+      const pageCount = Math.floor(this.total / pageSize)
+      const all = this.$store.state.report.datasource
+      const results = []
+      let beginItemIdx = (currentPage - 1) * pageSize ? (currentPage - 1) * pageSize : 0
+      let endItemIdx = beginItemIdx < all.length ? beginItemIdx + pageSize : all.length
+      this.currentPage = currentPage
+      while (true) {
+        if (beginItemIdx === endItemIdx) break
+        if (!all[beginItemIdx]) break
+        results.push(all[beginItemIdx])
+        beginItemIdx++;
+      }
+      return results
+    }
+  }
+}
+</script>
+
+<style>
+.grid-date {
+  display: flex;
+}
+
+.grid-filter-block {
+  text-align: center;
+  border-right: 1px solid #eff2f6;
+  flex: 1;
+  border-bottom: 1px solid #eff2f6;
+  padding: 10px 0;
+}
+
+.center {
+  text-align: right;
+}
+
+.flex-box {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-box.center {
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.flex-item {
+  flex: 0 0 47%;
+  padding: 15px;
+}
+
+.flex-title {
+  text-align: center;
+  font-size: 22px;
+  padding: 5px;
+}
+
+.flex-item.full {
+  flex: 0 0 96%;
+  padding: 0 15px;
+}
+
+</style>

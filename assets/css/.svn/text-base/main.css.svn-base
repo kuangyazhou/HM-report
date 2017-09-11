@@ -1,0 +1,70 @@
+body {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  overflow: auto;
+  height: 100%;
+  font-size: .8rem;
+  margin: 0;
+  padding: 0;
+  color: #73879c;
+  min-width: 1330px;
+  overflow-x: hidden;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+ol,
+dl {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol,
+dl {
+  list-style: none;
+}
+
+footer {
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+a,
+a:hover,
+a:focus,
+a:visited {
+  text-decoration: none;
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both;
+}

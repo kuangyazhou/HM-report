@@ -1,0 +1,34 @@
+import axios from 'axios'
+
+export const state = {
+  datasource: [],
+  orderamount: []
+}
+
+export const mutations = {
+  setDatasource (state, datasource) {
+    state.datasource = datasource || []
+  },
+  setOrderAmount (state, datasource) {
+    state.orderamount = datasource || []
+  }
+}
+
+export const actions = {
+  getDatasource ({ commit }, parameters) {
+    return axios.get(`/api/report/store?storecode=${parameters.storeCode}&beginDate=${parameters.beginDate}&endDate=${parameters.endDate}`)
+      .then((response) => {
+        commit('setDatasource', response.data.rows)
+      }).catch((error) => {
+        throw new Error(error)
+      })
+  },
+  getOrderAmountDatasource ({ commit }, parameters) {
+    return axios.get(`/api/report/store/order_amount/date?storecode=${parameters.storeCode}&beginDate=${parameters.beginDate}&endDate=${parameters.endDate}&storename=${parameters.storeName}`)
+      .then((response) => {
+        commit('setOrderAmount', response.data.rows)
+      }).catch((error) => {
+        throw new Error(error)
+      })
+  }
+}

@@ -1,0 +1,7 @@
+SELECT so.`name`,order_amount, oi.add_time FROM hm_order_info oi
+		INNER JOIN hm_store_outlet so 
+      ON oi.store_outlet_id = so.id
+    WHERE oi.store_code=:storecode
+      AND oi.add_time>=:beginDate
+      AND oi.add_time<=:endDate
+      AND so.`name`=:storename

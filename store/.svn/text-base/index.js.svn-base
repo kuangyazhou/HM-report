@@ -1,0 +1,50 @@
+import axios from 'axios'
+
+export const state = {
+  authUser: null,
+  storeCode: null
+}
+
+export const mutations = {
+  SET_USER: function (state, user) {
+    state.authUser = user
+  },
+  SET_STORE_CODE: function (state, storecode) {
+    state.storeCode = storecode
+  }
+}
+
+export const actions = {
+  nuxtServerInit ({ commit }, { req }) {
+    if (req.session && req.session.authUser) {
+      commit('SET_USER', req.session.authUser)
+    }
+    if (req.session && req.session.storeCode) {
+      commit('SET_STORE_CODE', req.session.storeCode)
+    }
+  },
+  login ({ commit }, { username, password }) {
+    return axios.post('/api/login', {
+      username,
+      password
+    })
+    .then((res) => {
+      commit('SET_USER', res.data)
+    })
+    .catch((error) => {
+      if (error.response.status === 401) {
+        throw new Error('用户名或密码错误')
+      }
+      if (error.response.status === 500) {
+        throw new Error('服务器错误')
+      }
+    })
+  },
+
+  logout ({ commit }) {
+    return axios.post('/api/logout')
+    .then(() => {
+      commit('SET_USER', null)
+    })
+  }
+}

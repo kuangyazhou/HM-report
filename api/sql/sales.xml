@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+  <sql-requests desc="全局数据">
+    <sql-request id="QUERY_SALE_AMOUNT_LAST_CURRENT_MONTH" desc="本月/上月销售金额趋势图">
+      <![CDATA[
+        SELECT store_code,hemiao_data,hemiao_year,hemiao_month,hemiao_day,day_price
+        FROM `hemiao-data`.report_month_amount
+        WHERE store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_TOP_20_OUTLET_CURRENT_MONTH" desc="本月门店销售额TOP20">
+      <![CDATA[
+        SELECT store_code, hemiao_date, hemiao_month, store_outlet, hemiao_amount, store_outlet_id
+        FROM `hemiao-data`.report_outlet_amount_rank
+        WHERE store_code=:storecode
+        ORDER BY hemiao_amount DESC
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_TOP_20_BRAND_CURRENT_MONTH" desc="本月品牌销售额TOP20">
+      <![CDATA[
+        SELECT store_code, hemiao_date, hemiao_year, hemiao_month, offline_name, hemiao_amount
+        FROM `hemiao-data`.brand_amount_rank
+        WHERE store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_SALES_CURRENT_AND_LAST_YEAR" desc="本年/去年销售金额趋势图">
+      <![CDATA[
+        SELECT store_code, hemiao_date, hemiao_year, hemiao_month, hemiao_amount
+        FROM `hemiao-data`.report_year_amount
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_NEW_OLD_MEMBER_COUNT_CURRENT_MONTH" desc="本月消费会员/总会员趋势">
+      <![CDATA[
+        SELECT store_code, hemiao_count, operation FROM `hemiao-data`.report_member_offline
+        WHERE store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_NEW_MEMBER_COUNT_CURRENT_AND_LAST_YEAR_BY_MONTH" desc="本月新增会员趋势（同比去年）">
+      <![CDATA[
+        SELECT store_code, hemiao_date, hemiao_year, hemiao_month, hemiao_count
+        FROM `hemiao-data`.report_new_old_member_analysis
+        WHERE store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_MEMBER_LEVEL_PENCENT_CURRENT_MONTH" desc="本月会员消费等级人数分布占比">
+      <![CDATA[
+        SELECT store_code, hemiao_Level, hemiao_count FROM `hemiao-data`.get_member_order_goods
+        WHERE hemiao_Statistics='hemiao_member_proportion'
+        AND store_code=:storecode
+      ]]>
+    </sql-request>
+    <!-- <sql-request id="QUERY_CURRENT_TOTAL_SALE_AMOUNT" desc="当前销售总额">
+      <![CDATA[
+        SELECT
+          store_code,
+          DATE_FORMAT( add_time, '%Y-%m-%d' ) add_time,
+          SUM( tot_price ) tot_price 
+        FROM
+          hemiao.hm_order_goods_offline 
+        WHERE
+          store_code = :storecode 
+          AND DATE( add_time ) = DATE( NOW( ) )
+      ]]>
+    </sql-request> -->
+  </sql-requests>
+  <sql-requests desc="单店数据">
+    <sql-request id="QUERY_SALES_CURRENT_AND_LAST_YEAR_BY_OUTLET" desc="年度销售金额总额趋势图（同比）">
+      <![CDATA[
+        SELECT store_code, store_outlet_id, store_outlet_name, hemiao_date, hemiao_year, hemiao_amount
+        FROM `hemiao-data`.report_year_outlet_amount
+        WHERE store_code=:storecode AND store_outlet_id=:outlet
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_SALES_CURRENT_AND_LAST_MONTH_BY_OUTLET" desc="月度销售金额总额趋势图（环比）">
+      <![CDATA[
+        SELECT store_code, store_outlet_id, store_outlet_name, hemiao_date, hemiao_month, hemiao_amount
+        FROM `hemiao-data`.report_month_outlet_amount
+        WHERE store_code=:storecode AND store_outlet_id=:outlet
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_TOP_20_OUTLET_CURRENT_MONTH_BY_OUTLET" desc="本月门店销售额TOP20">
+      <![CDATA[
+        SELECT store_code, store_outlet_id, store_outlet_name, hemiao_year, brand_id, offline_name, hemiao_amount
+        FROM `hemiao-data`.report_outlet_brand_amount_rank
+        WHERE store_code=:storecode AND store_outlet_id=:outlet
+        ORDER BY hemiao_amount DESC
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_NEW_MEMBER_COUNT_CURRENT_AND_LAST_YEAR_BY_MONTH_AND_OUTLET" desc="本月新增会员趋势（同比去年）">
+      <![CDATA[
+        SELECT store_code, hemiao_date, hemiao_year, hemiao_month, hemiao_count, store_outlet_name
+        FROM `hemiao-data`.report_outlet_new_old_member_analysis
+        WHERE store_code=:storecode AND store_outlet_id=:outlet
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_MEMBER_LEVEL_PENCENT_CURRENT_MONTH_BY_OUTLET" desc="本月会员消费等级人数分布占比">
+      <![CDATA[
+        SELECT store_code, hemiao_Level, hemiao_count
+        FROM `hemiao-data`.get_outlet_member_order_goods
+        WHERE store_code=:storecode AND store_outlet_id=:outlet
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_NEW_OLD_MEMBER_COUNT_CURRENT_MONTH_BY_OUTLET" desc="本月消费会员/总会员趋势">
+      <![CDATA[
+        SELECT store_code, store_outlet_id, store_outlet_name, hemiao_count, operation FROM `hemiao-data`.report_outlet_member_offline
+        WHERE store_code=:storecode AND store_outlet_id=:outlet
+      ]]>
+    </sql-request>
+  </sql-requests>
+  <sql-requests desc="单人数据">
+    <sql-request id="QUERY_SALE_AMOUNT_LAST_CURRENT_MONTH_BY_OUTLET_EMPNAME" desc="本月/上月销售金额趋势图">
+      <![CDATA[
+        SELECT store_code, store_outlet_id, store_outlet_name, hemiao_date, hemiao_year, hemiao_month, hemiao_amount, sys_store_user_id, work_name
+        FROM `hemiao-data`.report_month_outlet_work_amount
+        WHERE work_name=:empname AND store_outlet_id=:outlet AND store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_NEW_MEMBER_COUNT_CURRENT_AND_LAST_YEAR_BY_MONTH_AND_OUTLET_AND_EMPNAME" desc="本月新增会员趋势（同比去年）">
+      <![CDATA[
+        SELECT store_code, hemiao_data, hemiao_year, hemiao_month, hemiao_count, store_outlet_name, store_outlet_id, sys_store_user_id, work_name
+        FROM `hemiao-data`.report_year_outlet_work_count
+        WHERE work_name=:empname AND store_outlet_id=:outlet AND store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_SALE_PENCENT_CURRENT_AND_LAST_YEAR_BY_MONTH_AND_OUTLET_AND_EMPNAME" desc="导购 本月销售任务进度">
+      <![CDATA[
+        SELECT store_code, hemiao_date, hemiao_year, hemiao_month, hemiao_amount, store_outlet_name, store_outlet_id, sys_store_user_id, work_name
+        FROM `hemiao-data`.report_month_outlet_work_amount_progress
+        WHERE work_name=:empname AND store_outlet_id=:outlet AND store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_NEW_OLD_MEMBER_COUNT_CURRENT_MONTH_BY_OUTLE_AND_EMPNAME" desc="本月消费会员/总会员趋势">
+      <![CDATA[
+        SELECT store_code, hemiao_data, hemiao_year, hemiao_month, hemiao_count, store_outlet_name, store_outlet_id, sys_store_user_id, work_name, operation
+        FROM `hemiao-data`.report_month_outlet_work_count
+        WHERE work_name=:empname AND store_outlet_id=:outlet AND store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_MEMBER_LEVEL_PENCENT_CURRENT_MONTH_BY_EMP" desc="本月会员消费等级人数分布占比">
+      <![CDATA[
+        SELECT store_code, hemiao_Level, hemiao_count, store_outlet_name, store_outlet_id, sys_store_user_id, work_name
+        FROM `hemiao-data`.get_outlet_work_order_goods
+        WHERE work_name=:empname AND store_outlet_id=:outlet AND store_code=:storecode
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_TOP_20_OUTLET_CURRENT_MONTH_BY_EMP" desc="本月门店销售额TOP20">
+      <![CDATA[
+        SELECT store_code, offline_name, hemiao_month, hemiao_year, hemiao_date, store_outlet_name, store_outlet_id, work_name, hemiao_amount
+        FROM `hemiao-data`.report_outlet_work_brand_amount_rank
+        WHERE work_name=:empname AND store_outlet_id=:outlet AND store_code=:storecode
+        ORDER BY hemiao_amount DESC
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_TOP_20_GOODS_CURRENT_MONTH_BY_EMP" desc="本月门店销售额TOP20">
+      <![CDATA[
+        SELECT store_code, goods_name, hemiao_month, hemiao_year, hemiao_date, store_outlet_name, store_outlet_id, work_name, hemiao_amount
+        FROM `hemiao-data`.report_outlet_work_goods_amount
+        WHERE work_name=:empname AND store_outlet_id=:outlet AND store_code=:storecode
+        ORDER BY hemiao_amount DESC
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_MEMBER_FEATURE" desc="会员数据">
+       <![CDATA[
+        SELECT * FROM report_store_portrait WHERE store_code=:storecode AND hemiao_type = 'F1'
+      ]]> 
+    </sql-request>
+  </sql-requests>
+</root>
+
+<!--         
+SELECT A.store_code,A.hemiao_data,A.`hemiao_year`,A.`hemiao_month`,A.`hemiao_day`,SUM(CAST(A.tot_price AS DECIMAL(9,0))) day_price
+        FROM (
+        select store_code,DATE_FORMAT(add_time, '%Y-%m-%d') hemiao_data,
+        YEAR(STR_TO_DATE(add_time,'%Y-%c-%d')) `hemiao_year`,
+        MONTH(STR_TO_DATE(add_time,'%Y-%c-%d')) `hemiao_month`,
+        DAY(STR_TO_DATE(add_time,'%Y-%c-%d')) `hemiao_day`,
+        tot_price 
+        from hemiao.hm_order_goods_offline 
+        WHERE  store_code = :storecode and date_format(add_time,'%Y-%m') = date_format(date_sub(curdate(), interval 1 month),'%Y-%m') 
+        ) A
+        GROUP BY A.store_code,A.hemiao_data,A.`hemiao_year`,A.`hemiao_month`,A.`hemiao_day`
+        UNION ALL
+        SELECT A.store_code,A.hemiao_data,A.`hemiao_year`,A.`hemiao_month`,A.`hemiao_day`,SUM(A.tot_price) day_price
+        FROM (
+        select store_code,DATE_FORMAT(add_time, '%Y-%m-%d') hemiao_data,
+        YEAR(STR_TO_DATE(add_time,'%Y-%c-%d')) `hemiao_year`,
+        MONTH(STR_TO_DATE(add_time,'%Y-%c-%d')) `hemiao_month`,
+        DAY(STR_TO_DATE(add_time,'%Y-%c-%d')) `hemiao_day`,
+        tot_price 
+        from hemiao.hm_order_goods_offline 
+        WHERE  store_code = :storecode and date_format(add_time,'%Y-%m') = date_format(date_sub(curdate(), interval 0 month),'%Y-%m') 
+        ) A
+        GROUP BY A.store_code,A.hemiao_data,A.`hemiao_year`,A.`hemiao_month`,A.`hemiao_day`
+
+  -->

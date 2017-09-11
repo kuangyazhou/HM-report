@@ -1,0 +1,12 @@
+import VueHighcharts from '../components/commons/chart'
+
+// Use Highstock
+// import Highcharts from 'highcharts/highstock'
+
+// Use Highmaps
+// import loadMap from 'highcharts/modules/map'
+// loadMap(Highcharts)
+
+// Vue.use(VueHighcharts, { Highcharts })
+
+export default VueHighcharts

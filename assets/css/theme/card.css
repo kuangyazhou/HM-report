@@ -1,0 +1,26 @@
+@charset "UTF-8";
+.el-card {
+  border: 1px solid rgb(214, 209, 229);
+  border-radius: 0;
+  background-color: #fff;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.el-card__header {
+  padding: 5px 20px;
+  border-bottom: 1px solid rgb(214, 209, 229);
+  box-sizing: border-box;
+  background: rgb(233, 228, 241);
+}
+
+.theme-darker .el-card__header {
+  padding: 0 20px;
+  border: none;
+  background-color: rgba(3, 169, 244, 0.1);
+  overflow: hidden;
+}
+
+.el-card__body {
+  padding: 10px;
+}

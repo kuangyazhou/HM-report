@@ -1,0 +1,62 @@
+# Basic
+/.vscode
+.idea/
+/node_modules/
+# dependencies
+node_modules
+# logs
+npm-debug.log
+# Nuxt build
+.nuxt
+# Nuxt generate
+dist
+# Backpack build
+build
+# svn's tracking files
+api/.svn/prop-base/
+api/.svn/props/
+api/.svn/tmp/prop-base/
+api/.svn/tmp/props/
+api/.svn/tmp/text-base/
+api/sql/.svn/prop-base/
+api/sql/.svn/props/
+api/sql/.svn/tmp/
+assets/.svn/prop-base/
+assets/.svn/props/
+assets/.svn/text-base/
+assets/.svn/tmp/
+assets/css/.svn/prop-base/
+assets/css/.svn/props/
+assets/css/.svn/tmp/
+assets/css/theme/.svn/props/
+assets/css/theme/.svn/tmp/
+assets/css/theme/fonts/.svn/props/
+assets/css/theme/fonts/.svn/tmp/
+assets/img/.svn/props/
+assets/img/.svn/tmp/
+assets/img/chart-type/.svn/props/
+assets/img/chart-type/.svn/tmp/
+components/.svn/prop-base/
+components/.svn/props/
+components/.svn/tmp/
+components/commons/.svn/prop-base/
+components/commons/.svn/props/
+components/commons/.svn/text-base/
+components/commons/.svn/tmp/
+layouts/.svn/prop-base/
+layouts/.svn/props/
+layouts/.svn/tmp/
+middleware/.svn/prop-base/
+middleware/.svn/props/
+middleware/.svn/tmp/
+pages/.svn/prop-base/
+pages/.svn/props/
+pages/.svn/tmp/
+static/.svn/props/
+static/.svn/tmp/
+store/.svn/prop-base/
+store/.svn/props/
+store/.svn/tmp/
+utils/.svn/prop-base/
+utils/.svn/props/
+utils/.svn/tmp/

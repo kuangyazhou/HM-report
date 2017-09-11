@@ -1,0 +1,267 @@
+const router = require('express').Router()
+
+const datas = [{
+  name: '东京',
+  data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+}, {
+  name: '纽约',
+  data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+}, {
+  name: '伦敦',
+  data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+}, {
+  name: '柏林',
+  data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+}]
+
+const dimensions = [
+  {
+    id: 1,
+    label: '订单列表',
+    parent: true,
+    fixed: false,
+    children: [
+      {
+        id: 5,
+        label: '订单来源（门店/商城）',
+        prop: 'orderSource',
+        width: '200',
+        fixed: false
+      },
+      {
+        id: 6,
+        label: '订单号',
+        prop: 'orderNo',
+        width: '150',
+        fixed: false
+      }
+    ]
+  },
+  {
+const dimensions = [{
+  id: 1,
+  label: '城市',
+  parent: true,
+  fixed: false,
+  children: [{
+    id: 2,
+    label: '东京',
+    prop: 'tokyo',
+    width: '200',
+    fixed: false
+  }, {
+    id: 3,
+    label: '纽约',
+    prop: 'nyock',
+    width: '150',
+    fixed: false
+  }, {
+    id: 4,
+    label: '伦敦',
+    prop: 'lpdon',
+    width: '150',
+    fixed: false
+  }, {
+    id: 5,
+    label: '柏林',
+    prop: 'poling',
+    width: '150',
+    fixed: false
+  }]
+}]
+
+/* 获得所有的维度. */
+router.get('/dimensions', function(req, res, next) {
+  res.json({
+    data: dimensions
+  })
+})
+
+/* 获得分析所需数据样本. */
+router.get('/datas', function(req, res, next) {
+  res.json({
+    data: datas
+  })
+})
+
+<<<<<<< .mine
+module.exports = router
+=======
+module.exports = router
+import moment from 'moment'
+var router = require('express').Router()
+const datas = [
+  {
+    date: '一月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '二月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '三月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '四月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '五月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '六月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '七月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '八月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '九月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '十月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '十一月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }, {
+    date: '十二月',
+    tokyo: '48.9',
+    nyock: '83.6',
+    lpdon: '48.9',
+    poling: '42.4'
+  }
+]
+
+const dimensions = [
+  {
+    id: 1,
+    label: '订单列表',
+    parent: true,
+    fixed: false,
+    children: [
+      {
+        id: 5,
+        label: '订单来源（门店/商城）',
+        prop: 'orderSource',
+        width: '200',
+        fixed: false
+      },
+      {
+        id: 6,
+        label: '订单号',
+        prop: 'orderNo',
+        width: '150',
+        fixed: false
+      }
+    ]
+  },
+  {
+const dimensions = [
+  {
+    id: 1,
+    label: '时间',
+    parent: true,
+    fixed: true,
+    children: [
+      {
+        id: 3,
+        label: '时间',
+        prop: 'date',
+        width: '150',
+        fixed: true
+      }
+    ]
+  },
+  {
+    id: 2,
+    label: '城市',
+    parent: true,
+    fixed: '0',
+    children: [
+      {
+        id: 4,
+        label: '东京',
+        prop: 'tokyo',
+        width: '150',
+        fixed: false
+      },
+      {
+        id: 5,
+        label: '纽约',
+        prop: 'nyock',
+        width: '150',
+        fixed: false
+      },
+      {
+        id: 6,
+        label: '伦敦',
+        prop: 'lpdon',
+        width: '150',
+        fixed: false
+      },
+      {
+        id: 7,
+        label: '柏林',
+        prop: 'poling',
+        width: '150',
+        fixed: false
+      }
+    ]
+  }
+]
+
+/* 获得所有的维度. */
+router.get('/dimensions', function (req, res, next) {
+  res.json({ data: dimensions })
+})
+
+/* 获得分析所需数据样本. */
+router.get('/datas', function (req, res, next) {
+  res.json({ data: datas })
+})
+
+router.get('/date', function (req, res, next) {
+  const result = req.query.date.replace(/\s/ig, '')
+  const oldDate = result.slice(0, 10)
+  const newDate = result.slice(11)
+  const oldMonth = moment(oldDate).format('M')
+  const newMonth = moment(newDate).format('M')
+  res.json({ data: datas })
+})
+
+module.exports = router
+>>>>>>> .r2593

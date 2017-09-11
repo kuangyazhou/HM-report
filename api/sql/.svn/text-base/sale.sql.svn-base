@@ -1,0 +1,37 @@
+SELECT X.月份,X.老会员人数+Y.新会员人数 会员总人数,X.老会员人数,X.老会员订单数,X.老会员销售额,
+Y.新会员人数,Y.新会员订单数,Y.新会员销售额,X.老会员订单数+Y.新会员订单数 订单总数,X.老会员销售额+Y.新会员销售额 销售额总数,
+concat ( left (X.老会员人数 /(X.老会员人数+Y.新会员人数)*100,4),'%') 老会员人数占比,
+concat ( left (Y.新会员人数 /(X.老会员人数+Y.新会员人数)*100,4),'%') 新会员人数占比,
+concat ( left (X.老会员订单数 /(X.老会员订单数+Y.新会员订单数)*100,4),'%') 老会员订单数占比,
+concat ( left (Y.新会员订单数 /(X.老会员订单数+Y.新会员订单数)*100,4),'%') 新会员订单数占比,
+concat ( left (X.老会员销售额 /(X.老会员销售额+Y.新会员销售额)*100,4),'%') 老会员销售额占比,
+concat ( left (Y.新会员销售额 /(X.老会员销售额+Y.新会员销售额)*100,4),'%') 新会员销售额占比
+FROM (
+SELECT M.月份,M.老会员人数,N.老会员订单数,N.老会员销售额
+FROM temp_member_user M
+INNER JOIN temp_member_order N
+ON M.月份=N.月份
+) X
+INNER JOIN (
+SELECT P.月份,P.新会员人数,Q.新会员订单数,Q.新会员销售额
+FROM (
+select  A.reg_time1 月份,count(A.id) 新会员人数
+			from (
+				SELECT DISTINCT i.id,EXTRACT(YEAR_MONTH FROM i.reg_time) reg_time1
+				from hm_member i
+				inner join hm_order_info o on i.id=o.user_id
+        where o.store_code=?
+			) A group by A.reg_time1
+) P
+INNER JOIN (
+	select A.reg_time1 月份,count(order_sn) 新会员订单数, sum(order_amount) 新会员销售额
+			from (
+				SELECT i.id,EXTRACT(YEAR_MONTH FROM i.reg_time) reg_time1 ,o.order_sn,o.order_amount
+				from hm_member i
+				inner join hm_order_info o on i.id=o.user_id
+        where o.store_code=?
+			) A group by A.reg_time1
+) Q
+ON P.月份=Q.月份
+) Y
+ON X.月份=Y.月份;

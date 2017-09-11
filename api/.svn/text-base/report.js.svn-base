@@ -1,0 +1,65 @@
+import db from './db'
+const router = require('express').Router()
+const path = require('path')
+
+const STORE_SQL_PATH = path.join(__dirname, '/statements', 'store.sql')
+const STORE_ORDER_SQL_PATH = path.join(__dirname, '/statements', 'storeByDate.sql')
+
+/* 门店订单数, 销售额, 客单价, 销售占比, 订单占比. */
+router.get('/report/store', function (req, res, next) {
+  const storecode = req.query.storecode
+  const beginDate = req.query.beginDate
+  const endDate = req.query.endDate
+  db.queryFile({
+    file: STORE_SQL_PATH,
+    values: { storecode, beginDate, endDate },
+    done: (rows) => {
+      const datas = []
+      if (rows.length > 0) {
+        for (var i = 0; i < rows.length; i++) {
+          datas.push({
+            store: rows[i]['门店'],
+            orders: rows[i]['订单数'],
+            amount: rows[i]['销售额'],
+            customer: rows[i]['客单价'],
+            sales: rows[i]['销售占比'],
+            orderAmount: rows[i]['订单占比']
+          })
+        }
+        res.status(200).json({ rows: datas })
+      } else {
+        res.status(200).json({})
+      }
+    }
+  })
+})
+
+// 查询指定的店铺的销量
+router.get('/report/store/order_amount/date', function (req, res, next) {
+  const storecode = req.query.storecode
+  const beginDate = req.query.beginDate
+  const endDate = req.query.endDate
+  const storename = req.query.storename
+
+  db.queryFile({
+    file: STORE_ORDER_SQL_PATH,
+    values: { storecode, beginDate, endDate, storename },
+    done: (rows) => {
+      const datas = []
+      if (rows.length > 0) {
+        for (var index = 0; index < rows.length; index++) {
+          datas.push({
+            name: rows[index]['name'],
+            orderamount: rows[index]['order_amount'],
+            addtime: rows[index]['add_time']
+          })
+        }
+        res.status(200).json({ rows: datas })
+      } else {
+        res.status(200).json({})
+      }
+    }
+  })
+})
+
+module.exports = router

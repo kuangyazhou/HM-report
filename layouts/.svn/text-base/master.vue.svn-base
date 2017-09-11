@@ -1,0 +1,53 @@
+<template>
+  <div class="hm-protal-container">
+    <HMHeader></HMHeader>
+    <div class="grid-content bg-purple-light">
+      <nuxt/>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios'
+import Vue from 'vue'
+import { Loading } from 'element-ui'
+import HMHeader from '~components/Header.vue'
+
+Vue.use(Loading)
+
+export default {
+  components: {
+    HMHeader
+  },
+  data() {
+    let lodingInstance = null
+    // Add a request interceptor
+    axios.interceptors.request.use(function (config) {
+      // Do something before request is sent
+      lodingInstance = Loading.service({
+        target: 'body',
+        text: '正在费力加载中...'
+      })
+      return config
+    }, function (error) {
+      // Do something with request error
+      lodingInstance.close()
+      return Promise.reject(error)
+    })
+
+    // Add a response interceptor
+    axios.interceptors.response.use(function (response) {
+      // Do something with response data
+      setTimeout(() => (lodingInstance && lodingInstance.close()), 1000)
+      return response
+    }, function (error) {
+      lodingInstance.close()
+      // Do something with response error
+      return Promise.reject(error)
+    })
+    return {}
+  }
+}
+</script>
+
+<style></style>

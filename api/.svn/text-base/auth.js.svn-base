@@ -1,0 +1,27 @@
+import db from './db'
+const router = require('express').Router()
+
+router.post('/login', function (req, res) {
+  db.query({
+    sql: 'select `store_code` from `sys_store_user` where `account`=:account',
+    values: { account: req.body.username },
+    done: (results) => {
+      if (results.length === 0) res.status(401).json({ error: 'Bad credentials' })
+      else if (results[0] && results[0]['store_code']) {
+        req.session.authUser = req.body.username
+        req.session.storeCode = results[0].store_code
+        res.json({ username: req.body.username, storecode: results.store_code })
+      } else {
+        res.status(500).json({ error: results })
+      }
+    }
+  })
+})
+
+router.post('/logout', function (req, res) {
+  delete req.session.authUser
+  delete req.session.storeCode
+  res.json({ ok: true })
+})
+
+module.exports = router

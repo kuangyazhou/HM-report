@@ -1,0 +1,10 @@
+select B.z 门店 ,B.x 订单数,B.c 销售额,B.c/B.x 客单价,concat ( left (B.c / (select sum(order_amount) from hm_order_info where store_code=:storecode)*100,4),'%') 销售占比,concat ( left (B.x / (select count(order_sn) from hm_order_info where store_code=:storecode)*100,4),'%')  订单占比
+from (
+	select A.`name` z,count(A.order_sn) x ,sum(A.order_amount) c
+	from (
+		select oi.order_sn, so.`name`,order_amount from hm_order_info oi
+		inner join hm_store_outlet so on oi.store_outlet_id = so.id
+    where oi.store_code=:storecode and oi.add_time>=:beginDate and oi.add_time<=:endDate
+	) A
+	group by A.`name`
+) B

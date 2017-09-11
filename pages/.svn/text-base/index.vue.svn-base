@@ -1,0 +1,153 @@
+<template>
+<div class="container">
+  <el-row :gutter="20">
+    <el-col :span="24">
+      <div class="grid-content">
+        <el-col :span="4">
+          <el-card class="box-card">
+            <div slot="header" class="clearfix" style="text-align: center;">
+              <span>微商城各区域订单及销售总表</span>
+            </div>
+            <div class="box-content" v-on:click="handleShowReport('No1')">
+              <img src="../assets/img/dashboard.jpg" alt="" />
+            </div>
+          </el-card>
+        </el-col>
+      </div>
+    </el-col>
+  </el-row>
+</div>
+</template>
+
+<script>
+import Vue from 'vue'
+import {
+  Button,
+  Col,
+  Row,
+  Card,
+  MessageBox
+} from 'element-ui'
+
+Vue.use(Button)
+Vue.use(Col)
+Vue.use(Row)
+Vue.use(Card)
+
+export default {
+  middleware: 'check-auth',
+  layout: 'master',
+  data() {
+    return {
+      currentDate: new Date()
+    }
+  },
+  head() {
+    return {
+      title: '首页'
+    }
+  },
+  methods: {
+    handleShowReport(typeId) {
+      window.location.replace(`/report?type=${typeId}`)
+    },
+    handleAddReport(e) {
+      MessageBox.prompt('请输入需要创建的报表的名称: ', '提示', {
+        confirmButtonText: '创建',
+        cancelButtonText: '取消'
+      }).then((value) => {
+        this.$store.dispatch('report/setReportName', value)
+        // 此处模拟一下延时, 并没有后台数据库来操作.
+        setTimeout(() => {
+          window.location.replace('/generate-report')
+        }, 300)
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+.grid-content {
+  margin-top: 15px;
+}
+
+.el-button.is-plain:focus,
+.el-button.is-plain:hover {
+  color: #42D885;
+}
+
+.grid-content .el-card__body {
+  padding: 20px 30px;
+}
+
+.box-content {
+  position: relative;
+  width: 100%;
+  height: 145px;
+}
+
+.el-card {
+  box-shadow: none;
+}
+
+.el-card:hover {
+  cursor: pointer;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .12), 0 0 6px 0 rgba(0, 0, 0, .04)
+}
+
+.box-content img {
+  position: absolute;
+  top: -10px;
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+}
+
+.box-footer {
+  clear: both;
+  height: 30px;
+  line-height: 30px;
+}
+
+.box-empty-content {
+  position: relative;
+  width: 100px;
+  height: 101px;
+  margin: 0 auto;
+  font-size: 13px;
+  border-radius: 50%;
+  border: 1px solid #dedede;
+  transition: all 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.box-empty-content:hover {
+  background: #5C8533;
+  transform: rotate(90deg);
+}
+
+.box-empty-content:before {
+  position: absolute;
+  content: '';
+  top: 48px;
+  left: 10px;
+  width: 80px;
+  height: 8px;
+  border-radius: 5px;
+  background: rgb(231, 241, 228);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+
+.box-empty-content:after {
+  position: absolute;
+  content: '';
+  top: 48px;
+  left: 10px;
+  width: 80px;
+  height: 8px;
+  border-radius: 5px;
+  background: rgb(231, 241, 228);
+  transform: rotate(0deg);
+}
+</style>

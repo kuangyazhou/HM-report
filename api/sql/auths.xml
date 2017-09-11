@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+  <sql-requests>
+    <sql-request id="QUERY_LOGINED_STORES" desc="用户可以查询的门店">
+      <![CDATA[
+        SELECT A.* from
+          (
+            select hso.*, '0' position 
+            from hemiao.hm_store_outlet hso 
+            INNER JOIN hemiao.sys_store_user ssu
+            on hso.id=ssu.store_outlet_id and ssu.account=:account
+          ) A
+          UNION ALL
+          select DISTINCT E.* from (
+          #B 作为店长查询
+          SELECT B.* from
+          (
+            select hso.*, '1' position 
+            from hemiao.hm_store_outlet hso 
+            INNER JOIN hemiao.sys_store_user ssu
+            on hso.id=ssu.store_outlet_id and ssu.account=:account
+          ) B
+          UNION ALL
+          #C 作为督导
+          SELECT C.* from
+          (
+            select hso.*, '2' position
+            from hemiao.hm_store_outlet hso
+            INNER JOIN hemiao.hm_guider_supervisor hgs
+            on hso.id=hgs.store_outlet_id
+            and hgs.supervisor_id in (select id from hemiao.sys_store_user where account=:account)
+          ) C
+          UNION ALL
+          #D 作为管理员
+          SELECT D.* from
+          (
+            select hso.*, '3' position
+            from hemiao.hm_store_outlet hso
+            INNER JOIN hemiao.sys_store_user ssu
+            on hso.store_code=ssu.store_code
+            and ssu.account=:account
+          ) D
+          ) E INNER JOIN hemiao.sys_store_user F on E.position=f.position and f.account=:account
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_LOGINED_MEMBERS" desc="用户可以查询的门店员工">
+      <![CDATA[
+        select DISTINCT E.* from (
+        #A 作为导购查询
+        SELECT A.* from
+        (
+          select ssu.*, '0' position_r from hemiao.sys_store_user ssu WHERE ssu.account=:account
+        ) A
+        UNION ALL
+        #B 作为店长查询
+        SELECT B.* from
+        (
+          select ssu2.*, '1' position_r from hemiao.sys_store_user ssu1 
+          INNER JOIN hemiao.sys_store_user ssu2 on ssu1.store_outlet_id=ssu2.store_outlet_id
+          and ssu1.account=:account
+        ) B
+        UNION ALL
+        #C 作为督导
+        SELECT C.* from
+        (
+          SELECT ssu.*,'2' position_r FROM hemiao.sys_store_user ssu
+          WHERE store_outlet_id in (select hgs.store_outlet_id from hemiao.sys_store_user ssu INNER JOIN hemiao.hm_guider_supervisor hgs on ssu.id=hgs.supervisor_id where ssu.account=:account)
+        ) C
+        UNION ALL
+        #D 作为管理员
+        SELECT D.* from
+        (
+          select ssu2.*, '3' position_r from hemiao.sys_store_user ssu1 INNER JOIN hemiao.sys_store_user ssu2 on ssu1.store_code=ssu2.store_code and ssu1.account=:account
+        ) D
+        ) E INNER JOIN hemiao.sys_store_user F on E.position_r=f.position and f.account=:account
+      ]]>
+    </sql-request>
+  </sql-requests>
+</root>
