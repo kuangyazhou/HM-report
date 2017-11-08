@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+  <sql-requests desc="首页数据">
+    <sql-request id="QUERY_HOME_TOTAL" desc="月度销售完成率">
+       <![CDATA[
+        select sum(target_value) from `hemiao-data`.hm_guider_appraisal_target_newest t where t.store_code=:storecode and t.target_object=1 and t.target_type=1 and t.time_rank=1 and t.target_time='2017-09' and t.target_object=1
+      ]]>
+    </sql-request>
+</sql-requests>
+</root>

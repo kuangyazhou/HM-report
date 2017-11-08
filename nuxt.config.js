@@ -11,6 +11,9 @@ module.exports = {
         ],
         link: [
             { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+        ],
+        script: [
+            { src: 'http://api.map.baidu.com/getscript?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM' }
         ]
     },
     /*
@@ -29,11 +32,13 @@ module.exports = {
         '~plugins/axios',
         '~plugins/moment',
         { src: '~plugins/ga.js', ssr: false }
-        // { src: '~plugins/drilldown.js', ssr: false }
+        // { src: '~plugins/echarts.js', ssr: false },
+        // { src: '~plugins/bmap.js', ssr: false }
     ],
     /*
      ** Add axios globally
      */
+    //external_library
     build: {
         analyze: false,
         vendor: ['axios', 'moment'],

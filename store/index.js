@@ -13,7 +13,8 @@ export const mutations = {
         state.authUser = user
     },
     SET_STORE_CODE: function(state, storecode) {
-        state.storeCode = storecode
+        state.storeCode = storecode;
+        // console.log(state.storeCode);
     },
     SET_IS_LOADING: function(state, status) {
         state.isLoading = status
@@ -33,6 +34,11 @@ export const actions = {
             commit('SET_STORE_CODE', req.session.storeCode)
         }
     },
+    jump({ commit }, storecode) {
+        console.log(storecode);
+        commit('SET_STORE_CODE', storecode);
+        // commit('SET_USER', user);
+    },
     login({ commit }, { username, password }) {
         return axios.post('/api/login', {
                 username,
@@ -51,11 +57,6 @@ export const actions = {
             })
     },
     comLogin({ commit }, { account, password }) {
-        // return axios.post('/api/comLogin', {
-        //         account,
-        //         password
-        //     }).then((e) => { console.log(e) })
-        //     .catch(e => console.log(e));
         return axios.post('http://192.168.188.128:8090/hemiao-crm-backservice/data/login.htm', {
                 account,
                 password

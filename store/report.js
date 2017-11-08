@@ -95,7 +95,39 @@ export const state = {
         rebuytype: [],
         rebuybrand: [],
         memberTotal: [],
-        todayNewMember: []
+        todayNewMember: [],
+        monthNewMember: [],
+        newMemberStore: [],
+        newMemberGuide: [],
+        guideDetail: [],
+        guideSeries: [],
+        saleGuideSeries: [],
+        expenseAxis: [],
+        singleMoney: [],
+        exTime: [],
+        transform: [],
+        currentMonth: [],
+        currentMonthChart: [],
+        monthNewTotal: [],
+        monthNewDetail: [],
+        saleTotal: [],
+        saleTotalDim: [],
+        saleDimension: [],
+        saleDimCompare: [],
+        saleDimStore: [],
+        saleDimGuide: [],
+        saleOrder: [],
+        saleOrderDim: [],
+        saleTimes: [],
+        saleTimeDim: [],
+        operaMain: [],
+        operaGuide: [],
+        operaDealNum: [],
+        operaDealTimes: [],
+        operaDealPrice: [],
+        memberGeo: [],
+        storeList: [],
+        guideList: []
     }
 }
 
@@ -317,10 +349,49 @@ export const mutations = {
         state.datasource.top20GoodsSaleByEmp = datas
     },
 
-    //每日新增会员
+    //每月新增会员
+    setMonthNewMember(state, datas) {
+        state.datasource.monthNewMember = datas
+    },
+    //门店新增会员
+    setNewMemberByStore(state, datas) {
+        state.datasource.newMemberStore = datas
+    },
+
+    //导购新增会员
+    setNewMemberGuide(state, datas) {
+        state.datasource.newMemberGuide = datas
+    },
     setTodayNewMember(state, datas) {
         state.datasource.todayNewMember = datas
     },
+
+    setAxis(state, datas) {
+        state.datasource.expenseAxis = datas;
+    },
+    setGuideDetail(state, datas) {
+        state.datasource.guideDetail = datas;
+    },
+
+    setGuideSeries(state, datas) {
+        state.datasource.guideSeries = datas;
+    },
+    setSaleGuideSeries(state, datas) {
+        state.datasource.saleGuideSeries = datas;
+    },
+
+    setSingle(state, datas) {
+        state.datasource.singleMoney = datas;
+    },
+    setTime(state, datas) {
+        state.datasource.exTime = datas;
+    },
+    setTransform(state, datas) {
+        state.datasource.transform = datas;
+    },
+    // setTransDetail(state, datas) {
+    //     state.datasource.transDetail = datas;
+    // },
     getMemberFeatureAll(state, datas) {
         datas.forEach((data) => {
             switch (data.hemiao_type) {
@@ -361,10 +432,91 @@ export const mutations = {
     },
     getTotal(state, datas) {
         state.datasource.memberTotal = datas;
+    },
+    setCurrentMonth(state, datas) {
+        state.datasource.currentMonth = datas;
+    },
+    setMonthChart(state, datas) {
+        state.datasource.currentMonthChart = datas;
+    },
+    setMonthNew(state, datas) {
+        state.datasource.monthNewTotal = datas;
+    },
+    setMonthNewDetail(state, datas) {
+        state.datasource.monthNewDetail = datas;
+    },
+    //销售统计分析
+    setSaleOrder(state, datas) {
+        state.datasource.saleOrder = datas;
+    },
+    setSaleTotal(state, datas) {
+        state.datasource.saleTotal = datas;
+    },
+    setSaleTotalDim(state, datas) {
+        state.datasource.saleTotalDim = datas;
+    },
+    //多维度销售数据
+    setSaleDimension(state, datas) {
+        state.datasource.saleDimension = datas;
+    },
+    //多维度对比数据
+    setSaleDimCompare(state, datas) {
+        state.datasource.saleDimCompare = datas;
+    },
+    //多维度销售数据-门店
+    setSaleDimStore(state, datas) {
+        state.datasource.saleDimStore = datas;
+    },
+    setSaleDimGuide(state, datas) {
+        state.datasource.saleDimGuide = datas;
+    },
+    //销售对比数据
+    setSaleOrderDim(state, datas) {
+        state.datasource.saleOrderDim = datas;
+    },
+    setStoreList(state, datas) {
+        state.datasource.storeList = datas;
+    },
+    setGuideList(state, datas) {
+        state.datasource.guideList = datas;
+    },
+    //销售消费次数
+    setSaleTimes(state, datas) {
+        state.datasource.saleTimes = datas;
+    },
+    setSaleTimeDim(state, datas) {
+        state.datasource.saleTimeDim = datas;
+    },
+    //运营统计分析，首页
+    setOperaMain(state, datas) {
+        state.datasource.operaMain = datas;
+    },
+    setOperaGuide(state, datas) {
+        state.datasource.operaGuide = datas;
+    },
+    //维护交易购买人数
+    setOperaDealNum(state, datas) {
+        state.datasource.operaDealNum = datas;
+    },
+    setOperaDealTimes(state, datas) {
+        state.datasource.operaDealTimes = datas;
+    },
+    //维护交易购买单价
+    setOperaDealPrice(state, datas) {
+        state.datasource.operaDealPrice = datas;
+    },
+    //会员地理分布
+    setMemberGeo(state, datas) {
+        state.datasource.memberGeo = datas;
     }
 }
 
 export const actions = {
+    jump({ commit }, storecode) {
+        // console.log(storecode);
+        commit('SET_STORE_CODE', storecode);
+        // commit('SET_USER', user);
+    },
     getCurrentTotalAmount({ commit }, { storecode }) {
         return axios.get(`/api/report/sales/total/amount?storecode=${storecode}`)
             .then((resp) => {
@@ -692,10 +844,427 @@ export const actions = {
             })
     },
 
-    getTodayNewMember({ commit }, { storecode, type }) {
+    getTodayNew({ commit }, { storecode }) {
         return axios.get(`/api/report/newmember/today?storecode=${storecode}`)
             .then((resp) => {
                 commit('setTodayNewMember', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    // getTodayDetail({ commit }, { storecode, outlet }) {
+    //     return axios.get(`/api/report/today/detail?storecode=${storecode}&outlet=${outlet}`)
+    //         .then((resp) => {
+    //             commit('setGuideDetail', resp.data.rows)
+    //         })
+    //         .catch((error) => {
+    //             if (error.response.status === 500) {
+    //                 throw new Error('服务器错误')
+    //             }
+    //         })
+    // },
+    getMonthNewMember({ commit }, { storecode }) {
+        return axios.get(`/api/report/newmember/month?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setMonthNewMember', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+
+    getGuideByStore({ commit }, { storecode, outlet }) {
+        return axios.get(`/api/report/newmember/guide?storecode=${storecode}&outlet=${outlet}`)
+            .then((resp) => {
+                commit('setNewMemberGuide', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    // getGuideDetail({ commit }, { storecode, outlet, userid }) {
+    //     return axios.get(`/api/report/guide/detail?storecode=${storecode}&outlet=${outlet}&userid=${userid}`)
+    //         .then((resp) => {
+    //             commit('setGuideDetail', resp.data.rows)
+    //         })
+    //         .catch((error) => {
+    //             if (error.response.status === 500) {
+    //                 throw new Error('服务器错误')
+    //             }
+    //         })
+    // },
+    getAxis({ commit }, { storecode }) {
+        return axios.get(`/api/report/axis?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setAxis', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+
+    getSingleMoneyAll({ commit }, { storecode }) {
+        return axios.get(`/api/report/singleMoneyAll?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setSingle', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getSingleMoney({ commit }, { storecode, age, type }) {
+        // console.log(storecode, type, age);
+        return axios.get(`/api/report/singleMoney?storecode=${storecode}&age=${age}&type=${type}`)
+            .then((resp) => {
+                commit('setSingle', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    // getSingleDetail({ commit }, { storecode, age, tot_price }) {
+    //     return axios.get(`/api/report/singleDetail?storecode=${storecode}&age=${age}&tot_price=${tot_price}`)
+    //         .then((resp) => {
+    //             commit('setGuideDetail', resp.data.rows)
+    //         })
+    //         .catch((error) => {
+    //             if (error.response.status === 500) {
+    //                 throw new Error('服务器错误')
+    //             }
+    //         })
+    // },
+    getExTimeAll({ commit }, { storecode }) {
+        return axios.get(`/api/report/exTimeAll?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setTime', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getExTime({ commit }, { storecode, age, type }) {
+        // console.log(storecode, type, age);
+        return axios.get(`/api/report/exTime?storecode=${storecode}&age=${age}&type=${type}`)
+            .then((resp) => {
+                commit('setTime', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    // getTimeDetail({ commit }, { storecode, age, com_no }) {
+    //     return axios.get(`/api/report/timeDetail?storecode=${storecode}&age=${age}&com_no=${com_no}`)
+    //         .then((resp) => {
+    //             commit('setGuideDetail', resp.data.rows)
+    //         })
+    //         .catch((error) => {
+    //             if (error.response.status === 500) {
+    //                 throw new Error('服务器错误')
+    //             }
+    //         })
+    // },
+    getTransfrom({ commit }, { storecode }) {
+        return axios.get(`/api/report/transform?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setTransform', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    // getTransDetail({ commit }, { storecode, days }) {
+    //     return axios.get(`/api/report/transDetail?storecode=${storecode}&days=${days}`)
+    //         .then((resp) => {
+    //             commit('setGuideDetail', resp.data.rows)
+    //         })
+    //         .catch((error) => {
+    //             if (error.response.status === 500) {
+    //                 throw new Error('服务器错误')
+    //             }
+    //         })
+    // },
+    // getCurrentMonthSale({ commit }, { storecode }) {
+    //     return axios.get(`/api/report/home/total?storecode=${storecode}`)
+    //         .then((resp) => {
+    //             commit('setCurrentMonth', resp.data.rows)
+    //         }).catch((error) => {
+    //             if (error.response.status === 500) {
+    //                 throw new Error('服务器错误')
+    //             }
+    //         })
+    // },
+    getMonthSale({ commit }, { storecode }) {
+        return axios.get(`/api/report/home/saleDetail?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setMonthChart', resp.data.rows)
+            }).catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getMonthNewmember({ commit }, { storecode }) {
+        return axios.get(`/api/report/home/newDetail?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setMonthNewDetail', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getGuideNew({ commit }, { storecode, outletId }) {
+        return axios.get(`/api/report/home/getGuide?storecode=${storecode}&outletId=${outletId}`)
+            .then((resp) => {
+                commit('setGuideSeries', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getGuideSale({ commit }, { storecode, outletId }) {
+        return axios.get(`/api/report/home/getSaleGuide?storecode=${storecode}&outletId=${outletId}`)
+            .then((resp) => {
+                commit('setSaleGuideSeries', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getSaleTotal({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/sale/total?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setSaleTotal', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getSaleTotalDim({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/sale/totalDim?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setSaleTotalDim', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //多维度销售数据
+    getSaleDimension({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/sale/dimension?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setSaleDimension', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //多维度销售对比数据
+    getSaleDimCompare({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/sale/dimension?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setSaleDimCompare', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //多维度销售数据-门店
+    getSaleDimStore({ commit }, { storecode, outletId }) {
+        return axios.get(`/api/report/sale/dim/store?storecode=${storecode}&outletId=${outletId}`)
+            .then((resp) => {
+                commit('setSaleDimStore', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //多维度销售数据-导购
+    getSaleDimGuide({ commit }, { storecode, outletId, userId }) {
+        return axios.get(`/api/report/sale/dim/guide?storecode=${storecode}&outletId=${outletId}&userId=${userId}`)
+            .then((resp) => {
+                commit('setSaleDimGuide', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getSaleOrder({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/sale/order?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setSaleOrder', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getSaleOrderDim({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/sale/orderDim?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setSaleOrderDim', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getSaleOrderTimes({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/sale/times?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setSaleTimes', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getSaleTimeDim({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/sale/timeDim?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setSaleTimeDim', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getOperaMain({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/opera/scanRegBind?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setOperaMain', resp.data.rows);
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getOperaGuide({ commit }, { storecode, outlet, startDate, endDate }) {
+        return axios.get(`/api/report/operaGuide?storecode=${storecode}&outlet=${outlet}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setOperaGuide', resp.data.rows);
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getOperaGuideDetail({ commit }, { storecode, outlet, userid, startDate, endDate }) {
+        return axios.get(`/api/report/opera/guideDetail?storecode=${storecode}&outlet=${outlet}&userid=${userid}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setGuideDetail', resp.data.rows);
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //客户维护交易人数
+    getOperaDealNum({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/opera/dealnum?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setOperaDealNum', resp.data.rows);
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //维护客户购买次数
+    getOperaDealTimes({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/opera/dealtimes?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setOperaDealTimes', resp.data.rows);
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //客户维护交易单价
+    getOperaDealPrice({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/opera/dealprice?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setOperaDealPrice', resp.data.rows);
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //会员地理分布
+    getMemberGeo({ commit }, { storecode }) {
+        return axios.get(`/api/report/member/geo?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setMemberGeo', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getStoreList({ commit }, { storecode }) {
+        return axios.get(`/api/report/sale/sotreList?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setStoreList', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getGuideList({ commit }, { storecode, outletId }) {
+        return axios.get(`/api/report/sale/guideList?storecode=${storecode}&outletId=${outletId}`)
+            .then((resp) => {
+                commit('setGuideList', resp.data.rows)
             })
             .catch((error) => {
                 if (error.response.status === 500) {

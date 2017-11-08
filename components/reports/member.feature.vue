@@ -81,7 +81,7 @@
                 </el-card>
             </el-col>
         </el-row>
-        <el-dialog title="会员信息详情" :visible="dialogVisible" size="large" :show-close="false" :before-close="handleClose">
+        <el-dialog title="会员信息详情" :visible="dialogVisible" size="large" :show-close="false">
             <el-table :data="gridData">
                 <el-table-column property="name" label="姓名" width="200"></el-table-column>
                 <el-table-column property="date" label="日期" width="150"></el-table-column>
@@ -399,16 +399,12 @@ export default {
     methods: {
         sizeChange(val) {
             this.$store.dispatch('report/getDetail', { storecode: this.storecode, type: this.type, number: val * 10 });
-            console.log(`第 ${val} 页`);
+            // console.log(`第 ${val} 页`);
         }
     }
 }
 </script>
 
 <style scoped>
-.center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+
 </style>

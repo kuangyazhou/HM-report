@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
   <sql-requests desc="会员数据">
-    <sql-request id="QUERY_MEMBER_ALL" desc="会员特征全量数据">
+    <!-- <sql-request id="QUERY_MEMBER_ALL" desc="会员特征全量数据">
        <![CDATA[
         SELECT * FROM `hemiao-data`.report_store_portrait WHERE store_code=:storecode
       ]]>
@@ -40,6 +40,193 @@
        <![CDATA[
        SELECT hemiao_count,hemiao_rate,hemiao_type FROM `hemiao-data`.report_store_rebuy_days WHERE store_code=:storecode
       ]]>
+    </sql-request> -->
+    <sql-request id="COMMON_QUERY_GUIDELIST" desc="查询门店导购">
+    <![CDATA[
+    SELECT name,id FROM hemiao.sys_store_user WHERE	store_code=:storecode AND store_outlet_id=:outletId
+    ]]>
+    </sql-request>
+<!-- 另一个xml文件使用时报莫名其妙错误，暂将sql语句放于此处 -->
+    <sql-request id="QUERY_NEWMEMBER_MONTH" desc="本月新增会员">
+      <![CDATA[
+      SELECT A.store_code,A.store_outlet_id,A.store_outlet_name,COUNT(A.id_old) hemiao_count ,SUM(A.points) hemiao_count2 FROM (SELECT store_code,store_outlet_id,store_outlet_name,id_old ,points FROM `hemiao-data`.data_member_analysis1 WHERE store_code=:storecode AND hemiao_date =DATE_FORMAT(NOW(),'%Y-%m') GROUP BY store_code,store_outlet_id,store_outlet_name,id_old) A GROUP BY A.store_code,A.store_outlet_id,A.store_outlet_name
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_NEWMEMBER_GUIDE" desc="导购新增会员数">
+      <![CDATA[
+        SELECT A.store_code,A.store_outlet_id,A.store_outlet_name,A.sys_store_user_id,A.work_name,COUNT(A.id_old) hemiao_count ,SUM(A.points) hemiao_count2 FROM (SELECT store_code,store_outlet_id,store_outlet_name,sys_store_user_id,work_name,id_old,points FROM `hemiao-data`.data_member_analysis1 WHERE store_code=:storecode AND store_outlet_id=:outlet AND hemiao_date=DATE_FORMAT(NOW(),'%Y-%m') GROUP BY store_code,store_outlet_id,store_outlet_name,sys_store_user_id,work_name,id_old) A GROUP BY A.store_code,A.store_outlet_id,A.store_outlet_name,A.sys_store_user_id,A.work_name
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_GUIDE_DETAIL" desc="新增会员详情">
+      <![CDATA[
+      SELECT work_name,real_name,user_name,mobile_phone,age,perform_date,last_shopping_time,tot_price FROM `hemiao-data`.data_member_analysis1 WHERE store_code=:storecode AND store_outlet_id =:outlet AND sys_store_user_id=:userid AND hemiao_date=DATE_FORMAT(NOW(),'%Y-%m') GROUP BY store_code,store_outlet_id,store_outlet_name,sys_store_user_id,work_num,work_name,id_old 
+      ]]>
+    </sql-request>
+
+    <sql-request id="QUERY_NEWMEMBER_TODAY" desc="今日新增会员">
+    <![CDATA[
+        SELECT A.store_code,A.store_outlet_id,A.store_outlet_name,COUNT(A.id_old) hemiao_count
+        FROM (SELECT store_code,store_outlet_id,store_outlet_name,id_old 
+        FROM `hemiao-data`.data_member_analysis1
+        WHERE store_code=:storecode and  hemiao_date =DATE_FORMAT(NOW(),'%Y-%m-%d') GROUP BY store_code,store_outlet_id,store_outlet_name,id_old) A
+        GROUP BY A.store_code,A.store_outlet_id,A.store_outlet_name
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_TODAY_DETAIL" desc="今日新增会员详情包含导购">
+    <![CDATA[
+        SELECT work_name,real_name,user_name,mobile_phone,age,perform_date,last_shopping_time,tot_price FROM `hemiao-data`.data_member_analysis1 
+        WHERE store_code=:storecode AND store_outlet_id =:outlet and hemiao_date=DATE_FORMAT(NOW(),'%Y-%m-%d') GROUP BY store_code,store_outlet_id,store_outlet_name,sys_store_user_id,work_num,work_name,id_old
+      ]]>
+    </sql-request>
+<!-- <sql-request id="QUERY_NEWMEMBER_TODAY" desc="今日新增会员">
+</sql-> -->
+
+    <!-- 消费分布生理轴主图 -->
+    <sql-request id="QUERY_AXIS" desc="生理轴消费分布">
+      <![CDATA[
+      SELECT store_code,baby_age,COUNT(user_id) hemiao_count ,type FROM `hemiao-data`.data_member_analysis2 WHERE store_code=:storecode AND store_outlet_id IS NOT NULL AND type='reg' GROUP BY store_code,baby_age UNION SELECT store_code,baby_age,COUNT(user_id) hemiao_count ,type FROM `hemiao-data`.data_member_analysis2 WHERE store_code=:storecode AND store_outlet_id IS NOT NULL AND type='trade' GROUP BY store_code,baby_age
+      ]]>
+    </sql-request>
+
+    <sql-request id="QUERY_SINGLE_ALL" desc="单次消费金额全量数据">
+      <![CDATA[
+      SELECT store_code,tot_price,COUNT(user_id) hemiao_count FROM `hemiao-data`.data_member_analysis2 WHERE store_code=:storecode AND type='trade' GROUP BY store_code,tot_price
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_SINGLE_MONEY" desc="单次消费金额分布">
+      <![CDATA[
+      SELECT store_code,baby_age,tot_price,COUNT(user_id) hemiao_count 
+      FROM `hemiao-data`.data_member_analysis2 WHERE store_code=:storecode AND type=:type AND baby_age =:age GROUP BY store_code,baby_age,tot_price
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_SINGLE_DETAIL" desc="单次消费金额详情">
+      <![CDATA[
+      SELECT work_name,real_name,user_name,mobile_phone,age,perform_date,last_shopping_time,price FROM `hemiao-data`.data_member_analysis2 WHERE store_code=:storecode AND baby_age=:age AND tot_price =:tot_price AND hemiao_date='2017-08' GROUP BY store_code,store_outlet_id,store_outlet_name,user_id;
+      ]]>
+    </sql-request>
+
+    <sql-request id="QUERY_TIME_ALL" desc="消费频次全量数据">
+      <![CDATA[
+      SELECT store_code,com_no,COUNT(user_id) hemiao_count FROM `hemiao-data`.data_member_analysis2 WHERE store_code=:storecode AND com_no >=1 AND com_no <= 4  AND type='trade' GROUP BY store_code,com_no
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_EX_TIME" desc="消费频次人数分布">
+      <![CDATA[
+      SELECT store_code,baby_age,com_no,COUNT(user_id) hemiao_count FROM `hemiao-data`.data_member_analysis2 WHERE store_code=:storecode AND com_no >=1 AND com_no <= 4  AND baby_age=:age AND type=:type GROUP BY store_code,baby_age,com_no
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_TIME_DETAIL" desc="消费频次详情">
+      <![CDATA[
+      SELECT work_name,real_name,user_name,mobile_phone,age,perform_date,last_shopping_time,price FROM `hemiao-data`.data_member_analysis2 WHERE store_code=:storecode AND baby_age=:age AND com_no=:com_no AND hemiao_date='2017-08' GROUP BY store_code,store_outlet_id,store_outlet_name,user_id
+      ]]>
+    </sql-request>
+
+    <sql-request id="QUERY_TRANSFORM" desc="客户维护转换">
+      <![CDATA[
+      SELECT store_code,days,COUNT(id_old) id_old FROM `hemiao-data`.data_member_analysis3 WHERE store_code=:storecode GROUP BY store_code,days
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_TRANS_DETAIL" desc="客户维护转换详情">
+      <![CDATA[
+      SELECT real_name,user_name,mobile_phone,age,work_name,perform_date,last_shopping_time,tot_price FROM `hemiao-data`.data_member_analysis3 WHERE store_code=:storecode and days=:days
+      ]]>
+    </sql-request>
+
+    <sql-request id="QUERY_HOME_SALE_CHART" desc="月度销售">
+      <![CDATA[
+         select a.store_outlet_id,a.store_outlet_name,:currentMonth monthstr,target,amount from (select store_code,store_outlet_id,store_outlet_name,sum(target_value) target from `hemiao-data`.hm_guider_appraisal_target_newest where store_code=:storecode and target_object = 1 and target_type = 1 and time_rank = 1 and target_time = :_currentMonth group by store_code, store_outlet_id,store_outlet_name) a left join (select store_code,store_outlet_id,store_outlet_name,sum(tot_price) amount from `hemiao-data`.hm_order_goods_offline_extrecord ord where store_code=:storecode and date_format(ord.add_time, '%Y%m') = :currentMonth group by store_code,store_outlet_id,store_outlet_name) b on a.store_code = b.store_code and a.store_outlet_id = b.store_outlet_id;
+      ]]>
+    </sql-request>
+
+  <sql-request id="QUERY_SALE_GUIDE" desc="月度销售导购信息">
+    <![CDATA[
+    SELECT :currentMonth monthstr,target,amount,a.store_user_id,a.store_user_name FROM	(SELECT	store_code,store_outlet_id,store_outlet_name,store_user_id,store_user_name,sum( target_value ) target FROM `hemiao-data`.hm_guider_appraisal_target_newest WHERE	store_code=:storecode AND target_object = 1 AND target_type = 1 AND time_rank = 1 AND target_time = :_currentMonth AND store_outlet_id=:outletId GROUP BY store_code,store_outlet_id,store_outlet_name,store_user_id,store_user_name) a LEFT JOIN (SELECT store_code,store_outlet_id,store_outlet_name,belong_store_user_id,belong_store_user_name,sum(tot_price ) amount FROM `hemiao-data`.hm_order_goods_offline_extrecord ord WHERE store_code=:storecode AND store_outlet_id=:outletId AND date_format( ord.add_time, '%Y%m' ) = :currentMonth GROUP BY store_code,	store_outlet_id,store_outlet_name,belong_store_user_id,belong_store_user_name) b ON a.store_code = b.store_code	AND a.store_code = b.store_code AND a.store_outlet_id = b.store_outlet_id AND a.store_user_id = b.belong_store_user_id;
+    ]]>
+    </sql-request>
+
+    <sql-request id="QUERY-SALE-TOTAL" desc="总销售数据分析">
+    <![CDATA[
+    select d.belong_store_outlet_id,o.name store_outlet_name,sum(member_trade_amount) member_trade_amount from `hemiao-data`.hm_daystat_belong_guider_sales_details d,hemiao.hm_store_outlet o where d.store_code = o.store_code and d.belong_store_outlet_id = o.id and d.store_code=:storecode and d.stat_day >=:startDate and d.stat_day <= :endDate group by d.store_code,d.belong_store_outlet_id
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-SALE-DIMENSION" desc="多维度销售数据">
+    <![CDATA[
+    SELECT store_code,brand_offline_id,brand_offline_name,sum( member_trade_amount ) member_trade_amount FROM `hemiao-data`.hm_daystat_brand_details WHERE store_code=:storecode AND stat_day >= :startDate and stat_day<= :endDate GROUP BY store_code,brand_offline_id,	brand_offline_name order by sum( member_trade_amount ) desc
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-SALEDIM-STORE" desc="多维度销售数据-门店">
+    <![CDATA[
+    SELECT brand_offline_id,brand_offline_name,sum( member_trade_amount ) member_trade_amount FROM `hemiao-data`.hm_daystat_brand_details WHERE store_code=:storecode AND LEFT (stat_day, 6 ) = :currentMonth	AND store_outlet_id = :outletId GROUP BY brand_offline_id,brand_offline_name ORDER BY	sum( member_trade_amount ) DESC
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-SALEDIM-GUIDE" desc="多维度销售数据-导购">
+    <![CDATA[
+    SELECT brand_offline_id,brand_offline_name,belong_store_user_name,sum( member_trade_amount ) member_trade_amount FROM `hemiao-data`.hm_daystat_brand_details WHERE store_code=:storecode AND LEFT (stat_day, 6 ) = :currentMonth AND store_outlet_id = :outletId and belong_store_user_id=:userId GROUP BY brand_offline_id,brand_offline_name ORDER BY sum( member_trade_amount ) DESC
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-STORE-LIST" desc="获取门店列表">
+    <![CDATA[
+    select id store_outlet_id,name store_outlet_name from hemiao.hm_store_outlet where store_code=:storecode
+    ]]>
+    </sql-request>
+
+    <sql-request id="QUERY_NEWMEMBER_COM" desc="月度新客">
+    <![CDATA[
+   select a.store_outlet_id,a.store_outlet_name,:currentMonth monthstr,target,newmember_opencard_amount from (select store_code,store_outlet_id,store_outlet_name,sum(target_value) target from `hemiao-data`.hm_guider_appraisal_target_newest where store_code=:storecode and target_object = 0 and target_type = 0 and time_rank = 1 and target_time = :_currentMonth group by store_code,store_outlet_id,store_outlet_name) a left join(select store_code,belong_store_outlet_id,belong_store_outlet_name,sum(newmember_opencard_amount) newmember_opencard_amount from `hemiao-data`.hm_daystat_member_details where store_code=:storecode and left(stat_day, 6) = :currentMonth group by store_code,belong_store_outlet_id,belong_store_outlet_name) b on a.store_code = b.store_code and a.store_outlet_id = b.belong_store_outlet_id
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY-NEW-GUIDE" desc="查询新客导购信息">
+    <![CDATA[
+    select :currentMonth monthstr,target,newmember_opencard_amount,a.store_user_id,a.store_user_name from (select store_code,store_outlet_id,store_outlet_name,store_user_id,store_user_name,sum(target_value) target from `hemiao-data`.hm_guider_appraisal_target_newest where store_code = :storecode and target_object = 0 and target_type = 0 and time_rank = 1 and target_time = : and store_outlet_id=:outletId group by store_code,store_outlet_id,store_outlet_name,store_user_id,store_user_name) a left join (select store_code,belong_store_outlet_id,belong_store_outlet_name,belong_store_user_id,belong_store_user_name,sum(newmember_opencard_amount) newmember_opencard_amount from `hemiao-data`.hm_daystat_member_details where store_code = :storecode and belong_store_outlet_id = :outletId and left (stat_day, 6) = :currentMonth group by store_code,belong_store_outlet_id,belong_store_outlet_name,belong_store_user_id,belong_store_user_name) b on a.store_code = b.store_code and a.store_outlet_id = b.belong_store_outlet_id and a.store_user_id = b.belong_store_user_id
+    ]]>
+    </sql-request>
+
+    <sql-request id="QUERY-OPERA-NEW" desc="查询扫码/注册/绑定">
+    <![CDATA[
+    select store_outlet_id,store_outlet_name,left(stat_day, 6) stat_day,sum(scanqr_amount),sum(reg_amount),sum(bind_amount) from `hemiao-data`.hm_daystat_qrcode_details where store_code = :storecode AND stat_day >= :startDate and  stat_day<= :endDate group by store_code,store_outlet_id,store_outlet_name
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-OPERA-GUIDE" desc="根据门店查询导购的扫码/注册/绑定">
+    <![CDATA[
+    select store_user_id,store_user_name,left(stat_day, 6) stat_day,sum(scanqr_amount),sum(reg_amount),sum(bind_amount) from `hemiao-data`.hm_daystat_qrcode_details where store_code = :storecode and store_outlet_id=:outletId and stat_day >= :startDate and  stat_day<= :endDate group by store_code,store_outlet_id,store_user_id
+    ]]>
+    </sql-request>
+    <sql-request id="OPERA-GUIDE-CURRENTMONTH" desc="查询导购当月扫码/注册/绑定">
+    <![CDATA[
+    select stat_day,scanqr_amount,reg_amount,bind_amount from `hemiao-data`.hm_daystat_qrcode_details where store_code = :storecode and store_outlet_id=:outletId and store_user_id=:userId and stat_day >= :startDate and  stat_day<= :endDate
+    ]]>
+    </sql-request>
+
+    <sql-request id="QUERY-SALE-ORDER" desc="客户订单分析">
+    <![CDATA[
+    select d.belong_store_outlet_id,o.name store_outlet_name,sum(ifnull(member_trade_amount, 0)) / sum(ifnull(member_trade_num, 0)) avg_amount from `hemiao-data`.hm_daystat_belong_guider_sales_details d,hemiao.hm_store_outlet o where d.store_code = o.store_code and d.belong_store_outlet_id = o.id and d.store_code = :storecode and d.stat_day >= :startDate and d.stat_day <=:endDate group by d.store_code,d.belong_store_outlet_id
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-SALE-TIMES" desc="客户消费次数分析">
+    <![CDATA[
+    select d.belong_store_outlet_id,o.name store_outlet_name,sum(ifnull(member_trade_order_num, 0)) / sum(ifnull(member_trade_num, 0)) avg_amount from `hemiao-data`.hm_daystat_belong_guider_sales_details d,hemiao.hm_store_outlet o where d.store_code = o.store_code and d.belong_store_outlet_id = o.id and d.store_code = :storecode and d.stat_day >=:startDate and d.stat_day <= :endDate group by d.store_code,d.belong_store_outlet_id
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-OPERA-DEALNUM" desc="维护客户交易人数">
+    <![CDATA[
+    select ext.store_code,ext.store_outlet_id,r.name,back_type,count(*) from `hemiao-data`.hm_guider_contact_member_extrecord ext,hemiao.hm_store_outlet r where ext.store_code = :storecode and ext.back_num between 0 and 30 and ext.store_code = r.store_code and ext.store_outlet_id = r.id and left(ext.contact_day, 6) = :currentMonth group by ext.store_code,back_type,ext.store_outlet_id
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-OPERA-DEALTIMES" desc="维护客户购买次数">
+    <![CDATA[
+    SELECT hgcme.store_code,store_outlet_id,hso.`name`,store_user_id,mb_offline_id,contact_time FROM `hemiao-data`.hm_guider_contact_member_extrecord hgcme LEFT JOIN hemiao.hm_store_outlet hso on hgcme.store_outlet_id=hso.id WHERE contact_time >= :startDate AND hgcme.store_code = :storecode;
+    select DISTINCT order_id,store_code,belong_store_outlet_id,belong_store_outlet_name,belong_store_user_id,member_offline_id,add_time from `hemiao-data`.hm_order_goods_offline_extrecord where belong_store_user_id is not null and add_time>=:startDate and store_code = :storecode;
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-OPERA-DEALPRICE" desc="维护客户购买单价">
+    <![CDATA[
+    SELECT t.belong_store_outlet_id,t.belong_store_outlet_name,t.member_trade_amount_level,sum(t.countvalue) total FROM (SELECT belong_store_outlet_id,belong_store_outlet_name,belong_store_user_id,belong_store_user_name,member_trade_amount_level,count(member_trade_amount_level ) countvalue FROM `hemiao-data`.hm_daystat_belong_guider_sales_details WHERE	LENGTH(member_offline_id)>0 and stat_day BETWEEN :startDate AND :endDate and store_code = :storecode AND member_trade_amount_level IS NOT NULL GROUP BY belong_store_outlet_id,belong_store_outlet_name,member_trade_amount_level) t GROUP BY	t.belong_store_outlet_id,t.member_trade_amount_level
+    ]]>
+    </sql-request>
+    <sql-request id="QUERY-MEMBER-GEO" desc="会员地理分析图">
+    <![CDATA[
+     SELECT FORMAT(baidu_lng, 10) baidu_lng,FORMAT(baidu_lat, 10) baidu_lat,COUNT(*) elevation FROM `hemiao-data`.hm_member_lbs_summary WHERE baidu_lng IS NOT NULL AND baidu_lng <> 0 AND baidu_lat IS NOT NULL AND baidu_lat <> 0 GROUP BY FORMAT(baidu_lng, 10),FORMAT(baidu_lat, 10)
+    ]]>
     </sql-request>
 </sql-requests>
 </root>

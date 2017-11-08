@@ -15,7 +15,9 @@
             <div class="hm-sub-nav-item" v-if="$store.state.authUser">
               <el-dropdown @command="handleCommand">
                 <span class="el-dropdown-link">
-                  欢迎使用本系统, <span style="color: #F7BA2A;">{{loginedUser}}</span><i class="el-icon-caret-bottom el-icon--right"></i>
+                  欢迎使用本系统,
+                  <span style="color: #F7BA2A;">{{loginedUser}}</span>
+                  <i class="el-icon-caret-bottom el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>个人资料</el-dropdown-item>
@@ -31,81 +33,81 @@
 </template>
 
 <script>
-  import Vue from 'vue'
-  import {
-    Button,
-    Col,
-    Row,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    Message
-  } from 'element-ui'
+import Vue from 'vue'
+import {
+  Button,
+  Col,
+  Row,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  Message
+} from 'element-ui'
 
-  Vue.use(Button)
-  Vue.use(Col)
-  Vue.use(Row)
-  Vue.use(Dropdown)
-  Vue.use(DropdownItem)
-  Vue.use(DropdownMenu)
+Vue.use(Button)
+Vue.use(Col)
+Vue.use(Row)
+Vue.use(Dropdown)
+Vue.use(DropdownItem)
+Vue.use(DropdownMenu)
 
-  export default {
-    computed: {
-      loginedUser: function () {
-        return this.$store.state.authUser
-      }
+export default {
+  computed: {
+    loginedUser: function() {
+      return this.$store.state.authUser
+    }
+  },
+  methods: {
+    toDashboard() {
+      window.location.href = '/'
     },
-    methods: {
-      toDashboard () {
-        window.location.href = '/'
-      },
-      handleCommand (command) {
-        switch (command) {
-          case 'logout':
-            this.$store.dispatch('logout').then(() => (window.location.href='/login'))
-            break
-          default:
-            Message.error({
-              duration: 2000,
-              message: '该功能正在抓紧时间开发中...'
-            })
-            break
-        }
+    handleCommand(command) {
+      switch (command) {
+        case 'logout':
+          this.$store.dispatch('logout').then(() => (window.location.href = '/login'))
+          break
+        default:
+          Message.error({
+            duration: 2000,
+            message: '该功能正在抓紧时间开发中...'
+          })
+          break
       }
     }
   }
+}
 </script>
 
 <style scoped>
-  .hm-main-navbar {
-    position: relative;
-    width: 100%;
-    height: 60px;
-    line-height: 60px;
-    background-color: #6358a1;
-    color: #fff;
-    top: 0;
-    left: 0;
-    z-index: 100;
-  }
+.hm-main-navbar {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  background: linear-gradient(to right, #245dd0, #6393e5);
+  color: #fff;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
 
-  .hm-main-navbar .inner-container {
-    padding: 0 10px;
-  }
+.hm-main-navbar .inner-container {
+  padding: 0 10px;
+}
 
-  .hm-img-logo {
-    position: relative;
-    max-width: 100%;
-    width: 110px;
-    top: 6px;
-    left: 10px;
-  }
+.hm-img-logo {
+  position: relative;
+  max-width: 100%;
+  width: 110px;
+  top: 6px;
+  left: 10px;
+}
 
-  .hm-sub-nav-item {
-    float: right;
-  }
+.hm-sub-nav-item {
+  float: right;
+}
 
-  .hm-sub-nav-item .el-dropdown {
-    color: white;
-  }
+.hm-sub-nav-item .el-dropdown {
+  color: white;
+}
 </style>

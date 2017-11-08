@@ -25,7 +25,7 @@ module.exports = {
             user: 'root',
             host: '115.28.187.224',
             ref: 'origin/master',
-            repo: 'https://github.com/kuangyazhou/report.git',
+            repo: 'git@115.28.187.224:big-data/report.git',
             path: '/var/www/production',
             'post-setup': 'git pull && ls -la',
             'post-deploy': 'yarn && yarn run build && pm2 reload ecosystem.config.js --env production'

@@ -32,25 +32,25 @@
 
 <script>
 // import axios from '~plugins/axios'
-import Vue from 'vue'
-import { Button, Col, Row, Form, Input, FormItem, Alert } from 'element-ui'
-import axios from 'axios';
+import Vue from "vue";
+import { Button, Col, Row, Form, Input, FormItem, Alert } from "element-ui";
+import axios from "axios";
 
-Vue.use(Button)
-Vue.use(Col)
-Vue.use(Row)
-Vue.use(Form)
-Vue.use(Input)
-Vue.use(FormItem)
-Vue.use(Alert)
+Vue.use(Button);
+Vue.use(Col);
+Vue.use(Row);
+Vue.use(Form);
+Vue.use(Input);
+Vue.use(FormItem);
+Vue.use(Alert);
 
 export default {
-  layout: 'auth',
+  layout: "auth",
 
   watch: {
     check: function(e) {
       if (e.storeCode) {
-        console.log('登录成功');
+        console.log("登录成功");
       }
     }
   },
@@ -62,53 +62,50 @@ export default {
       },
       form: {
         formError: null,
-        formUsername: '',
-        formPassword: ''
+        formUsername: "",
+        formPassword: ""
       },
       rules: {
-        formUsername: [
-          { required: true, message: '用户名不能为空', trigger: 'blur' }
-        ],
-        formPassword: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ]
+        formUsername: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
+        formPassword: [{ required: true, message: "请输入密码", trigger: "blur" }]
       }
-    }
+    };
   },
   head() {
     return {
-      title: '用户登陆'
-    }
+      title: "用户登陆"
+    };
   },
   methods: {
     login() {
       const _this = this;
-      this.$refs['form'].validate((valid) => {
+      this.$refs["form"].validate(valid => {
         //获取form表单中的用户名和密码
         // console.log(this.form.formUsername, this.form.formPassword);
         if (valid) {
-          this.$store.dispatch('login', {
-            username: this.form.formUsername,
-            password: this.form.formPassword
-          })
+          this.$store
+            .dispatch("login", {
+              username: this.form.formUsername,
+              password: this.form.formPassword
+            })
             .then(() => {
-              this.formUsername = ''
-              this.formPassword = ''
+              this.formUsername = "";
+              this.formPassword = "";
               this.formError = null;
-              console.log(this.$store.state.storeCode)
-              window.location.href = '/reports/global-all?method=login'
+              console.log(this.$store.state.storeCode);
+              window.location.href = "/reports/homePage?method=login";
               this.$store.state.forbid = false;
             })
-            .catch((e) => {
-              this.form.formError = e.message
-            })
+            .catch(e => {
+              this.form.formError = e.message;
+            });
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     authLogin() {
-      this.$refs['form'].validate((valid) => {
+      this.$refs["form"].validate(valid => {
         let username = this.form.formUsername;
         let password = this.form.formPassword;
         if (valid) {
@@ -131,41 +128,41 @@ export default {
           //     throw new Error('服务器错误')
           //   }
           // })
-          this.$store.dispatch('comLogin', {
-            account: 'testadmin',
-            password: 'fhhemiao2203'
-            // account: username,
-            // password: password
-          })
+          this.$store
+            .dispatch("comLogin", {
+              account: "testadmin",
+              password: "fhhemiao2203"
+              // account: username,
+              // password: password
+            })
             // .then((data) => {
             //   if (!data) {
             //     this.form.formError = data.message;
             //   }
             //   console.log(data);
             // })
-            .then((e) => {
-              this.formUsername = ''
-              this.formPassword = ''
-              this.formError = null
-              console.log(this.$store.state.storeCode)
+            .then(e => {
+              this.formUsername = "";
+              this.formPassword = "";
+              this.formError = null;
+              console.log(this.$store.state.storeCode);
               this.$store.state.forbid = false;
               // window.location.href = '/reports/global-all'
-            })
+            });
           // .catch((e) => {
           //   console.log(e);
           //   this.form.formError = e.message
           // })
+        } else {
+          return false;
         }
-        else {
-          return false
-        }
-      })
+      });
     },
     logout() {
-      this.$store.dispatch('logout')
+      this.$store.dispatch("logout");
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -182,7 +179,7 @@ export default {
   position: relative;
   border: 1px solid rgba(234, 238, 251, 1);
   border-radius: 4px;
-  transition: .2s;
+  transition: 0.2s;
   padding: 20px;
   margin-bottom: 33px;
   background-color: #fff;

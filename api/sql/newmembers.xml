@@ -2,20 +2,36 @@
 <root>
   <sql-requests desc="新客">
     <sql-request id="QUERY_NEWMEMBER_TODAY" desc="今日新客">
-       <![CDATA[
+      <![CDATA[
+        SELECT A.store_code,A.store_outlet_id,A.store_outlet_name,COUNT(A.id_old) hemiao_count
+        FROM (
+        SELECT store_code,store_outlet_id,store_outlet_name,id_old 
+        FROM `hemiao-data`.data_member_analysis1
+        WHERE store_code=:storecode AND hemiao_date = DATE_FORMAT(NOW(),'%Y-%m')
+        GROUP BY store_code,store_outlet_id,store_outlet_name,id_old) A
+        GROUP BY A.store_code,A.store_outlet_id,A.store_outlet_name
+      ]]>
+    </sql-request>
+    <sql-request id="QUERY_MEMBER_STORE" desc="门店新会员">
+      <![CDATA[
+        SELECT A.store_code,A.store_outlet_id,A.store_outlet_name,A.sys_store_user_id,A.work_num,A.work_name,COUNT(id_old) hemiao_count 
+        FROM (
+        SELECT store_code,store_outlet_id,store_outlet_name,sys_store_user_id,work_num,work_name,id_old 
+        FROM `hemiao-data`.data_member_analysis1
+        WHERE store_code=:storecode AND store_outlet_id = :outlet AND hemiao_date = DATE_FORMAT(NOW(),'%Y-%m')
+        GROUP BY store_code,store_outlet_id,store_outlet_name,sys_store_user_id,work_num,work_name,id_old 
+        ) A
+        GROUP BY A.store_code,A.store_outlet_id,A.store_outlet_name,A.sys_store_user_id,A.work_num,A.work_name</sql-request>
+    ]]>
+    </sql-requests>
+</root>
+<!-- <![CDATA[
 SELECT A.store_code,A.store_outlet_id,A.store_outlet_name,COUNT(A.id_old) hemiao_count
 FROM (
 SELECT store_code,store_outlet_id,store_outlet_name,id_old FROM `hemiao-data`.data_member_analysis
 WHERE store_code=:storecode GROUP BY store_code,store_outlet_id,store_outlet_name,id_old
 ) A
 GROUP BY A.store_code,A.store_outlet_id,A.store_outlet_name
-      ]]>
-    </sql-request>
-    <sql-request id="QUERY_MEMBER_ALL" desc="会员特征全量数据">
-       <![CDATA[
-        SELECT * FROM `hemiao-data`.report_store_portrait WHERE store_code=:storecode
-      ]]>
-    </sql-request>
-</sql-requests>
+      ]]> --> 
 <!--  AND hemiao_date = date_add(CURDATE(),interval -1 day) -->
-</root>
+      

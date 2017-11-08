@@ -1,11 +1,11 @@
 <template>
   <div class="hm-protal-container">
     <HMHeader></HMHeader>
-    <el-row :gutter="10" style="background: rgb(241, 238, 246);">
+    <el-row :gutter="10" style="background: #edf0f7;">
        <el-col :span="3" style="padding-right: 0; border-right: 1px solid #dedede;">
         <HMSidebar />
        </el-col>
-       <el-col :span="21" style="background: rgb(241, 238, 241); padding-left: 0;">
+       <el-col :span="21" style="background:#edf0f7; padding-left: 0;">
         <nuxt/>
        </el-col>
     </el-row>
