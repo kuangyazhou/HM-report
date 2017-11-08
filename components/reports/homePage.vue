@@ -482,7 +482,7 @@ export default {
     let storecode = this.$route.query.code;
     let account = this.$route.query.account;
     if (storecode) {
-      // this.$store.dispatch("nuxtServerInit", user);
+      this.$store.dispatch("jump", storecode);
       // this.$store.commit("SET_STORE_CODE", storecode);
       this.$store.dispatch("report/getMonthSale", {
         storecode: this.$store.state.storecode

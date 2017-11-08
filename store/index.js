@@ -35,9 +35,9 @@ export const actions = {
         }
     },
     jump({ commit }, storecode) {
-        console.log(storecode);
         commit('SET_STORE_CODE', storecode);
-        // commit('SET_USER', user);
+        // commit('SET_USER', account);
+        console.log(storecode, state)
     },
     login({ commit }, { username, password }) {
         return axios.post('/api/login', {
