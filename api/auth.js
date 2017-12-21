@@ -11,7 +11,7 @@ router.get('/nologin', function(req, res) {
     const next = req.query.n || ''
     const account = req.query.u || ''
     db.query({
-        sql: 'select `store_code` from hemiao.sys_store_user where `account`=:account',
+        sql: 'select `store_code` from hemiaoshadow.sys_store_user where `account`=:account',
         values: { account },
         cacheKey: 'LOGINED_USER',
         done: (results) => {
@@ -37,7 +37,7 @@ router.post('/login', function(req, res) {
     const account = req.body.username
     const password = req.body.password;
     db.query({
-        sql: 'select `store_code` from hemiao.sys_store_user where `account`=:account',
+        sql: 'select `store_code` from hemiaoshadow.sys_store_user where `account`=:account',
         values: { account, password },
         cacheKey: 'LOGINED_USER',
         done: (results) => {

@@ -19,6 +19,9 @@
       <el-menu-item index="salesOrder">
         <i class="fa fa-calculator"></i>客户订单分析
       </el-menu-item>
+      <el-menu-item index="salePrice">
+        <i class="fa fa-money"></i>客户购买单价分析
+      </el-menu-item>
     </el-menu-item-group>
 
     <el-menu-item-group title="运营统计分析">
@@ -28,22 +31,22 @@
       <el-menu-item index="operaNumber">
         <i class="fa fa-handshake-o"></i>维护客户交易人数
       </el-menu-item>
-      <el-menu-item index="operaTimes">
-        <i class="fa fa-shopping-cart"></i>维护客户购买次数
-      </el-menu-item>
-      <el-menu-item index="operaSingle">
+      <!-- <el-menu-item index="operaTimes">
+        <i class="fa fa-shopping-cart"></i>客户购买次数分析
+      </el-menu-item> -->
+      <!-- <el-menu-item index="operaSingle">
         <i class="fa fa-money"></i>维护客户购买单价
-      </el-menu-item>
+      </el-menu-item> -->
     </el-menu-item-group>
-
-    <el-menu-item-group title="会员统计分析">
+    
+    <!-- <el-menu-item-group title="会员统计分析">
       <el-menu-item index="memberGeo">
         <i class="fa fa-globe"></i>会员地理分析图</el-menu-item>
       <el-menu-item index="memberLife">
         <i class="fa fa-users"></i>生理轴分布</el-menu-item>
       <el-menu-item index="memberLoyal">
         <i class="fa fa-pie-chart"></i>忠诚度分析</el-menu-item>
-    </el-menu-item-group>
+    </el-menu-item-group> -->
   </el-menu>
 </template>
 

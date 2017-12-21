@@ -9,9 +9,9 @@ const state = {
     pool: null,
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'dev',
     'dboptions': {
-        'username': 'hemiaoserverbak',
-        'password': 'Hemiao188bak',
-        'host': process.env.NODE_ENV === 'production' ? 'rdstkqsa4x4fa684rkmw.mysql.rds.aliyuncs.com' : 'rdstkqsa4x4fa684rkmwo.mysql.rds.aliyuncs.com'
+        'username': 'hemiaobizbak',
+        'password': 'HeMiao1314520',
+        'host': process.env.NODE_ENV === 'production' ? 'rm-m5ej731114908k9e9i.mysql.rds.aliyuncs.com' : 'rm-m5ej731114908k9e9.mysql.rds.aliyuncs.com'
     }
 }
 

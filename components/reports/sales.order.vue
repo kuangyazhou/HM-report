@@ -1,93 +1,96 @@
 <template>
-    <div class="container">
-        <el-row :gutter="15" style="margin-top: 20px;">
-            <el-col :span="18">
-                <el-card>
-                    <div slot="header" class="clearfix">
-                        <span style="line-height: 36px;">
-                            <i class="fa fa-database" aria-hidden="true"></i>
-                            门店平均客单价分析
-                        </span>
-                    </div>
-                    <div class="flex column">
-                        <div class="flex btns center">
-                            <!-- <el-button size="small" @click="lastWeek">上周</el-button> -->
-                            <el-button size="small" @click="lastMonthPrice">上月</el-button>
-                            <el-button size="small" @click="lastYearPrice">去年</el-button>
-                            <el-checkbox v-model="priceSwitch" type="info" class="distance m5">数据对比</el-checkbox>
-                            <el-date-picker v-model="pTime" v-if="priceSwitch" type="daterange" placeholder="选择日期范围" @change="priceTime" size="small" class="distance w200">
-                            </el-date-picker>
-                        </div>
-                        <div class="flex main row">
-                          <div class="note flex column stream" :style="{width:'180px'}">
-                            <span class="flex saleimg"></span>
-                            <span class="flex column center">
-                              <span class="flex">平均客单价(元)</span>
-                              <span class="flex text-total">{{saleAvg}}</span>
-                            </span>
-                            <span class="flex column center" v-if="dimPriceSwitch">
-                              <span class="flex">对比平均客单价(元)</span>
-                              <span class="flex text-yellow">{{dimSale}}</span>
-                            </span>
-                            <span class="flex column annotation">
-                                  <span class="flex mid">
-                                    <span class="flex circle"></span>
-                                    <span>注释</span>
-                                  </span>
-                                  <span class="flex">1.默认数据为本月门店平均客单价,可进行快捷切换选择</span>
-                                  <span class="flex">2.点击"数据对比"可选择任意时间段与当前数据进行对比</span>
-                                </span>
-                          </div>
-                            <div id="orderAvg" :style="{width:'80%',height:'400px'}"></div>
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-        </el-row>
-        <el-row :gutter="15" style="margin-top: 20px;">
-            <el-col :span="18">
-                <el-card>
-                    <div slot="header" class="clearfix">
-                        <span style="line-height: 36px;">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>门店平均单客消费次数分析
-                        </span>
-                    </div>
-                    <div class="flex column">
-                        <div class="flex btns center">
-                            <!-- <el-button size="small" @click="lastWeek">上周</el-button> -->
-                            <el-button size="small" @click="lastMonthTimes">上月</el-button>
-                            <el-button size="small" @click="lastYearhTimes">去年</el-button>
-                            <el-checkbox v-model="timeSwitch" type="info" class="distance m5">数据对比</el-checkbox>
-                            <el-date-picker v-model="tTime" v-if="timeSwitch" type="daterange" placeholder="选择日期范围" @change="timeChange" size="small" class="distance w200">
-                            </el-date-picker>
-                        </div>
-                        <div class="flex row main">
-                          <div class="note flex column stream" :style="{width:'180px'}">
-                             <span class="flex timesimg"></span>
-                             <span class="flex column center">
-                               <span class="flex">平均消费次数</span>
-                               <span class="flex text-Times">{{consume}}</span>
-                             </span>
-                             <span class="flex column center" v-if="dimTimeSwitch">
-                               <span class="flex">对比平均消费次数</span>
-                               <span class="flex text-yellow">{{dimConsume}}</span>
-                             </span>
-                            <span class="flex column annotation">
-                                  <span class="flex mid">
-                                    <span class="flex circle"></span>
-                                    <span>注释</span>
-                                  </span>
-                                  <span class="flex">1.默认数据为本月门店平均单客消费次数,可进行快捷切换选择</span>
-                                  <span class="flex">2.点击"数据对比"可选择任意时间段与当前数据进行对比</span>
-                                </span>
-                          </div>
-                            <div id="orderTimes" :style="{width:'80%',height:'400px'}"></div>
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-        </el-row>
-    </div>
+  <div class="container">
+    <el-row :gutter="15" style="margin-top: 20px;">
+      <el-col :span="18">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">
+              <i class="fa fa-database" aria-hidden="true"></i>
+              <span class="chart-title">门店平均客单价分析</span>
+            </span>
+          </div>
+          <div class="flex column">
+            <div class="flex btns center">
+              <!-- <el-button size="small" @click="lastWeek">上周</el-button> -->
+              <el-button size="small" @click="currentMonthPrice">本月</el-button>
+              <el-button size="small" @click="lastMonthPrice">上月</el-button>
+              <el-button size="small" @click="lastYearPrice">去年</el-button>
+              <el-checkbox v-model="priceSwitch" type="info" class="distance m5">数据对比</el-checkbox>
+              <el-date-picker v-model="pTime" v-if="priceSwitch" type="daterange" placeholder="选择日期范围" @change="priceTime" size="small" class="distance w200">
+              </el-date-picker>
+            </div>
+            <div class="flex main row">
+              <div class="note flex column stream" :style="{width:'180px'}">
+                <span class="flex saleimg"></span>
+                <span class="flex column center">
+                  <span class="flex">平均客单价(元)</span>
+                  <span class="flex text-total">{{saleAvg}}</span>
+                </span>
+                <span class="flex column center" v-if="dimPriceSwitch">
+                  <span class="flex">对比平均客单价(元)</span>
+                  <span class="flex text-yellow">{{dimSale}}</span>
+                </span>
+                <span class="flex column annotation">
+                  <span class="flex mid">
+                    <span class="flex circle"></span>
+                    <span>注释</span>
+                  </span>
+                  <span class="flex">1.默认数据为本月门店平均客单价,可进行快捷切换选择</span>
+                  <span class="flex">2.点击"数据对比"可选择任意时间段与当前数据进行对比</span>
+                </span>
+              </div>
+              <div id="orderAvg" :style="{width:'80%',height:this.avgHeight+'px'}"></div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-row :gutter="15" style="margin-top: 20px;">
+      <el-col :span="18">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <span class="chart-title">门店平均单客消费次数分析</span>
+            </span>
+          </div>
+          <div class="flex column">
+            <div class="flex btns center">
+              <!-- <el-button size="small" @click="lastWeek">上周</el-button> -->
+              <el-button size="small" @click="currentMonthTimes">本月</el-button>
+              <el-button size="small" @click="lastMonthTimes">上月</el-button>
+              <el-button size="small" @click="lastYearhTimes">去年</el-button>
+              <el-checkbox v-model="timeSwitch" type="info" class="distance m5">数据对比</el-checkbox>
+              <el-date-picker v-model="tTime" v-if="timeSwitch" type="daterange" placeholder="选择日期范围" @change="timeChange" size="small" class="distance w200">
+              </el-date-picker>
+            </div>
+            <div class="flex row main">
+              <div class="note flex column stream" :style="{width:'180px'}">
+                <span class="flex timesimg"></span>
+                <span class="flex column center">
+                  <span class="flex">平均消费次数</span>
+                  <span class="flex text-Times">{{consume}}</span>
+                </span>
+                <span class="flex column center" v-if="dimTimeSwitch">
+                  <span class="flex">对比平均消费次数</span>
+                  <span class="flex text-yellow">{{dimConsume}}</span>
+                </span>
+                <span class="flex column annotation">
+                  <span class="flex mid">
+                    <span class="flex circle"></span>
+                    <span>注释</span>
+                  </span>
+                  <span class="flex">1.默认数据为本月门店平均单客消费次数,可进行快捷切换选择</span>
+                  <span class="flex">2.点击"数据对比"可选择任意时间段与当前数据进行对比</span>
+                </span>
+              </div>
+              <div id="orderTimes" :style="{width:'80%',height:this.timesHeight+'px'}"></div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -118,6 +121,8 @@ export default {
   props: [
     "storeList",
     "saleOrderPrice",
+    "saleOrderSingleGuide",
+    "saleOrderAvgamount",
     "saleOrderPriceDim",
     "slaeOrderTimes",
     "saleOrderTimeDim"
@@ -127,33 +132,74 @@ export default {
       //   console.log(val);
     },
     saleOrderPrice: function(val) {
-      // console.log('1');
-      this.saleAvg = val.mean;
+      // this.saleAvg = val.mean;
       this.priceData.series[0].data = val.avg;
       this.priceData.yAxis.data = val.name;
+      this.outletId = val.outlet;
+      this.avgHeight = val.avg.length / 20 * 200 + 300;
+      // console.log(val.avg.length);
       this.priceClose();
-      this.setPrice();
+      // this.setPrice();
+      if (!this.currentMonthPriceData) {
+        this.currentMonthPriceData = val;
+      }
+      this.avgChart.resize({
+        height: this.avgHeight
+      });
+      this.avgChart.setOption(this.priceData);
+    },
+    saleOrderAvgamount(val) {
+      this.saleAvg = val.toFixed(2);
+    },
+    saleOrderSingleGuide(val) {
+      // console.log(val);
+      // this.saleAvg = val.mean;
+      this.priceData.series[0].data = val.avg;
+      this.priceData.yAxis.data = val.name;
+      this.avgHeight = val.avg.length / 20 * 200 + 300;
+      this.avgChart.resize({
+        height: this.avgHeight
+      });
+      this.avgChart.setOption(this.priceData);
     },
     saleOrderPriceDim: function(val) {
       // console.log(val);
       this.dimPriceSwitch = true;
       this.dimSale = val.mean;
       this.priceData.series[1].data = val.avg;
-      this.setPrice();
+      this.avgHeight = val.avg.length / 20 * 200 + 300;
+      // this.setPrice();
+      this.avgChart.resize({
+        height: this.avgHeight
+      });
+      this.avgChart.setOption(this.priceData);
     },
     slaeOrderTimes: function(val) {
       // console.log(val);
       this.timesData.series[0].data = val.avg;
       this.timesData.yAxis.data = val.name;
       this.consume = val.times;
+      this.timesHeight = val.avg.length / 20 * 200 + 300;
       this.timesClose();
-      this.setTimes();
+      // this.setTimes();
+      if (!this.currentMonthTimesData) {
+        this.currentMonthTimesData = val;
+      }
+      this.timesChart.resize({
+        height: this.timesHeight
+      });
+      this.timesChart.setOption(this.timesData);
     },
     saleOrderTimeDim: function(val) {
       this.dimTimeSwitch = true;
       this.dimConsume = val.times;
       this.timesData.series[1].data = val.avg;
-      this.setTimes();
+      this.timesHeight = val.avg.length / 20 * 200 + 300;
+      this.timesChart.resize({
+        height: this.timesHeight
+      });
+      // this.setTimes();
+      this.timesChart.setOption(this.timesData);
     }
   },
   computed: {},
@@ -163,15 +209,22 @@ export default {
       timeSwitch: false,
       dimPriceSwitch: false,
       dimTimeSwitch: false,
+      avgHeight: 400,
+      timesHeight: 400,
+      avgChart: null,
+      timesChart: null,
       pTime: "",
       tTime: "",
+      outletId: null,
       saleAvg: 0,
       dimSale: 0,
       consume: 0,
       dimConsume: 0,
-      storecode: this.$store.state.storeCode,
+      // storecode: this.$store.state.storeCode,
       priceloading: null,
       timesloading: null,
+      currentMonthPriceData: null,
+      currentMonthTimesData: null,
       priceAttr: {
         target: "#orderAvg",
         fullscreen: false,
@@ -253,9 +306,10 @@ export default {
           containLabel: true
         },
         xAxis: {
-          type: "value"
-          // splitNumber: 2,
-          // boundaryGap: [0, 0.01]
+          type: "value",
+          splitNumber: 2,
+          min: 1,
+          boundaryGap: [0, 0.01]
         },
         yAxis: {
           type: "category",
@@ -296,11 +350,25 @@ export default {
   mounted() {
     // this.setPrice();
     // this.setTimes();
+    this.avgChart = echarts.init(document.getElementById("orderAvg"));
+    this.avgChart.on("click", e => {
+      this.getGuide(e);
+      this.saleAvg = this.saleOrderPrice.avg[e.dataIndex];
+      this.avgChart.off("click");
+    });
+    this.timesChart = echarts.init(document.getElementById("orderTimes"));
     this.priceloading = Loading.service(this.priceAttr);
     this.timesloading = Loading.service(this.timesAttr);
   },
   updated() {},
   activated() {},
+  computed: {
+    storeCode() {
+      return (
+        this.$store.state.storeCode || window.localStorage.getItem("storecode")
+      );
+    }
+  },
   methods: {
     // select(e) {
     //     console.log(e, this.value);
@@ -322,12 +390,27 @@ export default {
         // let startDate = (new Date(this.pTime[0])).Format('yyyyMMdd') + '';
         // let endDate = (new Date(this.pTime[1])).Format('yyyyMMdd') + '';
         this.$store.dispatch("report/getSaleOrderDim", {
-          storecode: this.storecode,
+          storecode: this.storeCode,
           startDate: startDate,
           endDate: endDate
         });
-        this.setPrice();
+        // this.setPrice();
         //     console.log(startDate, endDate);
+      }
+    },
+    getGuide(e) {
+      let startDate = new Date().Format("yyyyMM") + "01";
+      let endDate = new Date().Format("yyyyMMdd");
+      // let startDate = "20171101";
+      // let endDate = "20171130";
+      if (e) {
+        let id = this.outletId[e.dataIndex];
+        this.$store.dispatch("report/getSaleOrderGuide", {
+          storecode: this.storeCode,
+          startDate: startDate,
+          endDate: endDate,
+          outletId: id
+        });
       }
     },
     timeChange(e) {
@@ -338,24 +421,52 @@ export default {
         // let startDate = (new Date(this.pTime[0])).Format('yyyyMMdd') + '';
         // let endDate = (new Date(this.pTime[1])).Format('yyyyMMdd') + '';
         this.$store.dispatch("report/getSaleTimeDim", {
-          storecode: this.storecode,
+          storecode: this.storeCode,
           startDate: startDate,
           endDate: endDate
         });
-        this.setPrice();
+        // this.setPrice();
         //     console.log(startDate, endDate);
       }
     },
-    setPrice() {
-      let priceChart = echarts.init(document.getElementById("orderAvg"));
-      priceChart.setOption(this.priceData);
-    },
-    setTimes() {
-      let priceChart = echarts.init(document.getElementById("orderTimes"));
-      priceChart.setOption(this.timesData);
-    },
+    // setPrice() {
+    //   // let priceChart = echarts.init(document.getElementById("orderAvg"));
+    //   // priceChart.setOption(this.priceData);
+    // },
+    // setTimes() {
+    // let priceChart = echarts.init(document.getElementById("orderTimes"));
+    // priceChart.setOption(this.timesData);
+    // },
     lastWeek(e) {
-      console.log(e, "lastWeek");
+      // console.log(e, "lastWeek");
+    },
+    currentMonthTimes(e) {
+      this.timesData.series[0].data = this.currentMonthTimesData.avg;
+      this.timesData.yAxis.data = this.currentMonthTimesData.name;
+      this.consume = this.currentMonthTimesData.times;
+      this.timesHeight = this.currentMonthTimesData.avg.length / 20 * 200 + 300;
+      this.timesClose();
+      this.timesChart.resize({
+        height: this.timesHeight
+      });
+      this.timesChart.setOption(this.timesData);
+    },
+    currentMonthPrice(e) {
+      this.saleAvg = this.saleOrderAvgamount.toFixed(2);
+      this.priceData.series[0].data = this.currentMonthPriceData.avg;
+      this.priceData.yAxis.data = this.currentMonthPriceData.name;
+      this.outletId = this.currentMonthPriceData.outlet;
+      this.avgHeight = this.currentMonthPriceData.avg.length / 20 * 200 + 300;
+      this.priceClose();
+      this.avgChart.resize({
+        height: this.avgHeight
+      });
+      this.avgChart.setOption(this.priceData);
+      this.avgChart.on("click", e => {
+        this.getGuide(e);
+        this.saleAvg = this.saleOrderPrice.avg[e.dataIndex];
+        this.avgChart.off("click");
+      });
     },
     lastMonthPrice(e) {
       // console.log(e, "lastMonth");
@@ -364,7 +475,7 @@ export default {
       let startDate = preMonth + "01";
       let endDate = preMonth + "31";
       this.$store.dispatch("report/getSaleOrder", {
-        storecode: this.storecode,
+        storecode: this.storeCode,
         startDate: startDate,
         endDate: endDate
       });
@@ -374,7 +485,7 @@ export default {
       let startDate = date + "0101";
       let endDate = date + "1231";
       this.$store.dispatch("report/getSaleOrder", {
-        storecode: this.storecode,
+        storecode: this.storeCode,
         startDate: startDate,
         endDate: endDate
       });
@@ -386,7 +497,7 @@ export default {
       let startDate = preMonth + "01";
       let endDate = preMonth + "31";
       this.$store.dispatch("report/getSaleOrderTimes", {
-        storecode: this.storecode,
+        storecode: this.storeCode,
         startDate: startDate,
         endDate: endDate
       });
@@ -396,7 +507,7 @@ export default {
       let startDate = date + "0101";
       let endDate = date + "1231";
       this.$store.dispatch("report/getSaleOrderTimes", {
-        storecode: this.storecode,
+        storecode: this.storeCode,
         startDate: startDate,
         endDate: endDate
       });

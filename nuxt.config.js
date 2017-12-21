@@ -32,8 +32,6 @@ module.exports = {
         '~plugins/axios',
         '~plugins/moment',
         { src: '~plugins/ga.js', ssr: false }
-        // { src: '~plugins/echarts.js', ssr: false },
-        // { src: '~plugins/bmap.js', ssr: false }
     ],
     /*
      ** Add axios globally

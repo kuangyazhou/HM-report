@@ -1,773 +1,996 @@
 <template>
-  <el-row class="el-dashboard-container">
-    <transition name="custom-classes-transition" enter-active-class="animated slideInDown" leave-active-class="animated zoomOut">
-      <div v-if="isloading">
-        <el-row class="el-dashboard-header">
-          <el-col :span="24" style="position: relative;">
-            <div class="text">经营大数据实时指挥中心</div>
-            <div class="icon-lighting">
-              <i class="fa fa-bolt" aria-hidden="true"></i>
-            </div>
-            <div class="datetime">
-              <i class="fa fa-clock-o" aria-hidden="true" style="margin-right: 5px;"></i>{{currentDate}}
-            </div>
-          </el-col>
-        </el-row>
+  <div class="flex column main">
+    <div class="flex header">
+      <div class="flex screen-logo">
       </div>
-    </transition>
-    <transition name="custom-classes-transition" enter-active-class="animated slideInUp" leave-active-class="animated zoomIn">
-      <div v-if="isloading">
-        <el-row class="el-dashboard-content">
-          <el-col :span="7" class="row" style="padding: 0 15px 15px 15px;">
-            <el-card class="theme-darker">
-              <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">
-                  <i class="fa fa-area-chart" aria-hidden="true"></i>
-                  本月品牌销售额TOP10（环比）
-                </span>
-              </div>
-              <Charts :options="top20ChartBrandSale" />
-            </el-card>
-            <el-card class="theme-darker">
-              <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">
-                  <i class="fa fa-area-chart" aria-hidden="true"></i>
-                  本月会员消费等级人数分布占比
-                </span>
-              </div>
-              <Charts :options="currentMonthMemberLevelChart" />
-            </el-card>
-            <el-card class="theme-darker">
-              <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">
-                  <i class="fa fa-area-chart" aria-hidden="true"></i>
-                  本月新增会员趋势（同比）
-                </span>
-              </div>
-              <Charts :options="currAndLastYearNewMembersChart" />
-            </el-card>
-          </el-col>
-          <el-col :span="10" class="row">
-            <el-col :span="24" class="banner-task">
-              <el-col :span="8">
-                <div>
-                  <span style="color: #8DC1B4;">当日实时销售</span>
-                  <i class="fa fa-area-chart title" aria-hidden="true"></i>
-                </div>
-                <Digital :number="currentTotalAmount"></Digital>
-              </el-col>
-              <el-col :span="8">
-                <div id="targetComplete" style="height: 150px;"></div>
-              </el-col>
-              <el-col :span="8">
-                <div>
-                  <span style="color: #1D9275;">当月实时销售</span>
-                  <i class="fa fa-area-chart title" aria-hidden="true"></i>
-                </div>
-                <Digital :number="currentSaleAmount"></Digital>
-              </el-col>
-            </el-col>
-            <el-card class="theme-darker" style="width: 100%; margin-top: 20px;">
-              <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">
-                  <i class="fa fa-area-chart" aria-hidden="true"></i>
-                  月度销售金额总额趋势图（环比）
-                </span>
-              </div>
-              <Charts :options="currAndLastMonChart" />
-            </el-card>
-            <el-col :span="24">
-              <el-table :data="tableFakeData" class="banner-table" style="width: 100%">
-                <el-table-column type="index" width="50">
-                </el-table-column>
-                <el-table-column prop="offline_name" label="品牌名称" width="150">
-                </el-table-column>
-                <el-table-column prop="hemiao_date" label="日期" width="100">
-                </el-table-column>
-                <el-table-column prop="hemiao_amount" label="销售额度">
-                </el-table-column>
-              </el-table>
-            </el-col>
-          </el-col>
-          <el-col :span="7" class="row" style="padding: 0 15px 15px 15px;">
-            <el-card class="theme-darker">
-              <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">
-                  <i class="fa fa-area-chart" aria-hidden="true"></i>
-                  {{currentYearDate}} 年度销售额度
-                </span>
-              </div>
-              <Charts :options="currAndLastYearChart" />
-            </el-card>
-            <el-card class="theme-darker">
-              <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">
-                  <i class="fa fa-area-chart" aria-hidden="true"></i>
-                  本月会员消费等级人数分布占比
-                </span>
-              </div>
-              <Charts :options="currentMonthMemberLevelChart" />
-            </el-card>
-            <el-card class="theme-darker">
-              <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">
-                  <i class="fa fa-area-chart" aria-hidden="true"></i>
-                  本月门店销售排行TOP10（环比）
-                </span>
-              </div>
-              <Charts :options="top20ChartOutletSale" />
-            </el-card>
-          </el-col>
-        </el-row>
+      <div class="flex title">经营大数据实时指挥中心</div>
+      <div class="flex time">
+        {{time}}
       </div>
-    </transition>
-  </el-row>
+    </div>
+    <div class="flex center sand-clock">
+      <span class="flex center">实时大数据刷新倒计时
+        <span class="text-clock">{{min}}:{{seconds}}</span>
+      </span>
+    </div>
+    <el-row>
+      <el-col :span="8">
+        <el-card class="screen">
+          <div slot="header" class="clearfix" style="text-align:center">
+            <span style="line-height: 18px;">销售指标预警</span>
+          </div>
+          <div>
+            <Vtable :title="saleTitle" :tableData="saleTableData" :showIndex="false" :activeLine="1" :activeRow="2"></Vtable>
+          </div>
+        </el-card>
+        <el-card class="screen" style="margin:12px 0">
+          <div slot="header" class="clearfix" style="text-align:center">
+            <span style="line-height: 18px;">品类销售排行</span>
+          </div>
+          <div id="typeSale" style="width:100%;height:230px"></div>
+        </el-card>
+        <el-card class="screen">
+          <div slot="header" class="clearfix" style="text-align:center">
+            <span style="line-height: 18px;">品牌top10</span>
+          </div>
+          <Vtable :title="topTenTitle" :tableData="topTenData" :activeRow="3"></Vtable>
+        </el-card>
+      </el-col>
+      <el-col :span="8" class="margin1">
+        <el-card class="screen">
+          <div slot="header" class="clearfix" style="text-align:center">
+            <span style="line-height: 18px;">今日销售动态</span>
+          </div>
+          <div class="flex column">
+            <div class="flex row around white">
+              <span class="flex">今日销售额(元)</span>
+              <span class="flex" style="{width:'50%',justify-content:'center'}">{{percentage+'%'}}</span>
+              <span class="flex">今日目标(元)</span>
+            </div>
+            <div class="flex around m5">
+              <span class="flex today-sale">{{Sale}}</span>
+              <!-- <el-progress style="width:50%" :stroke-width="18" :percentage="percentage"></el-progress> -->
+              <Vprogress :percentage="percentage"></Vprogress>
+              <span class="flex today-target" title="双击自定义目标" @dblclick="defineTarget">{{Target}}</span>
+            </div>
+            <!-- <div class="flex">
+              <el-button size="mini">自定义目标</el-button>
+            </div> -->
+          </div>
+          <div class="gradient-border"></div>
+          <div id="hourDis" style="width:100%;height:350px"></div>
+          <div class="gradient-border"></div>
+          <div id="storeSaleDis" :style="{width:'100%',height:this.storeHeight+'px'}"></div>
+          <el-dialog title="自定义目标" :visible.sync="dialogSaleVisible" :show-close="false">
+            <el-input type="number" placeholder="请输入数字" v-model="customTarget"></el-input>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="dialogSaleVisible = false">取 消</el-button>
+              <el-button type="primary" @click="setSaleTarget">确 定</el-button>
+            </span>
+          </el-dialog>
+        </el-card>
+      </el-col>
+      <el-col :span="8">
+        <el-card class="screen" style="margin-bottom:12px;">
+          <div slot="header" class="clearfix" style="text-align:center">
+            <span style="line-height: 18px;">会员增长动态
+            </span>
+          </div>
+          <div class="flex column white">
+            <div class="flex row around">
+              <span class="flex">今日新增会员(人)</span>
+              <span class="flex" style="{width:'50%',justify-content:'center'}">{{newpercentage+'%'}}</span>
+              <span class="flex">今日新客目标(元)</span>
+            </div>
+            <div class="flex around">
+              <span class="flex today-add">{{newMom+newBaby}}</span>
+              <!-- <el-progress style="width:50%" :stroke-width="18" :percentage="70" status="success"></el-progress> -->
+              <Vprogress :percentage="newpercentage"></Vprogress>
+              <span class="flex today-target" title="双击自定义目标" @dblclick="memberTarget">{{newMemberTarget}}</span>
+            </div>
+            <div class="flex column">
+              <span class="felx font14">
+                <i class="fa fa-female icon-blue"></i>新增孕妈(人):{{newMom}}
+              </span>
+            </div>
+            <div class="flex">
+              <span class="felx font14">
+                <i class="fa fa-child icon-blue"></i>新增萌宝(人):{{newBaby}}
+              </span>
+            </div>
+          </div>
+          <div class="gradient-border"></div>
+          <div id="memberAdd" style="width:100%;height:300px"></div>
+          <el-dialog title="自定义目标" :visible.sync="dialogMemberVisible" :show-close="false">
+            <el-input type="number" placeholder="请输入数字" v-model="newAddTarget"></el-input>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="dialogMemberVisible = false">取 消</el-button>
+              <el-button type="primary" @click="setNewTarget">确 定</el-button>
+            </span>
+          </el-dialog>
+        </el-card>
+        <el-card class="screen">
+          <div slot="header" class="clearfix" style="text-align:center">
+            <span style="line-height: 18px;">会员消费贡献分布</span>
+          </div>
+          <Vtable :showIndex="false" :title="memberconsumTitle" :tableData="memberconsumData"></Vtable>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
+
 <script>
-import Vue from 'vue'
-import moment from 'moment'
-import currencyFormatter from 'currency-formatter'
-// import Highcharts from 'highcharts'
+import Vue from "vue";
 import {
   Button,
   Col,
+  Dialog,
+  Input,
+  Progress,
   Row,
   Card,
   Tooltip,
   Table,
   TableColumn
-} from 'element-ui'
-
-import Charts from '~components/commons/Charts.vue'
-
-import Digital from '~components/commons/Digital.vue'
-
-Vue.use(Button)
-Vue.use(Col)
-Vue.use(Row)
-Vue.use(Card)
-Vue.use(Tooltip)
-Vue.use(Table)
-Vue.use(TableColumn)
-
+} from "element-ui";
+import Vprogress from "~components/commons/progress";
+import Vtable from "~components/commons/table";
+import echarts from "echarts";
+import axios from "axios";
+import { Format } from "../utils/format";
+Vue.use(Button);
+Vue.use(Col);
+Vue.use(Card);
+Vue.use(Dialog);
+Vue.use(Input);
+Vue.use(Row);
+Vue.use(Table);
+Vue.use(TableColumn);
+Vue.use(Progress);
 export default {
-  components: { Charts, Digital },
-  middleware: 'check-auth',
-  layout: 'dashboard',
-  computed: {
-    // table fake data
-    tableFakeData() {
-      return this.$store.state.report.datasource.top20BrandsSale.current
-    },
-    currentTAmount() {
-      return this.$store.state.report.datasource.currentTotalAmount
-    },
-    // 本月会员消费等级人数分布占比(饼图)
-    currentMonthMemberLevel() {
-      const levels = [{
-        type: 'pie',
-        name: '会员消费等级人数分布占比',
-        data: []
-      }]
-      this.$store.state.report.datasource.currentMonthMemberLevel.forEach((level, idx) => {
-        levels[0].data.push([level.hemiao_Level, level.hemiao_count])
-      })
-      return levels
-    },
-    // 本年和去年的月度会员人数的统计
-    currentAndLastYearNewMembersCounts() {
-      const years = this.currentYearDate.split('/')
-      const newMembersByYearSeries = [{
-        type: 'bar',
-        name: years[0],
-        data: []
-      }, {
-        type: 'bar',
-        name: years[1],
-        data: []
-      }]
-      this.$store.state.report.datasource.newMembersByYear.current.forEach((amount) => {
-        newMembersByYearSeries[1].data.push(amount.hemiao_count)
-      })
-      this.$store.state.report.datasource.newMembersByYear.past.forEach((amount) => {
-        newMembersByYearSeries[0].data.push(amount.hemiao_count)
-      })
-      return newMembersByYearSeries
-    },
-    // 本月消费会员和所有会员的统计
-    newAndOldMembersCount() {
-      const months = this.currentMonthDate.split('/')
-      const series = [{
-        type: 'spline',
-        name: months[0],
-        data: []
-      }, {
-        type: 'spline',
-        name: months[1],
-        data: []
-      }]
-      this.$store.state.report.datasource.newAndOldMembers.old.forEach((members) => {
-        series[1].data.push(members.hemiao_count)
-        series[1].name = '总会员(人数)'
-      })
-      this.$store.state.report.datasource.newAndOldMembers.new.forEach((members) => {
-        series[0].data.push(members.hemiao_count)
-        series[0].name = '新消费会员(人数)'
-      })
-      return series
-    },
-    // 门店所有商城的销售数据
-    currentAndLastMonthSale() {
-      const months = this.currentMonthDate.split('/')
-      const currentAndLastMonthSaleAmountSeries = [{
-        type: 'column',
-        name: months[0],
-        data: []
-      }, {
-        type: 'column',
-        name: months[1],
-        data: []
-      }]
-      this.$store.state.report.datasource.currentAndLastMonthSaleAmount.current.forEach((amount) => {
-        currentAndLastMonthSaleAmountSeries[1].data.push(amount.day_price)
-      })
-      this.$store.state.report.datasource.currentAndLastMonthSaleAmount.past.forEach((amount) => {
-        currentAndLastMonthSaleAmountSeries[0].data.push(amount.day_price)
-      })
-      return currentAndLastMonthSaleAmountSeries
-    },
-    // 门店所有商城的销售数据(年份)
-    currentAndLastYearSale() {
-      const years = this.currentYearDate.split('/')
-      const currentAndLastYearSaleAmountSeries = [{
-        type: 'column',
-        name: years[0],
-        data: []
-      }, {
-        type: 'column',
-        name: years[1],
-        data: []
-      }]
-      this.$store.state.report.datasource.currentAndLastYearSaleAmount.current.forEach((amount) => {
-        currentAndLastYearSaleAmountSeries[1].data.push(amount.hemiao_amount)
-      })
-      this.$store.state.report.datasource.currentAndLastYearSaleAmount.past.forEach((amount) => {
-        currentAndLastYearSaleAmountSeries[0].data.push(amount.hemiao_amount)
-      })
-      return currentAndLastYearSaleAmountSeries
-    },
-    // top20 品牌排行
-    topBrandSale() {
-      const top20Brands = [{
-        name: '本月销售额',
-        data: [],
-        dataLabels: {
-          enabled: false,
-          rotation: 0,
-          color: '#fff',
-          align: 'right',
-          formatter: function() {
-            return `${currencyFormatter.format(this.y, { locale: 'zh-CN' })}元`
-          },
-          y: 0,
-          x: 0,
-          style: {
-            textOutline: '1px 1px #aaa',
-            fontSize: '10px',
-            fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif'
-          }
-        }
-      },
-      {
-        name: '上月销售额',
-        data: [],
-        dataLabels: {
-          enabled: false,
-          rotation: 0,
-          color: '#7cb5ec',
-          align: 'right',
-          formatter: function() {
-            return `${currencyFormatter.format(this.y, { locale: 'zh-CN' })}元`
-          },
-          y: 5,
-          x: 0,
-          style: {
-            textOutline: '1px 1px #aaa',
-            fontSize: '10px',
-            fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif'
-          }
-        }
-      }]
-      this.$store.state.report.datasource.top20BrandsSale.current.forEach((brand, idx) => {
-        // 只取前10名, 考虑到图标的空间限制
-        if (idx < 10) {
-          top20Brands[0].data.push([brand.offline_name, brand.hemiao_amount])
-        }
-      })
-      this.$store.state.report.datasource.top20BrandsSale.past.forEach((brand, idx) => {
-        // 只取前10名, 考虑到图标的空间限制
-        if (idx < 10) {
-          top20Brands[1].data.push([brand.offline_name, brand.hemiao_amount])
-        }
-      })
-      return top20Brands
-    },
-    // top20 门店排行
-    topOutletSale() {
-      const top20Outlet = [{
-        name: '销售额',
-        data: [],
-        dataLabels: {
-          enabled: true,
-          rotation: 0,
-          color: '#FFFFFF',
-          align: 'right',
-          formatter: function() {
-            return `${currencyFormatter.format(this.y, { locale: 'zh-CN' })}元`
-          },
-          y: 0,
-          x: 0,
-          style: {
-            textOutline: '1px 1px #aaa',
-            fontSize: '10px',
-            fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif'
-          }
-        }
-      }]
-      this.$store.state.report.datasource.top20OutletSale.forEach((outlet, idx) => {
-        // 只取前10名, 考虑到图标的空间限制
-        if (idx < 10) {
-          top20Outlet[0].data.push([outlet.store_outlet, outlet.hemiao_amount])
-        }
-      })
-      return top20Outlet
-    },
-    // 门店识别代码
-    storeCode() {
-      return this.$store.state.storeCode
-    },
-    // 当前年份
-    currentYearDate() {
-      let beginDate, endDate, resultDate
-      if (this.dates) {
-        beginDate = this.dates.subtract(1, 'years').format('YYYY')
-        endDate = this.dates.add(1, 'years').format('YYYY')
-        resultDate = `${beginDate}/${endDate}`
-      } else {
-        resultDate = `${moment().subtract(1, 'years').format('YYYY')}/${moment().format('YYYY')}`
-      }
-      return resultDate
-    },
-    // 当前月份和上月
-    currentMonthDate() {
-      return `${moment().subtract(1, 'months').format('YYYY-MM')}/${moment().format('YYYY-MM')}`
-    },
-    // 当前月份
-    currentMonth() {
-      let beginDate, resultDate
-      if (this.dates) {
-        beginDate = this.dates.format('YYYY-MM')
-        resultDate = `${beginDate}`
-      } else {
-        resultDate = `${moment().format('YYYY-MM')}`
-      }
-      return resultDate
-    },
-    currentMonthSaleTotalAmout() {
-      return this.$store.state.report.datasource.currentAndLastMonthSaleAmount.totalAmount.current
-    }
-  },
   watch: {
-    currentMonthMemberLevel: function(val) {
-      // this.currentMonthMemberLevelChart = Object.assign({}, this.currentMonthMemberLevelChart, { series: val })
+    saleroom: function(val) {
+      deep:true;
+      this.saleTableData = [];
+      this.saleTableData.push(val);
     },
-    currentAndLastYearNewMembersCounts: function(val) {
-      // this.currAndLastYearNewMembersChart = Object.assign({}, this.currAndLastYearNewMembersChart, { series: val })
+    // saleroom:{
+    //   deep:true;
+    //   this.saleTableData = [];
+    //   this.saleTableData.push(val);
+    // },
+    saleSingle: function(val) {
+      deep:true;
+      // this.saleTableData = [];
+      this.saleTableData.push(val);
     },
-    currentAndLastMonthSale: function(val) {
-      // this.currAndLastMonChart = Object.assign({}, this.currAndLastMonChart, { series: val })
+    related: function(val) {
+      deep:true;
+      // console.log(val);
+      // this.saleTableData = [];
+      this.saleTableData.push(val);
     },
-    currentAndLastYearSale: function(val) {
-      // this.currAndLastYearChart = Object.assign({}, this.currAndLastYearChart, { series: val })
-      this.currAndLastYearChart = null;
+    brand: function(val) {
+      // console.log(val);
+      let name = [];
+      val.forEach(e => {
+        name.push(e.name);
+      });
+      this.brandOption.series[0].data = val;
+      this.brandOption.legend.data = name;
+      this.typeLength = val.length;
+      this.typeSaleChart.setOption(this.brandOption);
     },
-    newAndOldMembersCount: function(val) {
-      // this.currNewAndOldMembersChart = Object.assign({}, this.currNewAndOldMembersChart, { series: val })
+    topTen: function(val) {
+      this.topTenData = val;
     },
-    topBrandSale: function(val) {
-      // this.top20ChartBrandSale = Object.assign({}, this.top20ChartBrandSale, { series: val })
+    todaySale: function(val) {
+      // console.log(val);
+      this.Sale = val[0] ? val[0].toFixed(2) : 0;
+      // this.percentage = (this.Sale / this.Target).toFixed(2);
     },
-    topOutletSale: function(val) {
-      // this.top20ChartOutletSale = Object.assign({}, this.top20ChartOutletSale, { series: val })
+    todayTarget: function(val) {
+      this.Target = val[0] ? val[0].toFixed(2) : 0;
+      // console.log(val);
+      // this.percentage = Number((this.Sale / this.Target * 100).toFixed(2));
+      this.Target
+        ? (this.percentage = Number((this.Sale / this.Target * 100).toFixed(2)))
+        : 0;
+      // console.log(typeof this.percentage);
+    },
+    hourSale: function(val) {
+      // console.log(val);
+      this.hourDisOption.series[0].data = val[0];
+      this.hourDisOption.xAxis.data = val[1];
+      this.hourLength = val[0].length;
+      this.hourDisChart.setOption(this.hourDisOption);
+    },
+    sevenSale: function(val) {
+      // console.log(val);
+      this.hourDisOption.series[1].data = val;
+      this.hourDisChart.setOption(this.hourDisOption);
+    },
+    saleSpread: function(val) {
+      // console.log(val);
+      this.storeSaleOption.yAxis[0].data = val[2];
+      this.storeSaleOption.yAxis[1].data = val[2];
+      this.storeSaleOption.series[0].data = val[1];
+      this.storeSaleOption.series[1].data = val[0];
+      this.storeHeight = val[1].length / 16 * 200 + 350;
+      this.storeSaleChart.resize({
+        height: this.storeHeight
+      });
+      this.storeLength = val[0].length;
+      this.storeSaleChart.setOption(this.storeSaleOption);
+      // this.memberAddChart.setOption(this.storeSaleOption);
+    },
+    newTarget: function(val) {
+      // console.log(val);
+      this.newMemberTarget = Math.ceil(val);
+      this.newpercentage = val
+        ? Number(((this.newMom + this.newBaby) / val * 100).toFixed(2))
+        : 0;
+    },
+    memberConsum: function(val) {
+      // console.log(val);
+      this.memberconsumData = val;
+    },
+    Timestamp: function(val) {
+      // console.log(val);
+      val ? "" : this.refreshData();
+      this.typeSaleChart.setOption(this.brandOption);
+      this.hourDisChart.setOption(this.hourDisOption);
+      // this.memberAddChart.setOption(this.memberAddOption);
     }
   },
+  components: { Vprogress, Vtable },
+  middleware: "check-auth",
+  layout: "dashboard",
   data() {
-    const range = moment.range(moment('2017-05-01T00:00:00.000').startOf('month').format('YYYY-MM-DD'), moment('2017-05-01T00:00:00.000').endOf('month').format('YYYY-MM-DD'))
-    const yearRange = moment.range(moment().startOf('year').format('YYYY-MM-DD'), moment().endOf('year').format('YYYY-MM-DD'))
-    const dayString = []
-    const monthString = []
-    for (const month of range.by('day')) { dayString.push(month.format('DD号')) }
-    for (const month of yearRange.by('month')) { monthString.push(month.format('MM月')) }
     return {
-      isloading: false,
-      currentDate: '',
-      currentSaleAmount: null,
-      currentTotalAmount: null,
-      currentMonthMemberLevelChart: {
-        theme: 'darker',
-        chart: {
-          type: 'pie',
-          options3d: {
-            enabled: true,
-            alpha: 45,
-            beta: 0
+      time: null,
+      Timestamp: 180,
+      tenType: 1,
+      activeRow: 3,
+      Sale: 0,
+      Target: 0,
+      newMemberTarget: 0,
+      newpercentage: 0,
+      percentage: 0,
+      typeIndex: 0,
+      typeLength: 6,
+      hourIndex: 0,
+      hourLength: 16,
+      storeIndex: 0,
+      storeLength: 10,
+      storeHeight: 1,
+      customTarget: "",
+      newAddTarget: "",
+      dialogSaleVisible: false,
+      dialogMemberVisible: false,
+      typeSaleChart: null,
+      hourDisChart: null,
+      storeSaleChart: null,
+      memberAddChart: null,
+      newMom: 0,
+      newBaby: 0,
+      saleTitle: ["项目", "今日", "昨日", "最近7日", "上月同期"],
+      saleTableData: [],
+      topTenTitle: ["品牌", "销售额", "销量", "交易会员数"],
+      topTenData: [],
+      memberconsumTitle: ["年龄段", "产生销售额", "产生订单量", "交易客户数"],
+      memberconsumData: [],
+      storeSaleOption: {
+        title: {
+          text: "门店销售分布",
+          textStyle: {
+            color: "#f1f1f1"
           }
         },
-        dataLabels: {
-          enabled: true,
-          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-          connectorColor: 'silver'
-        },
+        // color: ["#0074ff", "#7c9ee3"],
         tooltip: {
-          headerFormat: '{series.name}<br>',
-          pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        series: this.currentMonthMemberLevel
-      },
-      currAndLastYearNewMembersChart: {
-        title: '',
-        theme: 'darker',
-        inverted: false,
-        yAxisTitle: '会员人数(个数)',
-        valueSuffix: '',
-        // legend: {
-        //   enabled: true,
-        //   layout: this.legendPostion || 'horizontal',
-        //   align: 'center',
-        //   verticalAlign: 'bottom',
-        //   borderWidth: 1
-        // },
-        categories: monthString,
-        series: this.currentAndLastYearNewMembersCounts
-      },
-      currNewAndOldMembersChart: {
-        title: '',
-        theme: 'darker',
-        inverted: false,
-        yAxisTitle: '会员人数(个)',
-        valueSuffix: '',
-        legend: {
-          enabled: true,
-          layout: this.legendPostion || 'horizontal',
-          align: 'center',
-          verticalAlign: 'bottom',
-          borderWidth: 1
-        },
-        tooltip: {
-          crosshairs: true,
-          shared: false
-        },
-        categories: monthString,
-        series: this.newAndOldMembersCount
-      },
-      currAndLastYearChart: {
-        title: '',
-        theme: 'darker',
-        inverted: false,
-        tooltip: {
-          headerFormat: '',
-          pointFormatter: function() {
-            return `<span style="color:${this.series.color}">${this.series.name}-${this.x + 1}: </span>
-                      ${currencyFormatter.format(this.y, { locale: 'zh-CN' })}元`
-          }
-        },
-        yAxisTitle: '销售金额(元)',
-        valueSuffix: '',
-        legend: {
-          enabled: true,
-          layout: this.legendPostion || 'horizontal',
-          align: 'center',
-          verticalAlign: 'bottom',
-          borderWidth: 1
-        },
-        categories: monthString,
-        series: this.currentAndLastYearSale
-      },
-      currAndLastMonChart: {
-        title: '',
-        theme: 'darker',
-        inverted: false,
-        yAxisTitle: '销售金额(元)',
-        valueSuffix: '',
-        tooltip: {
-          headerFormat: '',
-          pointFormatter: function() {
-            return `<span style="color:${this.series.color}">${this.series.name}-${this.x + 1}: </span>
-                      ${currencyFormatter.format(this.y, { locale: 'zh-CN' })}元`
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow"
           }
         },
         legend: {
-          enabled: true,
-          layout: this.legendPostion || 'horizontal',
-          align: 'center',
-          verticalAlign: 'bottom',
-          borderWidth: 1
-        },
-        categories: dayString,
-        series: this.currentAndLastMonthSale
-      },
-      top20ChartBrandSale: {
-        type: 'column',
-        theme: 'darker',
-        title: '',
-        inverted: true,
-        tooltip: {
-          enable: true,
-          headerFormat: '',
-          pointFormatter: function() {
-            return `<span style="color:${this.series.color}">${this.series.name}: </span>
-                      ${currencyFormatter.format(this.y, { locale: 'zh-CN' })}元`
+          right: 20,
+          orient: "horizontal",
+          data: ["实时销售额", "今日销售目标"],
+          textStyle: {
+            color: "#f1f1f1"
           }
         },
-        yAxisTitle: '销售金额(元)',
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "10%",
+          containLabel: true
+        },
         xAxis: {
-          type: 'category',
-          labels: {
-            rotation: 0,
-            style: {
-              fontSize: '12px',
-              fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif'
+          type: "value",
+          axisLine: {
+            lineStyle: {
+              color: "#b2b2b2"
+            }
+          },
+          boundaryGap: [0, 0.01],
+          splitNumber: 2,
+          splitLine: false
+        },
+        yAxis: [
+          {
+            type: "category",
+            axisTick: { show: false },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: "#b2b2b2"
+              }
+            },
+            data: []
+          },
+          {
+            type: "category",
+            axisLine: { show: false },
+            axisTick: { show: false },
+            axisLabel: { show: false },
+            splitArea: { show: false },
+            splitLine: { show: false },
+            data: []
+          }
+        ],
+        series: [
+          {
+            name: "今日销售目标",
+            type: "bar",
+            yAxisIndex: 1,
+            stack: "总量",
+            itemStyle: {
+              normal: {
+                barBorderRadius: 10,
+                borderWidth: 0,
+                color: "#3d7be0"
+              }
+            },
+            barGap: "0%",
+            barCategoryGap: "50%",
+            data: []
+          },
+          {
+            name: "实时销售额",
+            type: "bar",
+            yAxisIndex: 0,
+            itemStyle: {
+              normal: {
+                barBorderRadius: 10,
+                borderWidth: 0,
+                color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
+                  { offset: 0, color: "#287cd7" },
+                  { offset: 1, color: "#e576e9" }
+                ])
+              }
+            },
+            barGap: "0%",
+            barCategoryGap: "50%",
+            data: []
+          }
+        ]
+      },
+      hourDisOption: {
+        title: {
+          text: "小时销售分布",
+          // left: "10%",
+          // textAlign: "center"
+          textStyle: {
+            color: "#f1f1f1"
+          }
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            lineStyle: {
+              color: "#ddd"
+            }
+          },
+          // backgroundColor: "rgba(255,255,255,1)",
+          padding: [5, 10],
+          textStyle: {
+            color: "#fff"
+          },
+          extraCssText: "box-shadow: 0 0 5px rgba(0,0,0,0.3)"
+        },
+        grid: {
+          left: "1%",
+          right: "4%",
+          bottom: "10%",
+          containLabel: true
+        },
+        legend: {
+          right: 20,
+          orient: "horizontal",
+          data: ["今日销售", "近七天平均销售"],
+          textStyle: {
+            color: "#f1f1f1"
+          }
+        },
+        xAxis: {
+          type: "category",
+          data: [],
+          boundaryGap: false,
+          // splitLine: {
+          //   show: false,
+          //   interval: "auto",
+          //   lineStyle: {
+          //     color: ["#D4DFF5"]
+          //   }
+          // },
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            lineStyle: {
+              color: "#609ee9"
+            }
+          },
+          axisLabel: {
+            margin: 10,
+            textStyle: {
+              fontSize: 14
             }
           }
         },
-        legend: {
-          layout: 'vertical',
-          align: 'right',
-          verticalAlign: 'top',
-          x: -40,
-          y: 100,
-          floating: true,
-          borderWidth: 0,
-          backgroundColor: 'transparent',
-          shadow: true
-        },
-        series: this.topBrandSale
-      },
-      top20ChartOutletSale: {
-        type: 'column',
-        theme: 'darker',
-        title: '',
-        inverted: true,
-        yAxisTitle: '销售金额(元)',
-        tooltip: {
-          headerFormat: '',
-          pointFormatter: function() {
-            return `<span style="color:${this.series.color}">${this.series.name}: </span>
-                      ${currencyFormatter.format(this.y, { locale: 'zh-CN' })}元`
-          }
-        },
-        xAxis: {
-          type: 'category',
-          labels: {
-            rotation: 0,
-            style: {
-              fontSize: '12px',
-              fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif'
+        yAxis: {
+          type: "value",
+          splitNumber: 3,
+          splitLine: false,
+          // splitLine: {
+          //   lineStyle: {
+          //     color: ["#D4DFF5"]
+          //   }
+          // },
+          axisTick: {
+            // show: true
+          },
+          axisLine: {
+            lineStyle: {
+              color: "#609ee9"
+            }
+          },
+          axisLabel: {
+            margin: 10,
+            textStyle: {
+              fontSize: 14
             }
           }
         },
-        legend: {
-          enabled: false
+        series: [
+          {
+            name: "今日销售",
+            type: "line",
+            smooth: true,
+            showSymbol: false,
+            symbol: "circle",
+            symbolSize: 6,
+            data: [],
+            itemStyle: {
+              normal: {
+                color: "#ff0000"
+              }
+            },
+            lineStyle: {
+              normal: {
+                width: 2
+              }
+            }
+          },
+          {
+            name: "近七天平均销售",
+            type: "line",
+            smooth: true,
+            showSymbol: false,
+            symbol: "circle",
+            symbolSize: 6,
+            data: [],
+            areaStyle: {
+              normal: {
+                color: new echarts.graphic.LinearGradient(
+                  0,
+                  0,
+                  0,
+                  1,
+                  [
+                    {
+                      offset: 0,
+                      // color: "rgba(216, 244, 247,1)"
+                      color: "#285ab2"
+                    },
+                    {
+                      offset: 1,
+                      // color: "rgba(216, 244, 247,1)"
+                      color: "#c26ccc"
+                    }
+                  ],
+                  false
+                )
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: "#c26ccc"
+              }
+            },
+            lineStyle: {
+              normal: {
+                width: 0
+              }
+            }
+          }
+        ]
+      },
+      brandOption: {
+        title: {
+          // text: "品类销售排行"
         },
-        series: this.topOutletSale
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b}: {c} ({d}%)"
+        },
+        color: [
+          "#00599b",
+          "#0569cc",
+          "#007ee5",
+          "#2e97ff",
+          "#5fa8ff",
+          "#8fbaff",
+          "#bbd7ff"
+        ],
+        legend: {
+          orient: "horizontal",
+          // bottom:0,
+          textStyle: {
+            color: "#f1f1f1"
+          },
+          data: []
+        },
+        series: [
+          {
+            name: "品类销售排行",
+            type: "pie",
+            radius: ["50%", "70%"],
+            avoidLabelOverlap: true,
+            data: []
+          }
+        ]
+      },
+      memberAddOption: {
+        title: {
+          text: "今日门店会员增长分布",
+          textStyle: {
+            color: "#f1f1f1"
+          }
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow"
+          }
+        },
+        legend: {
+          right: 20,
+          orient: "horizontal",
+          data: ["孕妈", "萌宝"],
+          textStyle: {
+            color: "#f1f1f1"
+          }
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
+        },
+        xAxis: {
+          type: "value",
+          axisLine: {
+            lineStyle: {
+              color: "#b2b2b2"
+            }
+          },
+          boundaryGap: [0, 0.01],
+          splitLine: false
+        },
+        yAxis: {
+          type: "category",
+          axisLine: {
+            lineStyle: {
+              color: "#b2b2b2"
+            }
+          },
+          data: []
+        },
+        series: [
+          {
+            name: "孕妈",
+            type: "bar",
+            stack: "总量",
+            itemStyle: {
+              normal: {
+                // barBorderRadius: 10,
+                // borderWidth: 0,
+                color: "#245dd1"
+              }
+            },
+            barGap: "0%",
+            barCategoryGap: "50%",
+            data: []
+          },
+          {
+            name: "萌宝",
+            type: "bar",
+            stack: "总量",
+            itemStyle: {
+              // barBorderRadius: 10,
+              // borderWidth: 0,
+              normal: { color: "#507dda" }
+            },
+            barGap: "0%",
+            barCategoryGap: "50%",
+            data: []
+          }
+        ]
       }
+    };
+  },
+  computed: {
+    storeCode() {
+      return (
+        this.$store.state.storeCode || window.localStorage.getItem("storecode")
+      );
+    },
+    // testData() {
+    //   return this.$store.state.report.datasource.saleTotal;
+    // },
+    saleroom() {
+      return this.$store.state.report.datasource.screenSaleroom;
+    },
+    saleSingle() {
+      return this.$store.state.report.datasource.screenSalesingle;
+    },
+    related() {
+      return this.$store.state.report.datasource.screenRelated;
+    },
+    brand() {
+      return this.$store.state.report.datasource.screenBrand;
+    },
+    topTen() {
+      return this.$store.state.report.datasource.topTen;
+    },
+    todaySale() {
+      return this.$store.state.report.datasource.screenTodaySale;
+    },
+    todayTarget() {
+      return this.$store.state.report.datasource.screenTodayTarget;
+    },
+    hourSale() {
+      return this.$store.state.report.datasource.screenHourSale;
+    },
+    sevenSale() {
+      return this.$store.state.report.datasource.screenSevenSale;
+    },
+    saleSpread() {
+      return this.$store.state.report.datasource.screenSaleSpread;
+    },
+    newTarget() {
+      return this.$store.state.report.datasource.screenNewtarget;
+    },
+    // newpercentage() {
+    //   return this.newMemberTarget ? (this.mom + this.baby) / this.newMemberTarget * 100 : 0;
+    // },
+    memberConsum() {
+      return this.$store.state.report.datasource.screenMemberconsum;
+    },
+    min() {
+      return "0" + Number.parseInt(this.Timestamp / 60);
+    },
+    seconds() {
+      return this.Timestamp - this.min * 60 < 10
+        ? "0" + (this.Timestamp - this.min * 60)
+        : this.Timestamp - this.min * 60;
     }
   },
-  head() {
-    return {
-      title: '实时大屏幕'
-    }
+  created() {
+    this.refreshData();
+    // 会员全量信息
+    axios
+      .get(
+        `http://crmbackservice.hemiao100.com/crm/data/today_member_info.json?token=5510,6666,1,${this
+          .storeCode},11161`
+      )
+      .then(response => {
+        // console.log(response);
+        if (response.data.code == 0) {
+          this.newMom = response.data.data.mom;
+          this.newBaby = response.data.data.baby;
+          this.newMemberTarget
+            ? (this.percentage = Number(
+                (this.mom + this.baby) / this.newMemberTarget * 100
+              ).toFixed(2))
+            : (this.percentage = 0);
+        }
+      });
+    // 门店会员信息
+    axios
+      .get(
+        `http://crmbackservice.hemiao100.com/crm/data/today_member_outlet_info.json?token=5510,6666,1,${this
+          .storeCode},11161`
+      )
+      .then(response => {
+        if (response.data.code == 0) {
+          let storeName = new Set(
+            Object.keys(response.data.data.baby),
+            Object.keys(response.data.data.mom)
+          );
+          let baby = Array.from(Object.keys(response.data.data.baby));
+          let mom = Array.from(Object.keys(response.data.data.mom));
+          let babyValue = Array.from(Object.values(response.data.data.baby));
+          let momValue = Array.from(Object.values(response.data.data.mom));
+          let name = Array.from(storeName);
+          // console.log(name);
+          let data = {
+            baby: [],
+            mom: []
+          };
+          name.forEach(n => {
+            let bindex = baby.findIndex(function(value, index, arr) {
+              return value == n;
+            });
+            let mindex = mom.findIndex(function(value, index, arr) {
+              return value == n;
+            });
+            bindex > -1 ? data.baby.push(babyValue[bindex]) : data.baby.push(0);
+            mindex > -1 ? data.mom.push(momValue[mindex]) : data.mom.push(0);
+          });
+          // console.log(baby, mom, data);
+          this.memberAddOption.yAxis.data = name;
+          this.memberAddOption.series[0].data = data.mom;
+          this.memberAddOption.series[1].data = data.baby;
+          // console.log
+          this.memberAddChart.setOption(this.memberAddOption);
+        }
+      });
   },
+  updated() {},
+  mounted() {
+    // setInterval(() => {
+    //   this.refreshData();
+    // }, 1000 * 60 * 3);
+    this.time = setInterval(() => {
+      this.updateTime();
+      this.sandClock();
+    }, 1000);
+    this.typeSaleChart = echarts.init(document.getElementById("typeSale"));
+    this.hourDisChart = echarts.init(document.getElementById("hourDis"));
+    this.storeSaleChart = echarts.init(document.getElementById("storeSaleDis"));
+    this.memberAddChart = echarts.init(document.getElementById("memberAdd"));
+
+    setInterval(() => {
+      this.showTooltip();
+    }, 2000);
+  },
+  //   destroyed: {},
   methods: {
     updateTime: function() {
-      const date = moment(new Date())
-      this.currentDate = date.format(date.format('YYYY-MM-DD HH:mm:ss'))
+      this.time = new Date().Format("yyyy-MM-dd hh:mm:ss");
     },
-    updateDS: function() {
-      // ----------------------------------- //
-      this.$store.dispatch(
-        'report/getCurrLastMonthSaleAmount',
-        { storecode: this.storeCode })
-      // ----------------------------------- //
-      this.$store.dispatch(
-        'report/getCurrLastYearSaleAmount',
-        { storecode: this.storeCode })
-      // ----------------------------------- //
-      this.$store.dispatch(
-        'report/getTOP20OutletSale',
-        { storecode: this.storeCode })
-      // ----------------------------------- //
-      this.$store.dispatch(
-        'report/getTOP20BrandSale',
-        { storecode: this.storeCode })
-      // ----------------------------------- //
-      this.$store.dispatch(
-        'report/getOldAndNewMembersCounts',
-        { storecode: this.storeCode })
-      // ----------------------------------- //
-      this.$store.dispatch(
-        'report/getNewMembersCounts',
-        { storecode: this.storeCode })
-      // ----------------------------------- //
-      this.$store.dispatch(
-        'report/getCurrentMonthMemberLevel',
-        { storecode: this.storeCode })
-      // ----------------------------------- //
-      this.$store.dispatch(
-        'report/getCurrentTotalAmount',
-        { storecode: this.$store.state.storeCode })
+    sandClock() {
+      this.Timestamp <= 0 ? (this.Timestamp = 180) : (this.Timestamp -= 1);
     },
-    updateCurrentSaleAmount: function(number) {
-      this.currentSaleAmount = number
+    showTooltip() {
+      this.typeSaleChart.dispatchAction({
+        type: "showTip",
+        seriesIndex: 0,
+        dataIndex: this.typeIndex
+      });
+      this.hourDisChart.dispatchAction({
+        type: "showTip",
+        seriesIndex: 0,
+        dataIndex: this.hourIndex
+      });
+      this.storeSaleChart.dispatchAction({
+        type: "showTip",
+        seriesIndex: 0,
+        dataIndex: this.storeIndex
+      });
+      this.typeIndex += 1;
+      this.hourIndex += 1;
+      this.storeIndex += 1;
+      if (this.typeIndex >= this.typeLength) {
+        this.typeIndex = 0;
+      }
+      if (this.hourIndex >= this.hourLength) {
+        this.hourIndex = 0;
+      }
+      if (this.storeIndex >= this.storeLength) {
+        this.storeIndex = 0;
+      }
     },
-    updateCurrentTotalAmount: function(number) {
-      // console.log(number)
-      this.currentTotalAmount = number
+    // headerClick(e) {
+    //   // console.log(e);
+    //   if (e.label == "销量") {
+    //     this.$store.dispatch("report/getTopTen", {
+    //       storecode: "233"
+    //     });
+    //   }
+    //   if (e.label == "交易会员数") {
+    //     this.$store.dispatch("report/getTopTen", {
+    //       storecode: "233"
+    //     });
+    //   }
+    // },
+    defineTarget(e) {
+      // console.log(e);
+      this.dialogSaleVisible = true;
     },
-    buildTaskCompletedPieChart() {
-      this.taskCompletedPie = Highcharts.chart(
-        document.getElementById('targetComplete'),
-        {
-          chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            backgroundColor: 'transparent'
-          },
-          credits: {
-            enabled: false
-          },
-          title: {
-            float: true,
-            text: '81%',
-            verticalAlign: 'middle'
-          },
-          tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-          },
-          plotOptions: {
-            pie: {
-              allowPointSelect: true,
-              cursor: 'pointer',
-              dataLabels: {
-                enabled: false,
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                style: {
-                  color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                }
-              }
-            }
-          },
-          series: [{
-            type: 'pie',
-            innerSize: '60%',
-            name: '目标达成率',
-            data: [
-              ['未完成', 19.4],
-              {
-                name: '月销售',
-                y: 81.6,
-                sliced: false,
-                selected: false
-              }
-            ]
-          }]
-        })
-      this.taskCompletedPie.setTitle({
-        title: '82%'
-      })
+    memberTarget(e) {
+      this.dialogMemberVisible = true;
+    },
+    setSaleTarget(e) {
+      // console.log(this.customTarget);
+      this.percentage = Number(
+        (this.Sale / Number(this.customTarget) * 100).toFixed(2)
+      );
+      this.Target = this.customTarget;
+      this.dialogSaleVisible = false;
+    },
+    setNewTarget(e) {
+      this.newpercentage = Number(
+        ((this.newMom + this.newBaby) /
+          Number(this.newAddTarget) *
+          100
+        ).toFixed(2)
+      );
+      this.newMemberTarget = this.newAddTarget;
+      this.dialogMemberVisible = false;
+    },
+    refreshData() {
+      switch (this.tenType) {
+        case 1:
+          this.$store.dispatch("report/getTopTen", {
+            storecode: this.storeCode
+          });
+          break;
+        case 2:
+          this.$store.dispatch("report/getTenBynumber", {
+            storecode: this.storeCode
+          });
+          break;
+        case 3:
+          this.$store.dispatch("report/getTenBymember", {
+            storecode: this.storeCode
+          });
+          break;
+        default:
+          this.$store.dispatch("report/getTopTen", {
+            storecode: this.storeCode
+          });
+      }
+      this.$store.dispatch("report/getScreenSaleRoom", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenSaleSingle", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenRelated", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenBrand", {
+        storecode: this.storeCode
+      });
+
+      this.$store.dispatch("report/getScreenTodaySale", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenTodayTarget", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenHourSale", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenSevenSale", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenSaleSpread", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenNewtarget", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenMemberconsum", {
+        storecode: this.storeCode
+      });
+      this.tenType >= 3 ? (this.tenType = 1) : (this.tenType += 1);
+      this.activeRow = this.tenType + 2;
     }
-  },
-  mounted() {
-    setTimeout(() => { this.updateDS() }, 0)
-    this.dateCounter = setInterval(() => { this.updateTime() }, 1000)
-    // fixme: 便于演示动画效果，设置1000毫秒的延时.
-    setTimeout(() => {
-      this.isloading = true
-    }, 300)
-    // 10秒更新一次数据源
-    this.dsCounter = setInterval(() => {
-      // this.updateDS()
-      // this.updateCurrentSaleAmount(this.currentMonthSaleTotalAmout)
-      // this.updateCurrentTotalAmount(this.currentTAmount)
-      // this.buildTaskCompletedPieChart()
-    }, 1 * 10 * 1000)
-  },
-  destroyed() {
-    clearInterval(this.dateCounter)
-    clearInterval(this.dsCounter)
   }
-}
+};
 </script>
-
 <style scoped>
-.banner-table.el-table {
-  color: #7CB342;
-  background-color: transparent;
-  border: 1px solid #8DC1B4;
+.header {
+  /* justify-content: space-between; */
+  align-items: center;
+  color: white;
+  background: radial-gradient(ellipse 40% 40%, #004c9e, #002259);
+  text-shadow: 1px 1px gray;
 }
-
-.el-dashboard-container {
-  background: radial-gradient(ellipse at bottom, #1b2735 0%, #053287 100%);
-  background-image: url('../assets/img/galaxy.jpg')
+.white {
+  color: #f1f1f1;
 }
-
-.el-dashboard-header {
-  height: 80px;
-  line-height: 40px;
-}
-
-.el-card.theme-darker {
-  border: none;
-  background-color: rgba(3, 169, 244, 0.1);
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-
-.el-dashboard-header .text {
-  font-size: 20px;
-  text-align: center;
-  color: #fff;
-}
-
-.el-dashboard-header .datetime {
-  font-size: 16px;
-  text-align: center;
-  color: #FCE188;
-}
-
-.el-dashboard-header .icon-lighting:hover {
-  font-size: 30px;
-  transform: rotateX(30)
-}
-
-.el-dashboard-header .icon-lighting {
-  position: absolute;
-  left: 50%;
-  top: 26%;
-  font-size: 20px;
-  color: #B2DFDB;
-  transition: all .5s;
-}
-
-.el-dashboard-content {
+.m5 {
   margin-top: 5px;
 }
-
-.fa-area-chart.title {
-  font-size: 24px;
-  margin-left: 8px;
-  margin-bottom: 15px;
-  color: aqua;
+.main {
+  padding: 8px;
+  background: radial-gradient(circle at 50%, #004c9e, #002259);
+}
+.icon-blue{
+  color: #8fbaff;
+}
+.sand-clock {
+  color: #4aedca;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+}
+.text-clock {
+  font-size: 28px;
+}
+.el-col-8 {
+  width: 32.6%;
+}
+.screen-logo,
+.title,
+.time {
+  flex: 1;
+}
+.font14 {
+  font-size: 14px;
+}
+.today-sale,
+.today-add {
+  color: #4aedca;
+}
+.today-sale,
+.today-target,
+.today-add {
+  font-size: 22px;
+}
+.today-target {
+  color: #8fbaff;
+}
+.today-target:hover {
+  cursor: pointer;
+}
+.margin1 {
+  margin: 0 1%;
+}
+.screen-logo {
+  /* width: 100%; */
+  justify-content: flex-start;
+  height: 26px;
+  background: url("../assets/img/logowhite.png") no-repeat;
+}
+.title {
+  justify-content: center;
+  font-size: 28px;
+}
+.time {
+  justify-content: flex-end;
+}
+.gradient-border {
+  margin: 5px 0;
+  height: 2px;
+  background: linear-gradient(to right, #002259, #004c9e, #002259);
+  /* background: linear-gradient(to right, #004c9e, #002259, #004c9e); */
 }
 </style>

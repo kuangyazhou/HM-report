@@ -15,7 +15,7 @@
             <div class="hm-sub-nav-item" v-if="$store.state.authUser">
               <el-dropdown @command="handleCommand">
                 <span class="el-dropdown-link">
-                  欢迎使用本系统,
+                  欢迎使用 禾苗·数据平台
                   <span style="color: #F7BA2A;">{{loginedUser}}</span>
                   <i class="el-icon-caret-bottom el-icon--right"></i>
                 </span>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import Vue from "vue";
 import {
   Button,
   Col,
@@ -42,40 +42,42 @@ import {
   DropdownItem,
   DropdownMenu,
   Message
-} from 'element-ui'
+} from "element-ui";
 
-Vue.use(Button)
-Vue.use(Col)
-Vue.use(Row)
-Vue.use(Dropdown)
-Vue.use(DropdownItem)
-Vue.use(DropdownMenu)
+Vue.use(Button);
+Vue.use(Col);
+Vue.use(Row);
+Vue.use(Dropdown);
+Vue.use(DropdownItem);
+Vue.use(DropdownMenu);
 
 export default {
   computed: {
     loginedUser: function() {
-      return this.$store.state.authUser
+      return this.$store.state.authUser;
     }
   },
   methods: {
     toDashboard() {
-      window.location.href = '/'
+      window.location.href = "/";
     },
     handleCommand(command) {
       switch (command) {
-        case 'logout':
-          this.$store.dispatch('logout').then(() => (window.location.href = '/login'))
-          break
+        case "logout":
+          this.$store
+            .dispatch("logout")
+            .then(() => (window.location.href = "/login"));
+          break;
         default:
           Message.error({
             duration: 2000,
-            message: '该功能正在抓紧时间开发中...'
-          })
-          break
+            message: "该功能正在抓紧时间开发中..."
+          });
+          break;
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>

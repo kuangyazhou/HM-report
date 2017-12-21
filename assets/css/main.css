@@ -73,18 +73,73 @@ a:visited {
     max-width: 400px;
 }
 
+.hm-protal-container {
+    /* background: blue; */
+    /* padding: 8px; */
+}
+
 .clearfix:before,
 .clearfix:after {
     display: table;
     content: "";
 }
 
+.chart-title {
+    padding-left: 10px;
+}
+
+.annotation {
+    padding: 0 8px;
+}
+
 .clearfix:after {
     clear: both;
+}
+
+.el-menu-item.is-active {
+    background-color: #edf0f7 !important;
+}
+
+.sidebar {
+    border-right: none !important;
+}
+
+.flex {
+    display: flex;
+}
+
+.row {
+    flex-direction: row;
+}
+
+.column {
+    flex-direction: column;
 }
 
 .center {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.around {
+    justify-content: space-around;
+}
+
+
+/* 大屏表格部分css */
+
+.screen .el-table tr {
+    /* background: #0074ff; */
+    background: transparent;
+}
+
+.screen .el-table th {
+    /* background: #0074ff; */
+    background: transparent;
+}
+
+.screen .el-table th>.cell {
+    /* background: #0074ff; */
+    background: transparent;
 }

@@ -1,89 +1,92 @@
 <template>
-    <div class="container">
-        <el-row :gutter="15" style="margin-top: 20px;">
-            <el-col :span="12">
-                <el-card>
-                    <div slot="header" class="clearfix">
-                        <span style="line-height: 36px;">
-                            <i class="fa fa-dashboard" aria-hidden="true"></i>本月销售目标及完成率
-                        </span>
-                    </div>
-                    <div class="flex sale">
-                        <div class="flex btns center">
-                            <el-button size="small" :disabled="saleTotalSwitch" class="btn-total">总目标</el-button>
-                            <el-select v-model="saleStore" placeholder="选择门店" size="small" class="w150 m5" @change="saleStoreSele">
-                                <el-option v-for="item in saleStoreName" :key="item.value" :label="item.label" :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <el-select v-model="saleGuide" placeholder="选择导购" size="small" class="w150 m5" :disabled="saleGuideSwitch" @change="saleGuideSelec">
-                                <el-option v-for="item in saleGuideData" :key="item.value" :label="item.label" :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </div>
-                        <div class="flex">
-                            <div class="flex text column center">
-                                <div class="flex column center saleTarget">
-                                    <span class="flex">销售总目标(元)</span>
-                                    <span class="flex text-target">{{totalTarget}}</span>
-                                </div>
-                                <div class="flex column center finish">
-                                    <span class="flex top5">已完成(元)</span>
-                                    <span class="flex text-finish">{{saleComplete}}</span>
-                                </div>
-                            </div>
-                            <div class="flex monthSale">
-                                <div id="monthSale" :style="{width:'100%',height:'250px'}"></div>
-                            </div>
-                        </div>
-                        <div class="detail">
-                            <div id="saleTarget" :style="{width:'100%',height:this.saleHeight+'px'}"></div>
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-            <el-col :span="12">
-                <el-card>
-                    <div slot="header" class="clearfix">
-                        <span style="line-height: 36px;">
-                            <i class="fa fa-user-plus" aria-hidden="true"></i>本月新客目标及完成率
-                        </span>
-                        <!-- <el-button style="float: right;" icon="star-off" type="primary">收藏</el-button> -->
-                    </div>
-                    <div class="flex sale">
-                        <div class="flex btns center">
-                            <el-button size="small" class="btn-total" @click="setOld" :disabled="back">总目标</el-button>
-                            <el-select v-model="value" placeholder="选择门店" @change="selectStore" size="small" class="w150 m5">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <el-select v-model="guideName" placeholder="选择导购" size="small" class="w150 m5" :disabled="newGuideSwitch" @change="selectGuide">
-                                <el-option v-for="item in guide" :key="item.value" :label="item.label" :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </div>
-                        <div class="flex">
-                            <div class="flex text column center">
-                                <div class="flex column center saleTarget">
-                                    <span class="flex">目标人数(人)</span>
-                                    <span class="flex text-target">{{newTotal}}</span>
-                                </div>
-                                <div class="flex column center finish">
-                                    <span class="flex top5">已完成(人)</span>
-                                    <span class="flex text-finish">{{newComplete}}</span>
-                                </div>
-                            </div>
-                            <div class="flex newMember">
-                                <div id="member" :style="{width:'100%',height:'250px'}"></div>
-                            </div>
-                        </div>
-                        <div class="detail">
-                            <div id="memberTarget" :style="{width:'100%',height:this.newHeight+'px'}"></div>
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-        </el-row>
-    </div>
+  <div class="container">
+    <el-row :gutter="15" style="margin-top: 20px;">
+      <el-col :span="12">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">
+              <i class="fa fa-dashboard" aria-hidden="true"></i>
+              <span class="chart-title">本月销售目标及完成率</span>
+            </span>
+          </div>
+          <div class="flex sale">
+            <div class="flex btns center">
+              <el-button size="small" v-if="saleTotalSwitch" type="primary" class="btn-total" @click="saleTotal">总目标</el-button>
+              <el-select v-model="saleStore" placeholder="选择门店" size="small" class="w150 m5" @change="saleStoreSele">
+                <el-option v-for="item in saleStoreName" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+              <el-select v-model="saleGuide" placeholder="选择导购" size="small" class="w150 m5" v-if="saleGuideSwitch" @change="saleGuideSelec">
+                <el-option v-for="item in saleGuideData" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-switch v-model="chartToTable" active-text="图" inactive-text="表" active-color="#13ce66" inactive-color="#ff4949"></el-switch> -->
+            </div>
+            <div class="flex">
+              <div class="flex text column center">
+                <div class="flex column center saleTarget">
+                  <span class="flex">销售总目标(元)</span>
+                  <span class="flex text-target">{{totalTarget}}</span>
+                </div>
+                <div class="flex column center finish">
+                  <span class="flex top5">已完成(元)</span>
+                  <span class="flex text-finish">{{saleComplete}}</span>
+                </div>
+              </div>
+              <div class="flex monthSale">
+                <div id="monthSale" :style="{width:'100%',height:'250px'}"></div>
+              </div>
+            </div>
+            <div class="detail">
+              <div id="saleTarget" :style="{width:'100%',height:this.saleHeight+'px'}"></div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">
+              <i class="fa fa-user-plus" aria-hidden="true"></i>
+              <span class="chart-title">本月新客目标及完成率</span>
+            </span>
+            <!-- <el-button style="float: right;" icon="star-off" type="primary">收藏</el-button> -->
+          </div>
+          <div class="flex sale">
+            <div class="flex btns center">
+              <el-button size="small" class="btn-total" @click="newback" v-if="back">总目标</el-button>
+              <el-select v-model="value" placeholder="选择门店" @change="selectStore" size="small" class="w150 m5">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+              <el-select v-model="guideName" placeholder="选择导购" size="small" class="w150 m5" v-if="newGuideSwitch" @change="selectGuide">
+                <el-option v-for="item in guide" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+            <div class="flex">
+              <div class="flex text column center">
+                <div class="flex column center saleTarget">
+                  <span class="flex">目标人数(人)</span>
+                  <span class="flex text-target">{{newTotal}}</span>
+                </div>
+                <div class="flex column center finish">
+                  <span class="flex top5">已完成(人)</span>
+                  <span class="flex text-finish">{{newComplete}}</span>
+                </div>
+              </div>
+              <div class="flex newMember">
+                <div id="member" :style="{width:'100%',height:'250px'}"></div>
+              </div>
+            </div>
+            <div class="detail">
+              <div id="memberTarget" :style="{width:'100%',height:this.newHeight+'px'}"></div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -96,6 +99,7 @@ import { currency } from "./../../utils/currency";
 import {
   Button,
   Col,
+  Switch,
   Row,
   Tooltip,
   Card,
@@ -109,6 +113,7 @@ import {
 Vue.use(Button);
 Vue.use(Col);
 Vue.use(Card);
+Vue.use(Switch);
 Vue.use(Row);
 Vue.use(Tooltip);
 Vue.use(Alert);
@@ -131,21 +136,25 @@ export default {
       this.totalTarget = currency(val.total, "￥");
       this.saleComplete = currency(val.com, "￥");
       this.outletId = val.outlet;
-      this.saleRate = (val.com / val.total * 100).toFixed(2);
+      this.saleRate =
+        val.com / val.total ? (val.com / val.total * 100).toFixed(2) : 0;
       this.saleStoreName = val.sel;
       this.saleHeight = val.data.length / 25 * 400 + 200;
+      this.monthSaleback ? "" : (this.monthSaleback = val);
       // this.setSale();
     },
     currentMonthNewDetail: function(val) {
       // console.log(val)
-      this.montNewData.yAxis.data = val.name;
-      this.montNewData.series[0].data = val.data;
-      this.montNewData.series[1].data = val.finish;
+      this.monthNewData.yAxis.data = val.name;
+      this.monthNewData.series[0].data = val.data;
+      this.monthNewData.series[1].data = val.finish;
       this.newTotal = val.total;
       this.newComplete = val.com;
-      this.newRate = (val.com / val.total * 100).toFixed(2);
+      this.newRate =
+        val.com / val.total ? (val.com / val.total * 100).toFixed(2) : 0;
       this.newHeight = val.data.length / 25 * 400 + 200;
       this.options = val.sel;
+      this.monthNewBack ? "" : (this.monthNewBack = val);
       // this.setNew();
     },
     guideSaleSeries: function(val) {
@@ -155,17 +164,19 @@ export default {
       this.totalTarget = currency(val.total, "￥");
       this.saleComplete = currency(val.com, "￥");
       this.saleGuideData = val.sel;
-      this.saleRate = (val.com / val.total * 100).toFixed(2);
+      this.saleRate =
+        val.com / val.total ? (val.com / val.total * 100).toFixed(2) : 0;
       this.saleHeight = val.data.length / 25 * 400 + 200;
     },
     guideNewSeries: function(val) {
-      this.montNewData.yAxis.data = val.name;
-      this.montNewData.series[0].data = val.data;
-      this.montNewData.series[1].data = val.finish;
+      this.monthNewData.yAxis.data = val.name;
+      this.monthNewData.series[0].data = val.data;
+      this.monthNewData.series[1].data = val.finish;
       this.newTotal = val.total;
       this.newComplete = val.com;
       this.guide = val.sel;
-      this.newRate = (val.com / val.total * 100).toFixed(2);
+      this.newRate =
+        val.com / val.total ? (val.com / val.total * 100).toFixed(2) : 0;
       this.newHeight = val.data.length / 25 * 400 + 200;
       // console.log(val);
     },
@@ -176,7 +187,7 @@ export default {
       // this.Dom('memberTarget').dispose();
     },
     newHeight: function(v) {
-      this.setNew(this.montNewData);
+      this.setNew();
     },
     saleRate: function(v) {
       // console.log(v);
@@ -192,17 +203,17 @@ export default {
   computed: {},
   data() {
     return {
-      storecode: this.$store.state.storeCode,
+      // storecode: this.$store.state.storeCode,
       totalTarget: 0,
       saleComplete: 0,
       saleRate: 0,
       newTotal: 0,
       newComplete: 0,
       newRate: 0,
-      back: true,
-      saleTotalSwitch: true,
-      saleGuideSwitch: true,
-      newGuideSwitch: true,
+      back: false,
+      saleTotalSwitch: false,
+      saleGuideSwitch: false,
+      newGuideSwitch: false,
       outletId: null,
       saleHeight: 400,
       newHeight: 400,
@@ -215,16 +226,15 @@ export default {
       saleStoreName: [],
       options: [],
       guide: [],
+      startDate: null,
+      endDate: null,
+      chartToTable: true,
       value: "",
       guideName: "",
       saleStore: "",
       saleGuide: "",
       saleGuideData: [],
-      value1: "",
-      value6: "",
-      radio3: "北京",
-      memberTarge: 11,
-      memberFinish: 2333,
+      monthSaleback: null,
       monthSaleData: {
         // color: ['#3398DB'],
         tooltip: {
@@ -281,7 +291,8 @@ export default {
           }
         ]
       },
-      montNewData: {
+      monthNewBack: null,
+      monthNewData: {
         tooltip: {
           trigger: "axis",
           axisPointer: {
@@ -479,16 +490,21 @@ export default {
   },
   created() {},
   mounted() {
-    let storecode = this.$route.query.code;
+    let storecode = this.$route.query.storecode;
     let account = this.$route.query.account;
     if (storecode) {
       this.$store.dispatch("jump", storecode);
       // this.$store.commit("SET_STORE_CODE", storecode);
+      window.localStorage.setItem("storecode", storecode);
       this.$store.dispatch("report/getMonthSale", {
-        storecode: this.$store.state.storecode
+        storecode: this.$store.state.storecode,
+        startDate: this.startDate,
+        endDate: this.endDate
       });
       this.$store.dispatch("report/getMonthNewmember", {
-        storecode: this.$store.state.storecode
+        storecode: this.$store.state.storecode,
+        startDate: this.startDate,
+        endDate: this.endDate
       });
     }
     let loadAttr = {
@@ -547,6 +563,10 @@ export default {
         }
       ]
     };
+    this.startDate = new Date().Format("yyyyMM") + "01";
+    this.endDate = new Date().Format("yyyyMMdd");
+    // this.startDate = '20171101';
+    // this.endDate = '20171130';
     // monthSale.setOption(option);
     // member.setOption(option);
     // setInterval(function() {
@@ -561,31 +581,35 @@ export default {
     // this.setNew();
   },
   activated() {},
+  computed: {
+    storeCode() {
+      return (
+        this.$store.state.storeCode || window.localStorage.getItem("storecode")
+      );
+    }
+  },
   methods: {
     Dom(e) {
       return echarts.init(document.getElementById(e));
     },
-    back() {
-      this.showBack = false;
-      this.showDetail = false;
-    },
+    // back() {
+    //   this.showBack = false;
+    //   this.showDetail = false;
+    // },
     setSale() {
       let saleChart = this.Dom("saleTarget");
-      const _this = this;
       saleChart.resize({
         height: this.saleHeight
       });
       saleChart.setOption(this.monthSaleData);
     },
-    setNew(data) {
+    setNew() {
       let newChart = this.Dom("memberTarget");
       const _this = this;
       newChart.resize({
         height: this.newHeight
       });
-      newChart.setOption(data);
-      // newChart.on('click', e => {
-      // })
+      newChart.setOption(this.monthNewData);
     },
     setSaleRate() {
       let chart = this.Dom("monthSale");
@@ -596,40 +620,48 @@ export default {
       chart.setOption(this.newRateData);
     },
     setOld(e) {
-      // this.setNew(this.montNewData);
+      // this.setNew(this.monthNewData);
     },
     saleStoreSele(e) {
-      let storeid = e;
-      this.saleTotalSwitch = false;
-      this.saleGuideSwitch = false;
-      this.saleGuide = "";
-      this.$store.dispatch("report/getGuideSale", {
-        storecode: this.storecode,
-        outletId: storeid
-      });
+      if (e) {
+        let storeid = e;
+        this.saleTotalSwitch = true;
+        this.saleGuideSwitch = true;
+        this.saleGuide = "";
+        this.$store.dispatch("report/getGuideSale", {
+          storecode: this.storeCode,
+          outletId: storeid,
+          startDate: this.startDate,
+          endDate: this.endDate
+        });
+      }
     },
     selectStore(e) {
-      this.back = false;
-      this.newGuideSwitch = false;
+      this.back = true;
+      this.newGuideSwitch = true;
       this.guideName = "";
       let storeid = e;
       this.$store.dispatch("report/getGuideNew", {
-        storecode: this.storecode,
-        outletId: storeid
+        storecode: this.storeCode,
+        outletId: storeid,
+        startDate: this.startDate,
+        endDate: this.endDate
       });
     },
     saleGuideSelec(id) {
-      let t = null;
-      let f = null;
-      this.guideSaleSeries.sel.forEach((e, i) => {
-        if (e.value === id) {
-          t = this.guideSaleSeries.data[i];
-          f = this.guideSaleSeries.finish[i];
-        }
-      });
-      this.totalTarget = currency(t, "￥");
-      this.saleComplete = currency(f, "￥");
-      this.saleRate = (f / t * 100).toFixed(2);
+      if (id) {
+        let t = null;
+        let f = null;
+        this.guideSaleSeries.sel.forEach((e, i) => {
+          if (e.value === id) {
+            t = this.guideSaleSeries.data[i];
+            f = this.guideSaleSeries.finish[i];
+          }
+        });
+        this.totalTarget = currency(t, "￥");
+        this.saleComplete = currency(f, "￥");
+        this.saleRate = (f / t * 100).toFixed(2);
+      }
     },
     selectGuide(id) {
       // console.log(e);
@@ -644,6 +676,36 @@ export default {
       this.newTotal = t;
       this.newComplete = f;
       this.newRate = (f / t * 100).toFixed(2);
+    },
+    saleTotal(e) {
+      // console.log(this.monthSaleback);
+      this.monthSaleData.yAxis.data = this.monthSaleback.name;
+      this.monthSaleData.series[0].data = this.monthSaleback.data;
+      this.monthSaleData.series[1].data = this.monthSaleback.finish;
+      this.totalTarget = currency(this.monthSaleback.total, "￥");
+      this.saleComplete = currency(this.monthSaleback.com, "￥");
+      this.outletId = this.monthSaleback.outlet;
+      this.saleRate = (this.monthSaleback.com /
+        this.monthSaleback.total *
+        100
+      ).toFixed(2);
+      this.saleStoreName = this.monthSaleback.sel;
+      this.saleHeight = this.monthSaleback.data.length / 25 * 400 + 200;
+      this.saleStore = "";
+      this.saleGuide = "";
+    },
+    newback(e) {
+      this.monthNewData.yAxis.data = this.monthNewBack.name;
+      this.monthNewData.series[0].data = this.monthNewBack.data;
+      this.monthNewData.series[1].data = this.monthNewBack.finish;
+      this.newHeight = this.monthNewBack.data.length / 25 * 400 + 200;
+      this.newTotal = currency(this.monthNewBack.total, "￥");
+      this.newComplete = currency(this.monthNewBack.com, "￥");
+      this.guide = this.monthNewBack.sel;
+      this.newRate = (this.monthNewBack.com /
+        this.monthNewBack.total *
+        100
+      ).toFixed(2);
     }
   }
 };

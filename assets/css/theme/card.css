@@ -1,7 +1,7 @@
 @charset "UTF-8";
 .el-card {
     border: 1px solid rgb(214, 209, 229);
-    border-radius: 0;
+    border-radius: 4px;
     background-color: #fff;
     overflow: hidden;
     box-shadow: none;
@@ -14,6 +14,23 @@
     /* background: rgb(233, 228, 241); */
     background: linear-gradient(to right, #d3dff6, #e0e9fa);
     /* opacity: 0.2; */
+}
+
+
+/* 大屏card重写 */
+
+.screen .el-card__header {
+    background: linear-gradient(to right, #002259, #0074ff, #002259);
+    border: none;
+    color: white;
+}
+
+.screen .el-card__body {
+    background: radial-gradient(#004c9e, #002259);
+}
+
+.screen.el-card {
+    border: 1px solid #002259;
 }
 
 .theme-darker .el-card__header {

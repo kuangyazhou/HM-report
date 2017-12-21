@@ -12,9 +12,10 @@
           <el-form-item label="密码" prop="formPassword">
             <el-input type="password" placeholder="请输入密码,最小长度6位" v-model="form.formPassword" name="password" @keyup.enter="login">
             </el-input>
+            <!-- <el-input @change="inputChange"></el-input> -->
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="large" style="width: 100%;" :loading="false" @click="login">登陆</el-button>
+            <el-button type="primary" size="large" style="width: 100%;" :loading="false" @click="login">登录</el-button>
           </el-form-item>
         </el-form>
         <div class="hm-form-error">
@@ -104,6 +105,9 @@ export default {
         }
       });
     },
+    // inputChange(e) {
+    //   console.log(e);
+    // },
     authLogin() {
       this.$refs["form"].validate(valid => {
         let username = this.form.formUsername;

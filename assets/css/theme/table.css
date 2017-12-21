@@ -272,6 +272,7 @@
     width: 100%;
     max-width: 100%;
     background-color: #fff;
+    /* background-color: blue; */
     border: 1px solid rgb(225, 223, 236);
     font-size: 14px;
     color: rgb(38, 31, 61)
@@ -676,15 +677,16 @@
 
 .banner-table tr,
 .banner-table th {
-  background-color: transparent;
+    background-color: transparent;
 }
 
-.banner-table td, .banner-table th.is-leaf {
-  border-bottom: 1px solid #8DC1B4;
+.banner-table td,
+.banner-table th.is-leaf {
+    border-bottom: 1px solid #8DC1B4;
 }
 
 .banner-table .el-table__fixed-header-wrapper thead div,
 .banner-table .el-table__header-wrapper thead div {
-  color: #7CB342;
-  background-color: transparent;
+    color: #7CB342;
+    background-color: transparent;
 }

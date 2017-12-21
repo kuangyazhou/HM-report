@@ -1,69 +1,72 @@
 <template>
-    <div class="container">
-        <el-row :gutter="15" style="margin-top: 20px;">
-            <el-col :span="24">
-                <el-card>
-                    <div slot="header" class="clearfix">
-                        <span style="line-height: 36px;">
-                            <i class="fa fa-retweet" aria-hidden="true"></i>新客统计分析
-                        </span>
-                    </div>
-                    <div class="flex column opera">
-                        <div class="flex btns center">
-                            <el-button size="small" :disabled="total">所有门店</el-button>
-                            <el-date-picker v-model="dimTime" type="daterange" placeholder="选择日期范围" @change="dateSelect"
-                                            size="small" class="m5 w200">
-                            </el-date-picker>
-                        </div>
-                        <div class="flex row main">
-                            <div class="flex note column center" :style="{width:'200px'}">
-                                <span class="flex saleimg"></span>
-                                <span class="flex center column">
-                                  <span class="flex">扫码(人)</span>
-                                  <span class="flex text-total center">
-                                    <span>{{totalScan}}</span>
-                                    <span class="text-gray">(均值<span class="text-yellow">{{scanAvg}}</span>)</span>
-                                  </span>
-                                </span>
-                                <span class="flex center column">
-                                  <span class="flex">绑定(人)</span>
-                                  <span class="flex text-total center">
-                                    <span>{{totalBind}}</span>
-                                    <span class="text-gray">(均值<span class="text-yellow">{{bindAvg}}</span>)</span>
-                                  </span>
-                                </span>
-                                <span class="flex center column">
-                                  <span class="flex">注册(人)</span>
-                                  <span class="flex text-total center">
-                                    <span>{{totalReg}}</span>
-                                    <span class="text-gray">(均值<span class="text-yellow">{{regAvg}}</span>)</span>
-                                  </span>
-                                </span>
-                                <div class="flex column annotation">
-                                    <span class="flex mid">
-                                        <span class="flex circle"></span>
-                                        <span>注释</span>
-                                    </span>
-                                    <span class="flex">1.默认数据为本月所有门店新客人数，按天查看</span>
-                                    <span class="flex">2."按天查看"所选天数不得超过30天</span>
-                                    <span class="flex">3."按月查看"所选不得超过12个月</span>
-                                    <span class="flex">4.点击"活动"按钮，可查看当前选择时间内所有活动详情</span>
-                                </div>
-                            </div>
-                            <div id="newChart" :style="{width:'75%',height:this.containerHeight+'px'}">
-                            </div>
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-        </el-row>
-    </div>
+  <div class="container">
+    <el-row :gutter="15" style="margin-top: 20px;">
+      <el-col :span="24">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">
+              <i class="fa fa-retweet" aria-hidden="true"></i>
+              <!-- <span class="chart-title">新客统计分析</span> -->
+              <vBread :options="breadData" @breadClick="breadClick"></vBread>
+            </span>
+          </div>
+          <div class="flex column opera">
+            <div class="flex btns center">
+              <el-date-picker v-model="dimTime" type="daterange" placeholder="选择日期范围" @change="dateSelect" size="small" class="m5 w200">
+              </el-date-picker>
+            </div>
+            <div class="flex row main">
+              <div class="flex note column center" :style="{width:'200px'}">
+                <span class="flex saleimg"></span>
+                <span class="flex center column">
+                  <span class="flex">扫码(人)</span>
+                  <span class="flex text-total center">
+                    <span>{{totalScan}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow">{{scanAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">绑定(人)</span>
+                  <span class="flex text-total center">
+                    <span>{{totalBind}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow">{{bindAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">注册(人)</span>
+                  <span class="flex text-total center">
+                    <span>{{totalReg}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow">{{regAvg}}</span>)</span>
+                  </span>
+                </span>
+                <div class="flex column annotation">
+                  <span class="flex mid">
+                    <span class="flex circle"></span>
+                    <span>注释</span>
+                  </span>
+                  <span class="flex">1.默认数据为本月所有门店新客人数，按天查看</span>
+                  <span class="flex">2."按天查看"所选天数不得超过30天</span>
+                  <span class="flex">3."按月查看"所选不得超过12个月</span>
+                  <span class="flex">4.点击"活动"按钮，可查看当前选择时间内所有活动详情</span>
+                </div>
+              </div>
+              <div id="newChart" :style="{width:'75%',height:this.containerHeight+'px'}">
+              </div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
 import Vue from "vue";
 import echarts from "echarts";
-
+import vBread from "~components/commons/bread";
 import {
   Button,
   Col,
@@ -75,7 +78,7 @@ import {
   DatePicker,
   Loading
 } from "element-ui";
-
+let count = 1;
 Vue.use(Button);
 Vue.use(Col);
 Vue.use(Card);
@@ -85,7 +88,7 @@ Vue.use(Alert);
 Vue.use(Checkbox);
 Vue.use(DatePicker);
 export default {
-  components: {},
+  components: { vBread },
   props: [
     "storeList",
     "operaMainSeries",
@@ -107,8 +110,9 @@ export default {
       this.operaData.series[1].data = val.bind;
       this.operaData.series[2].data = val.reg;
       this.selectStore = val.sel;
-      this.closeLoad();
-      this.setOpera();
+      this.loading.close();
+      // this.setOpera();
+      this.newChart.setOption(this.operaData);
     },
     operaGuideSeries: function(val) {
       // console.log(val);
@@ -118,7 +122,24 @@ export default {
       this.guideData.series[1].data = val.bind;
       this.guideData.series[2].data = val.reg;
       this.selectGuide = val.sel;
-      this.setGuide();
+      // this.setGuide();
+      this.newChart.setOption(this.guideData);
+      this.newChart.on("click", e => {
+        let id = this.selectGuide[e.dataIndex].value;
+        this.$store.dispatch("report/getOperaGuideDetail", {
+          storecode: this.storeCode,
+          outlet: this.outlet,
+          userid: id,
+          startDate: this.startDate,
+          endDate: this.endDate
+        });
+        this.breadData.push({
+          label: e.name,
+          value: id,
+          level: 3
+        });
+        this.newChart.off("click");
+      });
     },
     operaGuideCurrentMonth: function(val) {
       // console.log(val);
@@ -127,13 +148,15 @@ export default {
       this.detailData.series[0].data = val.scan;
       this.detailData.series[1].data = val.reg;
       this.detailData.series[2].data = val.bind;
-      this.setDetail();
+      // this.setDetail();
+      this.newChart.setOption(this.detailData);
     }
   },
   computed: {},
   data() {
     return {
-      storecode: this.$store.state.storeCode,
+      // storecode: this.$store.state.storeCode,
+      newChart: null,
       total: true,
       guideSwitch: true,
       guide: null,
@@ -153,6 +176,7 @@ export default {
       selectGuide: [],
       containerHeight: 600,
       loading: null,
+      breadData: [{ label: "新客统计分析", level: 1 }],
       loadAttr: {
         target: "#newChart",
         fullscreen: false,
@@ -311,16 +335,25 @@ export default {
           {
             name: "扫码",
             type: "line",
+            symbol: "circle",
+            symbolSize: 6,
+            smooth: true,
             data: this.operaGuideCurrentMonth.scan
           },
           {
             name: "绑定",
             type: "line",
+            symbol: "circle",
+            symbolSize: 6,
+            smooth: true,
             data: this.operaGuideCurrentMonth.bind
           },
           {
             name: "注册",
             type: "line",
+            symbol: "circle",
+            symbolSize: 6,
+            smooth: true,
             data: this.operaGuideCurrentMonth.reg
           }
         ]
@@ -330,89 +363,88 @@ export default {
   created() {},
   mounted() {
     this.loading = Loading.service(this.loadAttr);
-    // let chart = echarts.init(document.getElementById('newChart'));
-    // let randomData = [];
-    // let randomData1 = [];
-    // let randomData2 = [];
-    // for (let i = 0; i < 12; i++) {
-    //     randomData.push(parseInt(Math.random() * 100));
-    //     randomData1.push(parseInt(Math.random() * 100));
-    //     randomData2.push(parseInt(Math.random() * 100));
-    // }
-    // let newChart = echarts.init(document.getElementById('newChart'));
-    // chart.setOption(option);
-    // this.Height = this.operaMainSeries.scan.length / 25 * 400 + 200;
-    // this.totalScan = this.operaMainSeries.totalScan;
-    // this.totalReg = this.operaMainSeries.totalReg;
-    // this.totalBind = this.operaMainSeries.totalBind;
-    // this.scanAvg = (this.operaMainSeries.totalScan /
-    //   this.operaMainSeries.scan.length
-    // ).toFixed(1);
-    // this.regAvg = (this.operaMainSeries.totalReg /
-    //   this.operaMainSeries.scan.length
-    // ).toFixed(1);
-    // this.bindAvg = (this.operaMainSeries.totalBind /
-    //   this.operaMainSeries.scan.length
-    // ).toFixed(1);
-    // this.operaData.yAxis.data = this.operaMainSeries.name;
-    // this.operaData.series[0].data = this.operaMainSeries.scan;
-    // this.operaData.series[1].data = this.operaMainSeries.bind;
-    // this.operaData.series[2].data = this.operaMainSeries.reg;
-    // this.selectStore = this.operaMainSeries.sel;
-    // this.setOpera();
-    // console.log(this.operaMainSeries.sel);
+    this.newChart = echarts.init(document.getElementById("newChart"));
+    this.newChart.on("click", e => {
+      let id = this.selectStore[e.dataIndex].value;
+      this.breadData.push({
+        label: e.name,
+        value: id,
+        level: 2
+      });
+      // console.log(e);
+      this.outlet = id;
+      this.guideSwitch = false;
+      this.total = false;
+      this.guide = "";
+      this.$store.dispatch("report/getOperaGuide", {
+        storecode: this.storeCode,
+        outlet: id,
+        startDate: this.startDate,
+        endDate: this.endDate
+      });
+      this.newChart.off("click");
+    });
+    this.startDate = new Date().Format("yyyyMM") + "01";
+    this.endDate = new Date().Format("yyyyMMdd");
   },
   updated() {},
   activated() {},
+  computed: {
+    storeCode() {
+      return (
+        this.$store.state.storeCode || window.localStorage.getItem("storecode")
+      );
+    }
+  },
   methods: {
-    Dom(e) {
-      return echarts.init(document.getElementById("newChart"));
-    },
-    closeLoad() {
-      this.loading.close();
-      //   console.log(this.loading);
-    },
-    setOpera() {
-      let operaChart = this.Dom();
-      // operaChart.resize({
-      //   Height: this.containerHeight
-      // });
-      operaChart.setOption(this.operaData);
-      operaChart.on("click", e => {
-        let id = this.selectStore[e.dataIndex].value;
-        this.outlet = id;
-        this.guideSwitch = false;
-        this.total = false;
-        this.guide = "";
-        this.$store.dispatch("report/getOperaGuide", {
-          storecode: this.storecode,
-          outlet: id,
-          // startDate: this.startDate,
-          // endDate: this.endDate,
-          startDate: "20171001",
-          endDate: "20171030"
-        });
-        operaChart.dispose();
-      });
-    },
-    setGuide() {
-      let guideChart = this.Dom();
-      // guideChart.resize({
-      //     Height: this.Height
-      // });
-      guideChart.setOption(this.guideData);
-      guideChart.on("click", e => {
-        let id = this.selectGuide[e.dataIndex].value;
-        this.$store.dispatch("report/getOperaGuideDetail", {
-          storecode: this.storecode,
-          outlet: this.outlet,
-          userid: id,
-          // startDate: this.startDate,
-          // endDate: this.endDate
-          startDate: "20171001",
-          endDate: "20171030"
-        });
-      });
+    // add(){
+    //   this.breadData.push({label:'南湖店'+count,value:2});
+    //   count++;
+    // },
+    breadClick(item) {
+      // console.log(item);
+      switch (item.level) {
+        case 1:
+          this.newChart.setOption(this.operaData);
+          this.newChart.on("click", e => {
+            // console.log(this.selectStore,e)
+            let outletid = this.selectStore[e.dataIndex].value;
+            this.outlet = outletid;
+            this.$store.dispatch("report/getOperaGuide", {
+              storecode: this.storeCode,
+              outlet: outletid,
+              startDate: this.startDate,
+              endDate: this.endDate
+            });
+            this.breadData.push({
+              label: e.name,
+              value: outletid,
+              level: 2
+            });
+            this.newChart.off("click");
+          });
+          break;
+        // case 2:
+        //   this.newChart.setOption(this.guideData);
+        //   this.newChart.on("click", e => {
+        //     // console.log(this.selectStore, e);
+        //     let userid = this.selectGuide[e.dataIndex].value;
+        //     this.breadData.push({
+        //       label: e.name,
+        //       value: userid,
+        //       level: 3
+        //     });
+        //     this.$store.dispatch("report/getOperaGuideDetail", {
+        //       storecode: this.storeCode,
+        //       outlet: this.outlet,
+        //       userid: userid,
+        //       startDate: this.startDate,
+        //       endDate: this.endDate
+        //     });
+        //     this.newChart.off("click");
+        //   });
+        //   break;
+      }
     },
     dateSelect(e) {
       if (e) {
@@ -422,32 +454,12 @@ export default {
         this.startDate = startDate;
         this.endDate = endDate;
         this.$store.dispatch("report/getOperaMain", {
-          storecode: this.storecode,
+          storecode: this.storeCode,
           startDate: startDate,
           endDate: endDate
         });
-        this.setOpera();
+        this.newChart.setOption(this.operaData);
       }
-    },
-    setDetail() {
-      let detailChart = this.Dom();
-      // detailChart.resize({
-      //     Height: this.Height
-      // });
-      detailChart.setOption(this.detailData);
-    },
-    select(e) {
-      // console.log(e);
-      // this.outlet = e;
-      // this.guideSwitch = false;
-      // this.total = false;
-      // this.guide = '';
-      // this.$store.dispatch('report/getOperaGuide', { storecode: this.storecode, outlet: e });
-    },
-    selectguide(e) {
-      // console.log(e);
-      // this.$store.dispatch('report/getOperaGuideDetail', { storecode: this.storecode, outlet: this.outlet, userid: e });
-      // this.setDetail();
     }
   }
 };
@@ -554,11 +566,3 @@ export default {
         background: #f6554c; */
 }
 </style>
-<!-- <el-select v-model="value" placeholder="选择门店" @change="select" size="small" class="w150 m5">
-  <el-option v-for="item in selectStore" :key="item.value" :label="item.label" :value="item.value">
-</el-option>
- </el-select>
-  <el-select v-model="guide" placeholder="选择导购" size="small" class="m5 w100" :disabled="guideSwitch" @change="selectguide">
-<el-option v-for="item in selectGuide" :key="item.value" :label="item.label" :value="item.value">
- </el-option>
-  </el-select> -->

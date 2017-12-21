@@ -1,69 +1,74 @@
 <template>
-    <div class="container">
-        <el-row :gutter="15" style="margin-top: 20px;">
-            <el-col :span="24">
-                <el-card>
-                    <div slot="header" class="clearfix">
-                        <span style="line-height: 36px;">
-                            <i class="fa fa-handshake-o" aria-hidden="true"></i>维护客户交易人数分析
-                        </span>
-                    </div>
-                    <div class="flex column person">
-                        <div class="flex btns center">
-                            <el-button size="small" @click="lastMonth">上月</el-button>
-                            <el-button @click="lastYear" size="small">去年</el-button>
-                            <el-date-picker v-model="dimTime" type="daterange" placeholder="选择日期范围" @change="dateSelect" size="small m5" class="distance w200">
-                            </el-date-picker>
-                        </div>
-                        <div class="flex row main">
-                            <div class="flex note column" :style="{width:'180px'}">
-                                <span class="flex saleimg"></span>
-                                <span class="flex center column">
-                                    <span class="flex">30天未购买(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{threeTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{threeAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex center column">
-                                    <span class="flex">0-7天(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{zeroTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{zeroAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex center column">
-                                    <span class="flex">7-15天(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{oneTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{oneAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex center column">
-                                    <span class="flex">15-30天(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{twoTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{twoAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex column annotation">
-                                    <span class="flex">
-                                        <span>注释</span>
-                                    </span>
-                                    <span class="flex">1.此表统计:在所选时间段内发生联系的客户，自联系时间起后30天自然天购买和未购买的客户数量详情;</span>
-                                    <span>2.默认数据为上周总人数，可进行快捷切换选择;</span>
-                                    <span>3."均值":总人数/门店数,便于各门店与平均数据的对比;</span>
-                                    <span class="flex">4.同一客户多次购买只算一次就近计算</span>
-                                </span>
-                            </div>
-                            <div class="flex" :style="{width:'85%', height:'400px'}" id="person">
-                            </div>
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-        </el-row>
-    </div>
+  <div class="container">
+    <el-row :gutter="15" style="margin-top: 20px;">
+      <el-col :span="24">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">
+              <i class="fa fa-handshake-o" aria-hidden="true"></i>
+              <span class="chart-title">维护客户交易人数分析</span>
+            </span>
+          </div>
+          <div class="flex column person">
+            <div class="flex btns center">
+              <el-button size="small" @click="lastMonth">上月</el-button>
+              <el-button @click="lastYear" size="small">去年</el-button>
+              <el-date-picker v-model="dimTime" type="daterange" placeholder="选择日期范围" @change="dateSelect" size="small m5" class="distance w200">
+              </el-date-picker>
+            </div>
+            <div class="flex row main">
+              <div class="flex note column" :style="{width:'180px'}">
+                <span class="flex saleimg"></span>
+                <span class="flex center column">
+                  <span class="flex">30天未购买(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="threeTotal">{{threeTotal}}</span>
+                    <span class="text-gray" v-if="threeAvg">(均值
+                      <span class="text-yellow">{{threeAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">0-7天(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="zeroTotal">{{zeroTotal}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow" v-if="zeroAvg">{{zeroAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">7-15天(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="oneTotal">{{oneTotal}}</span>
+                    <span class="text-gray" v-if="oneAvg">(均值
+                      <span class="text-yellow">{{oneAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">15-30天(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="twoTotal">{{twoTotal}}</span>
+                    <span class="text-gray" v-if="twoAvg">(均值
+                      <span class="text-yellow">{{twoAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex column annotation">
+                  <span class="flex">
+                    <span>注释</span>
+                  </span>
+                  <span class="flex">1.此表统计:在所选时间段内发生联系的客户，自联系时间起后30天自然天购买和未购买的客户数量详情;</span>
+                  <span>2.默认数据为上周总人数，可进行快捷切换选择;</span>
+                  <span>3."均值":总人数/门店数,便于各门店与平均数据的对比;</span>
+                  <span class="flex">4.同一客户多次购买只算一次就近计算</span>
+                </span>
+              </div>
+              <div class="flex" :style="{width:'85%', height:'400px'}" id="person">
+              </div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -85,9 +90,15 @@ export default {
     operDealNumSeries: function(val) {
       //   console.log(val);
       this.numberData.xAxis[0].data = val.name;
-      this.numberData.series[1].data = val.data;
+      this.numberData.series[1].data = val.data.zero;
+      this.numberData.series[2].data = val.data.one;
+      this.numberData.series[3].data = val.data.two;
       this.zeroTotal = val.zero;
       this.zeroAvg = val.avgzero;
+      this.oneTotal = val.one;
+      this.oneAvg = val.avgone;
+      this.twoTotal = val.two;
+      this.twoAvg = val.avgztwo;
       this.closeLoad();
       this.setNumber();
     }
@@ -95,17 +106,17 @@ export default {
   computed: {},
   data() {
     return {
-      storecode: this.$store.state.storeCode,
+      // storecode: this.$store.state.storeCode,
       checked: true,
       dimTime: "",
-      zeroTotal: "",
-      zeroAvg: "",
-      oneTotal: "",
-      oneAvg: "",
-      twoTotal: "",
-      twoAvg: "",
-      threeTotal: "",
-      threeAvg: "",
+      zeroTotal: 0,
+      zeroAvg: 0,
+      oneTotal: 0,
+      oneAvg: 0,
+      twoTotal: 0,
+      twoAvg: 0,
+      threeTotal: 0,
+      threeAvg: 0,
       loading: null,
       loadAttr: {
         target: "#person",
@@ -116,6 +127,12 @@ export default {
         color: ["#0d6bb2", "#128dd8", "#4cb7ed", "#97e2ff"],
         legend: {
           data: ["未购买", "0-7天", "7-15天", "15-30天"]
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow"
+          }
         },
         xAxis: [
           {
@@ -179,6 +196,13 @@ export default {
   },
   updated() {},
   activated() {},
+  computed: {
+    storeCode() {
+      return (
+        this.$store.state.storeCode || window.localStorage.getItem("storecode")
+      );
+    }
+  },
   methods: {
     setNumber() {
       let numChart = echarts.init(document.getElementById("person"));
@@ -195,7 +219,7 @@ export default {
         this.startDate = startDate;
         this.endDate = endDate;
         this.$store.dispatch("report/getOperaDealNum", {
-          storecode: this.storecode,
+          storecode: this.storeCode,
           startDate: startDate,
           endDate: endDate
         });
@@ -208,7 +232,7 @@ export default {
       let startDate = preMonth + "01";
       let endDate = preMonth + "31";
       this.$store.dispatch("report/getOperaDealNum", {
-        storecode: this.storecode,
+        storecode: this.storeCode,
         startDate: startDate,
         endDate: endDate
       });
@@ -218,7 +242,7 @@ export default {
       let startDate = date + "0101";
       let endDate = date + "1231";
       this.$store.dispatch("report/getOperaDealNum", {
-        storecode: this.storecode,
+        storecode: this.storeCode,
         startDate: startDate,
         endDate: endDate
       });
@@ -268,6 +292,9 @@ export default {
 .text-yellow {
   color: #f8a219;
 }
+/* #person {
+  padding-bottom: 30px;
+} */
 .note {
   font-size: 14px;
   border: 1px solid #a0a0a0;

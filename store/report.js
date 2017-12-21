@@ -111,12 +111,15 @@ export const state = {
         monthNewTotal: [],
         monthNewDetail: [],
         saleTotal: [],
+        saleTotalStore: [],
         saleTotalDim: [],
         saleDimension: [],
         saleDimCompare: [],
         saleDimStore: [],
         saleDimGuide: [],
         saleOrder: [],
+        orderAvgamount: [],
+        saleOrderGuide: [],
         saleOrderDim: [],
         saleTimes: [],
         saleTimeDim: [],
@@ -126,8 +129,24 @@ export const state = {
         operaDealTimes: [],
         operaDealPrice: [],
         memberGeo: [],
+        mebmerAxis: [],
         storeList: [],
-        guideList: []
+        guideList: [],
+        // 大屏数据中心
+        screenSaleroom: [],
+        screenSalesingle: [],
+        screenRelated: [],
+        screenBrand: [],
+        topTen: [],
+        // tenBynumber: [],
+        // tenBymember: [],
+        screenTodaySale: [],
+        screenTodayTarget: [],
+        screenHourSale: [],
+        screenSevenSale: [],
+        screenSaleSpread: [],
+        screenNewtarget: null,
+        screenMemberconsum: []
     }
 }
 
@@ -449,11 +468,25 @@ export const mutations = {
     setSaleOrder(state, datas) {
         state.datasource.saleOrder = datas;
     },
+    //客户订单分析-平均客单价-Avgamount
+    setOrderAvgamount(state, datas) {
+        state.datasource.orderAvgamount = datas;
+    },
+    //客户订单分析-平均客单价-导购数据
+    setSaleOrderGuide(state, datas) {
+        state.datasource.saleOrderGuide = datas;
+    },
+    //总销售数据分析
     setSaleTotal(state, datas) {
         state.datasource.saleTotal = datas;
     },
+    //总销售数据对比
     setSaleTotalDim(state, datas) {
         state.datasource.saleTotalDim = datas;
+    },
+    //总销售数据门店详情
+    setSaleTotalStore(state, datas) {
+        state.datasource.saleTotalStore = datas;
     },
     //多维度销售数据
     setSaleDimension(state, datas) {
@@ -508,6 +541,190 @@ export const mutations = {
     //会员地理分布
     setMemberGeo(state, datas) {
         state.datasource.memberGeo = datas;
+    },
+    //会员生理轴分布
+    setMemberAxis(state, datas) {
+        state.datasource.mebmerAxis = datas;
+    },
+    // 大屏数据中心
+    setScreenSaleRoom(state, datas) {
+        const data = [];
+        datas.forEach(e => {
+            data.push(e['amount'] ? e['amount'].toFixed(2) : 0)
+        })
+        data.unshift('销售额');
+        state.datasource.screenSaleroom = data;
+    },
+    setScreenSaleSingle(state, datas) {
+        const data = [];
+        datas.forEach(e => {
+            e['kedanjia'] ? data.push(e['kedanjia'].toFixed(2)) : data.push(0)
+        })
+        data.unshift('客单价');
+        state.datasource.screenSalesingle = data;
+    },
+    setScreenRelated(state, datas) {
+        const data = [];
+        datas.forEach(e => {
+            e['apr'] ? data.push(e['apr']) : data.push(0);
+        })
+        data.unshift('连带率');
+        state.datasource.screenRelated = data;
+    },
+    setScreenBrand(state, datas) {
+        const data = [];
+        datas.forEach(e => {
+            data.push({
+                value: e['amount'],
+                name: e['top_category_offline_name'] ? e['top_category_offline_name'] : '未知'
+            })
+        })
+        state.datasource.screenBrand = data;
+    },
+    setTopTen(state, datas) {
+        const data = [];
+        datas.forEach((e, i) => {
+            data.push({
+                index: i + 1,
+                brandName: e['offline_name'],
+                saleroom: e['amount'],
+                salevolume: e['num'],
+                member: e['user_num']
+            })
+        });
+        state.datasource.topTen = data;
+    },
+    setTenBynumber(state, datas) {
+        const data = [];
+        datas.forEach((e, i) => {
+            data.push({
+                index: i + 1,
+                brandName: e['offline_name'],
+                saleroom: e['amount'] ? e['amount'].toFixed(2) : 0,
+                salevolume: e['num'],
+                member: e['user_num']
+            })
+        });
+        state.datasource.tenBynumber = data;
+    },
+    setTenBymember(state, datas) {
+        const data = [];
+        datas.forEach((e, i) => {
+            data.push({
+                index: i + 1,
+                brandName: e['offline_name'],
+                saleroom: e['amount'],
+                salevolume: e['num'],
+                member: e['user_num']
+            })
+        });
+        state.datasource.tenBymember = data;
+    },
+    setScreenTodaysale(state, datas) {
+        const data = [];
+        datas.forEach(e => {
+            data.push(e['all_amount']);
+        })
+        state.datasource.screenTodaySale = data;
+    },
+    setScreenTodaytarget(state, datas) {
+        const data = [];
+        datas.forEach(e => {
+            data.push(e['day_target_value']);
+        })
+        state.datasource.screenTodayTarget = data;
+    },
+    setScreenHourSale(state, datas) {
+        const data = [
+            [],
+            []
+        ];
+        datas.forEach(e => {
+            data[0].push(e['hour_amount']);
+            data[1].push(e['hour'] + ':00');
+        })
+        state.datasource.screenHourSale = data;
+    },
+    setScreenSevensale(state, datas) {
+        const data = [];
+        datas.forEach(e => {
+            data.push(e['hour_amount'].toFixed(2));
+        })
+        state.datasource.screenSevenSale = data;
+    },
+    setScreenSalespread(state, datas) {
+        const option = [
+            [],
+            [],
+            []
+        ];
+        datas.forEach(e => {
+            option[0].push(e['day_amount']);
+            option[1].push(e['day_target'].toFixed(2))
+                // option[1].push(1)
+            option[2].push(e['store_outlet_name'])
+        })
+        state.datasource.screenSaleSpread = option;
+    },
+    setScreenNewtarget(state, datas) {
+        let data = null;
+        datas.forEach(e => {
+            e['day_target_value'] ? data = e['day_target_value'].toFixed(2) : data = 0;
+        })
+        state.datasource.screenNewtarget = data;
+    },
+    setScreenMemberconsum(state, datas) {
+        const data = [];
+        datas.forEach((e, index) => {
+            switch (e['age_group']) {
+                case '1':
+                    data.push(['孕早期', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '2':
+                    data.push(['孕中期', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '3':
+                    data.push(['孕晚期', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '4':
+                    data.push(['0-3个月', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '5':
+                    data.push(['3-6个月', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '6':
+                    data.push(['6-9个月', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '7':
+                    data.push(['9-12个月', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '8':
+                    data.push(['1岁-1岁半', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '9':
+                    data.push(['1岁半-2岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '10':
+                    data.push(['2岁-2岁半', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '11':
+                    data.push(['2岁半-3岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '12':
+                    data.push(['3岁-4岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '13':
+                    data.push(['4岁-5岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '14':
+                    data.push(['5岁-6岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+                case '15':
+                    data.push(['6岁以上', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    break;
+            }
+        })
+        state.datasource.screenMemberconsum = data;
     }
 }
 
@@ -1012,8 +1229,8 @@ export const actions = {
     //             }
     //         })
     // },
-    getMonthSale({ commit }, { storecode }) {
-        return axios.get(`/api/report/home/saleDetail?storecode=${storecode}`)
+    getMonthSale({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/home/saleDetail?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setMonthChart', resp.data.rows)
             }).catch((error) => {
@@ -1022,8 +1239,8 @@ export const actions = {
                 }
             })
     },
-    getMonthNewmember({ commit }, { storecode }) {
-        return axios.get(`/api/report/home/newDetail?storecode=${storecode}`)
+    getMonthNewmember({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/home/newDetail?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setMonthNewDetail', resp.data.rows)
             })
@@ -1033,8 +1250,8 @@ export const actions = {
                 }
             })
     },
-    getGuideNew({ commit }, { storecode, outletId }) {
-        return axios.get(`/api/report/home/getGuide?storecode=${storecode}&outletId=${outletId}`)
+    getGuideNew({ commit }, { storecode, outletId, startDate, endDate }) {
+        return axios.get(`/api/report/home/getGuide?storecode=${storecode}&outletId=${outletId}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setGuideSeries', resp.data.rows)
             })
@@ -1044,8 +1261,8 @@ export const actions = {
                 }
             })
     },
-    getGuideSale({ commit }, { storecode, outletId }) {
-        return axios.get(`/api/report/home/getSaleGuide?storecode=${storecode}&outletId=${outletId}`)
+    getGuideSale({ commit }, { storecode, outletId, startDate, endDate }) {
+        return axios.get(`/api/report/home/getSaleGuide?storecode=${storecode}&outletId=${outletId}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleGuideSeries', resp.data.rows)
             })
@@ -1055,6 +1272,7 @@ export const actions = {
                 }
             })
     },
+    //总销售数据分析
     getSaleTotal({ commit }, { storecode, startDate, endDate }) {
         return axios.get(`/api/report/sale/total?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
@@ -1066,6 +1284,18 @@ export const actions = {
                 }
             })
     },
+    getSaleToalStore({ commit }, { storecode, startDate, endDate, outletId }) {
+        return axios.get(`/api/report/saleTotal/store?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}&outletId=${outletId}`)
+            .then((resp) => {
+                commit('setSaleTotalStore', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //总销售对比数据
     getSaleTotalDim({ commit }, { storecode, startDate, endDate }) {
         return axios.get(`/api/report/sale/totalDim?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
@@ -1125,10 +1355,34 @@ export const actions = {
                 }
             })
     },
+    //客户订单分析-门店平均客单价
     getSaleOrder({ commit }, { storecode, startDate, endDate }) {
         return axios.get(`/api/report/sale/order?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleOrder', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    getSaleOrderAvgamount({ commit }, { storecode, startDate, endDate }) {
+        return axios.get(`/api/report/sale/orderAmount?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
+            .then((resp) => {
+                commit('setOrderAvgamount', resp.data.rows)
+            }).catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+
+    //客户订单分析-门店平均客单价-导购
+    getSaleOrderGuide({ commit }, { storecode, startDate, endDate, outletId }) {
+        return axios.get(`/api/report/saleOrderSingle?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}&outletId=${outletId}`)
+            .then((resp) => {
+                commit('setSaleOrderGuide', resp.data.rows)
             })
             .catch((error) => {
                 if (error.response.status === 500) {
@@ -1250,6 +1504,18 @@ export const actions = {
                 }
             })
     },
+    //生理轴分布
+    getMemberAxis({ commit }, { storecode }) {
+        return axios.get(`/api/report/member/axis`)
+            .then((resp) => {
+                commit('setMemberAxis', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
     getStoreList({ commit }, { storecode }) {
         return axios.get(`/api/report/sale/sotreList?storecode=${storecode}`)
             .then((resp) => {
@@ -1304,5 +1570,173 @@ export const actions = {
             })
             .then(res => res)
             .catch(err => console.log(err));
+    },
+    // 大屏数据中心
+    getScreenSaleRoom({ commit }, { storecode }) {
+        return axios.get(`/api/screen/saleroom?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenSaleRoom', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //客单价
+    getScreenSaleSingle({ commit }, { storecode }) {
+        return axios.get(`/api/screen/saleSingle?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenSaleSingle', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //连带率
+    getScreenRelated({ commit }, { storecode }) {
+        return axios.get(`/api/screen/related?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenRelated', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //品类销售排行
+    getScreenBrand({ commit }, { storecode }) {
+        return axios.get(`/api/screen/brand?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenBrand', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //品牌top10
+    getTopTen({ commit }, { storecode }) {
+        return axios.get(`/api/screen/topten?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setTopTen', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //top10-销量
+    getTenBynumber({ commit }, { storecode }) {
+        return axios.get(`/api/screen/tenbynumber?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setTopTen', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //top10-会员交易数
+    getTenBymember({ commit }, { storecode }) {
+        return axios.get(`/api/screen/tenbymember?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setTopTen', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //今日销售额
+    getScreenTodaySale({ commit }, { storecode }) {
+        return axios.get(`/api/screen/todaysale?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenTodaysale', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //今日销目标
+    getScreenTodayTarget({ commit }, { storecode }) {
+        return axios.get(`/api/screen/todaytarget?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenTodaytarget', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //小时销售
+    getScreenHourSale({ commit }, { storecode }) {
+        return axios.get(`/api/screen/hoursale?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenHourSale', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //最近七天销售
+    getScreenSevenSale({ commit }, { storecode }) {
+        return axios.get(`/api/screen/sevensale?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenSevensale', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //门店销售分布
+    getScreenSaleSpread({ commit }, { storecode }) {
+        return axios.get(`/api/screen/salespread?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenSalespread', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //今日新客目标
+    getScreenNewtarget({ commit }, { storecode }) {
+        return axios.get(`/api/screen/newTarget?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenNewtarget', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    //会员消费贡献分布
+    getScreenMemberconsum({ commit }, { storecode }) {
+        return axios.get(`/api/screen/memberconsum?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenMemberconsum', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
     }
 }

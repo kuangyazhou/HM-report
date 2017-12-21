@@ -6,7 +6,7 @@
           <div slot="header" class="clearfix">
             <span style="line-height: 36px;">
               <i class="fa fa-money" aria-hidden="true"></i>
-              <span class="chart-title">维护客户购买单价分析</span>
+              <span class="chart-title">客户购买单价分析</span>
             </span>
             <!-- <el-button style="float: right;" icon="star-off" type="primary">收藏</el-button> -->
           </div>
@@ -114,22 +114,22 @@ export default {
       this.priceData.xAxis[0].data = val.name;
       this.priceData.series[0].data = val.oneData.series;
       this.oneTotal = val.oneData.total;
-      this.oneAvg = val.oneData.avg ? val.oneData.avg : 0;
+      this.oneAvg = val.oneData.avg;
       this.priceData.series[1].data = val.twoData.series;
       this.twoTotal = val.twoData.total;
-      this.twoAvg = val.twoData.avg ? val.twoData.avg : 0;
+      this.twoAvg = val.twoData.avg;
       this.priceData.series[2].data = val.threeData.series;
       this.threeTotal = val.threeData.total;
-      this.threeAvg = val.threeData.avg ? val.threeData.avg : 0;
+      this.threeAvg = val.threeData.avg;
       this.priceData.series[3].data = val.fiveData.series;
       this.fiveTotal = val.fiveData.total;
-      this.fiveAvg = val.fiveData.avg ? val.fiveData.avg : 0;
+      this.fiveAvg = val.fiveData.avg;
       this.priceData.series[4].data = val.tenData.series;
       this.tenTotal = val.tenData.total;
-      this.tenAvg = val.tenData.avg ? val.tenData.avg : 0;
+      this.tenAvg = val.tenData.avg;
       this.priceData.series[5].data = val.thousandData.series;
       this.thousandTotal = val.thousandData.total;
-      this.thousandAvg = val.thousandData.avg ? val.thousandData.avg : 0;
+      this.thousandAvg = val.thousandData.avg;
       this.closeLoad();
       this.setPrice();
     }

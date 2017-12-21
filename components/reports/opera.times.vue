@@ -1,84 +1,91 @@
 <template>
-    <div class="container">
-        <el-row :gutter="15" style="margin-top: 20px;">
-            <el-col :span="24">
-                <el-card>
-                    <div slot="header" class="clearfix">
-                        <span style="line-height: 36px;">
-                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>维护客户购买次数分析
-                        </span>
-                        <!-- <el-button style="float: right;" icon="star-off" type="primary">收藏</el-button> -->
-                    </div>
-                    <div class="flex column person">
-                        <div class="flex btns center">
-                            <el-button size="small">上周</el-button>
-                            <el-button size="small">上月</el-button>
-                            <el-date-picker v-model="dimTime" v-if="checked" type="daterange" placeholder="选择日期范围" size="small m5" class="distance w200">
-                            </el-date-picker>
-                        </div>
-                        <div class="flex row main">
-                            <div class="flex note column center" :style="{width:'180px'}">
-                              <span class="flex saleimg"></span>
-                                <span class="flex center column">
-                                    <span class="flex">未购买(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{zeroTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{zeroAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex center column">
-                                    <span class="flex">1次(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{oneTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{oneAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex center column">
-                                    <span class="flex">2次(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{twoTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{twoAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex center column">
-                                    <span class="flex">3次(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{threeTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{threeAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex center column">
-                                    <span class="flex">4次(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{fourTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{fourAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex center column">
-                                    <span class="flex">4次以上(人)</span>
-                                    <span class="flex text-total center">
-                                        <span>{{fiveTotal}}</span>
-                                        <span class="text-gray">(均值<span class="text-yellow">{{fiveAvg}}</span>)</span>
-                                    </span>
-                                </span>
-                                <span class="flex column annotation">
-                                    <span class="flex">
-                                        <span>注释</span>
-                                    </span>
-                                    <span class="flex">1.此表统计:在所选时间段内发生联系的客户，自联系时间起后30天自然天购买和未购买的客户数量详情;</span>
-                                    <span>2.默认数据为上周总人数，可进行快捷切换选择;</span>
-                                    <span>3."均值":总人数/门店数,便于各门店与平均数据的对比;</span>
-                                    <span class="flex">4.同一客户多次购买只算一次就近计算</span>
-                                </span>
-                            </div>
-                            <div class="flex" :style="{width:'85%', height:'500px'}" id="times">
-                            </div>
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-        </el-row>
-    </div>
+  <div class="container">
+    <el-row :gutter="15" style="margin-top: 20px;">
+      <el-col :span="24">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">
+              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+              <span class="chart-title">客户购买次数分析</span>
+            </span>
+            <!-- <el-button style="float: right;" icon="star-off" type="primary">收藏</el-button> -->
+          </div>
+          <div class="flex column person">
+            <div class="flex btns center">
+              <el-button size="small">上周</el-button>
+              <el-button size="small">上月</el-button>
+              <el-date-picker v-model="dimTime" v-if="checked" type="daterange" placeholder="选择日期范围" size="small m5" class="distance w200">
+              </el-date-picker>
+            </div>
+            <div class="flex row main">
+              <div class="flex note column center" :style="{width:'180px'}">
+                <span class="flex saleimg"></span>
+                <span class="flex center column">
+                  <span class="flex">未购买(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="zeroTotal">{{zeroTotal}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow" v-if="zeroAvg">{{zeroAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">1次(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="oneTotal">{{oneTotal}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow" v-if="oneAvg">{{oneAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">2次(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="twoTotal">{{twoTotal}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow" v-if="twoAvg">{{twoAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">3次(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="threeTotal">{{threeTotal}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow" v-if="threeAvg">{{threeAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">4次(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="fourTotal">{{fourTotal}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow" v-if="fourAvg">{{fourAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex center column">
+                  <span class="flex">4次以上(人)</span>
+                  <span class="flex text-total center">
+                    <span v-if="fiveTotal">{{fiveTotal}}</span>
+                    <span class="text-gray">(均值
+                      <span class="text-yellow" v-if="fiveAvg">{{fiveAvg}}</span>)</span>
+                  </span>
+                </span>
+                <span class="flex column annotation">
+                  <span class="flex">
+                    <span>注释</span>
+                  </span>
+                  <span class="flex">1.此表统计:在所选时间段内发生联系的客户，自联系时间起后30天自然天购买和未购买的客户数量详情;</span>
+                  <span>2.默认数据为上周总人数，可进行快捷切换选择;</span>
+                  <span>3."均值":总人数/门店数,便于各门店与平均数据的对比;</span>
+                  <span class="flex">4.同一客户多次购买只算一次就近计算</span>
+                </span>
+              </div>
+              <div class="flex" :style="{width:'85%', height:'500px'}" id="times">
+              </div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -228,6 +235,13 @@ export default {
   },
   updated() {},
   activated() {},
+  computed: {
+    storeCode() {
+      return (
+        this.$store.state.storeCode || window.localStorage.getItem("storecode")
+      );
+    }
+  },
   methods: {
     Dom(e) {
       return echarts.init(document.getElementById(e));

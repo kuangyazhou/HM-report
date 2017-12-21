@@ -1,77 +1,78 @@
 <template>
-    <div class="container">
-        <el-row :gutter="15" style="margin-top: 20px;">
-            <el-col :span="24">
-                <el-card>
-                    <div slot="header" class="clearfix">
-                        <span style="line-height: 36px;">
-                            <i class="fa fa-bar-chart" aria-hidden="true"></i>多维度销售数据分析
-                        </span>
-                    </div>
-                    <div class="flex column dim">
-                        <div class="flex btns center">
-                            <el-autocomplete class="inline-input w150" size="small" v-model="brandId" :fetch-suggestions="querySearch" placeholder="请输入品牌名称" :trigger-on-focus="false" @select="handleSelect">
-                            </el-autocomplete>
-                            <el-select v-model="value" placeholder="选择门店" @change="storeSelect" size="small" class="w150 m5">
-                                <el-option v-for="item in storeData" :key="item.value" :label="item.label" :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <el-select v-model="value1" placeholder="选择导购" @change="guideSelect" :disabled="guideSwitch" size="small" class="w150 m5">
-                                <el-option v-for="item in guideData" :key="item.value" :label="item.label" :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <!-- <el-select v-model="value2" placeholder="本月" @change="select" size="small" class="w150 m5">
+  <div class="container">
+    <el-row :gutter="15" style="margin-top: 20px;">
+      <el-col :span="24">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">
+              <i class="fa fa-bar-chart" aria-hidden="true"></i>
+              <span class="chart-title">多维度销售数据分析</span>
+            </span>
+          </div>
+          <div class="flex column dim">
+            <div class="flex btns center">
+              <el-autocomplete class="inline-input w150" size="small" v-model="brandId" :fetch-suggestions="querySearch" placeholder="请输入品牌名称" :trigger-on-focus="false" @select="handleSelect">
+              </el-autocomplete>
+              <el-select v-model="value" placeholder="选择门店" @change="storeSelect" size="small" class="w150 m5">
+                <el-option v-for="item in storeData" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+              <el-select v-model="value1" placeholder="选择导购" @change="guideSelect" :disabled="guideSwitch" size="small" class="w150 m5">
+                <el-option v-for="item in guideData" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-select v-model="value2" placeholder="本月" @change="select" size="small" class="w150 m5">
                                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                                 </el-option>
                             </el-select> -->
-                            <el-checkbox v-model="checked" type="info" class="distance m5">数据对比</el-checkbox>
-                            <el-date-picker v-model="dimTime" v-if="checked" type="daterange" placeholder="选择日期范围" @change="dimTimeSelect" size="small" class="m5 distance w200">
-                            </el-date-picker>
-                        </div>
-                        <div class="flex row main">
-                            <div class="note flex column" :style="{width:'180px'}">
-                              <span class="flex saleimg"></span>
-                              <span class="flex center column">
-                                <span class="flex">本月总销售(元)</span>
-                                <span class="flex text-total">{{saleTotal}}</span>
-                              </span>
-                              <span class="flex center column" v-if="dimSwitch">
-                                <span class="flex">对比总销售</span>
-                                <span class="flex total-dim">{{totalDim}}</span>
-                              </span>
-                                <span class="flex avgimg"></span>
-                                <span class="flex center column">
-                                  <span class="flex">本月平均销售(元)</span>
-                                  <span class="flex text-dim">{{saleAvg}}</span>
-                                </span>
-                                <span class="flex center column" v-if="dimSwitch">
-                                  <span class="flex">对比平均销售</span>
-                                  <span class="flex avg-dim">{{avgDim}}</span>
-                                </span>
-                                <span class="flex column annotation">
-                                  <span class="flex mid">
-                                    <span class="flex circle"></span>
-                                    <span>注释</span>
-                                  </span>
-                                  <span class="flex">1.默认数据为本月总销售,可进行快捷切换选择</span>
-                                  <span class="flex">2.点击"数据对比"可选择任意时间段与当前数据进行对比</span>
-                                  <span class="flex">
-                                    3.选择下拉框可查看该门店内各导购具体销售详情
-                                  </span>
-                                </span>
-                            </div>
-                            <div id="saleDim" :style="{width:'75%',height:'600px'}">
-                            </div>
-                        </div>
-                        <div class="flex center">
-                            <el-pagination layout="prev, pager, next" :total=this.total :page-size="20" :current-page.sync="currentPage" @current-change="pageChange">
-                            </el-pagination>
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-        </el-row>
-    </div>
+              <el-checkbox v-model="checked" type="info" class="distance m5">数据对比</el-checkbox>
+              <el-date-picker v-model="dimTime" v-if="checked" type="daterange" placeholder="选择日期范围" @change="dimTimeSelect" size="small" class="m5 distance w200">
+              </el-date-picker>
+            </div>
+            <div class="flex row main">
+              <div class="note flex column" :style="{width:'180px'}">
+                <span class="flex saleimg"></span>
+                <span class="flex center column">
+                  <span class="flex">本月总销售(元)</span>
+                  <span class="flex text-total">{{saleTotal}}</span>
+                </span>
+                <span class="flex center column" v-if="dimSwitch">
+                  <span class="flex">对比总销售</span>
+                  <span class="flex total-dim">{{totalDim}}</span>
+                </span>
+                <span class="flex avgimg"></span>
+                <span class="flex center column">
+                  <span class="flex">本月平均销售(元)</span>
+                  <span class="flex text-dim">{{saleAvg}}</span>
+                </span>
+                <span class="flex center column" v-if="dimSwitch">
+                  <span class="flex">对比平均销售</span>
+                  <span class="flex avg-dim">{{avgDim}}</span>
+                </span>
+                <span class="flex column annotation">
+                  <span class="flex mid">
+                    <span class="flex circle"></span>
+                    <span>注释</span>
+                  </span>
+                  <span class="flex">1.默认数据为本月总销售,可进行快捷切换选择</span>
+                  <span class="flex">2.点击"数据对比"可选择任意时间段与当前数据进行对比</span>
+                  <span class="flex">
+                    3.选择下拉框可查看门店品牌销售详情
+                  </span>
+                </span>
+              </div>
+              <div id="saleDim" :style="{width:'75%',height:'600px'}">
+              </div>
+            </div>
+            <div class="flex center">
+              <el-pagination layout="prev, pager, next" :total=this.total :page-size="20" :current-page.sync="currentPage" @current-change="pageChange">
+              </el-pagination>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -124,7 +125,7 @@ export default {
       this.saleAvg = currency(this.saleDimensionSeries.avg, "￥");
       this.handleSeries();
       this.closeLoad();
-      this.setDim();
+      this.dimChart.setOption(this.dimData);
     },
     saleDimCompare: function(val) {
       this.dimSwitch = true;
@@ -132,7 +133,7 @@ export default {
       this.totalDim = currency(val.total, "￥");
       this.avgDim = currency(val.avg, "￥");
       this.handleCompare();
-      this.setDim();
+      this.dimChart.setOption(this.dimData);
     },
     saleDimStore: function(val) {
       // console.log(val)
@@ -141,16 +142,16 @@ export default {
       this.seriesData = val;
       this.total = val.data.length;
       this.handleSeries();
-      this.setDim();
+      this.dimChart.setOption(this.dimData);
     },
     saleDimGuide: function(val) {
       // console.log(val);
-      this.saleTotal = currency(val.total.toFixed(2), "￥");
+      this.saleTotal = currency(val.total ? val.total.toFixed(2) : 0, "￥");
       this.saleAvg = currency(val.avg, "￥");
       this.seriesData = val;
       this.total = val.data.length;
       this.handleSeries();
-      this.setDim();
+      this.dimChart.setOption(this.dimData);
     },
     storeList: function(val) {
       // console.log(val)
@@ -164,8 +165,9 @@ export default {
   computed: {},
   data() {
     return {
-      storecode: this.$store.state.storeCode,
+      // storecode: this.$store.state.storeCode,
       checked: false,
+      dimChart: null,
       dimTime: "",
       value: "",
       value1: "",
@@ -192,24 +194,6 @@ export default {
         fullscreen: false,
         text: "正在生成图表"
       },
-      options: [
-        {
-          value: "1",
-          label: "永旺店"
-        },
-        {
-          value: "2",
-          label: "徐东店"
-        },
-        {
-          value: "3",
-          label: "光谷店"
-        },
-        {
-          value: "4",
-          label: "abc"
-        }
-      ],
       dimData: {
         tooltip: {
           trigger: "axis",
@@ -269,50 +253,58 @@ export default {
   },
   created() {},
   mounted() {
+    this.dimChart = echarts.init(document.getElementById("saleDim"));
     this.storeData = this.storeList.data;
     this.loading = Loading.service(this.loadAttr);
-    // console.log(this.saleDimensionSeries);
-    // this.seriesData = this.saleDimensionSeries;
-    // this.restaurants = this.loadAll();
-    // this.total = this.saleDimensionSeries.data.length;
-    // this.saleTotal = currency(this.saleDimensionSeries.total, "￥");
-    // this.saleAvg = currency(this.saleDimensionSeries.avg, "￥");
-    // this.handleSeries();
-    // this.setDim();
   },
   updated() {},
   activated() {},
+  computed: {
+    storeCode() {
+      return (
+        this.$store.state.storeCode || window.localStorage.getItem("storecode")
+      );
+    }
+  },
   methods: {
     storeSelect(e) {
-      this.$store.dispatch("report/getSaleDimStore", {
-        storecode: this.storecode,
-        outletId: e
-      });
-      this.$store.dispatch("report/getGuideList", {
-        storecode: this.storecode,
-        outletId: e
-      });
-      this.outletId = e;
-      this.guideSwitch = false;
+      this.currentPage = 1;
+      this.brandId = "";
+      if (e) {
+        this.$store.dispatch("report/getSaleDimStore", {
+          storecode: this.storeCode,
+          outletId: e
+        });
+        this.$store.dispatch("report/getGuideList", {
+          storecode: this.storeCode,
+          outletId: e
+        });
+        this.outletId = e;
+        this.guideSwitch = false;
+      }
+      this.value1 = "";
     },
     guideSelect(e) {
-      this.$store.dispatch("report/getSaleDimGuide", {
-        storecode: this.storecode,
-        outletId: this.outletId,
-        userId: e
-      });
+      if (e) {
+        this.$store.dispatch("report/getSaleDimGuide", {
+          storecode: this.storeCode,
+          outletId: this.outletId,
+          userId: e
+        });
+      }
     },
     closeLoad() {
       this.loading.close();
     },
-    select(e) {
-      // console.log(e);
-    },
-    setDim() {
-      let dimChart = echarts.init(document.getElementById("saleDim"));
-      // this.handleSeries();
-      dimChart.setOption(this.dimData);
-    },
+    // setDim() {
+    // let dimChart = echarts.init(document.getElementById("saleDim"));
+    // dimChart.dispatchAction({
+    //   type: "showTip",
+    //   dataIndex: 2,
+    //   seriesIndex: 2
+    // });
+    // dimChart.setOption(this.dimData);
+    // },
     handleSeries(start = 0, end = 20) {
       this.dimData.yAxis.data = this.seriesData.name.slice(start, end);
       this.dimData.series[0].data = this.seriesData.data.slice(start, end);
@@ -324,8 +316,9 @@ export default {
       this.dimData.yAxis.data = [];
       this.dimData.series[0].data = [];
       this.handleSeries((e - 1) * 20, e * 20);
-      // console.log(this.dimData);
-      this.setDim();
+      this.dimData.series[1].data = [];
+      // this.dimChart.setOption(this.dimData);
+      this.dimChart.setOption(this.dimData);
     },
     querySearch(queryString, cb) {
       var restaurants = this.restaurants;
@@ -351,6 +344,22 @@ export default {
       });
       // console.log(index);
       this.currentPage = Math.ceil((index + 1) / 20);
+      this.pageChange(this.currentPage);
+      this.showTooltip(item.value);
+    },
+    showTooltip(name) {
+      let series = this.dimData.yAxis.data;
+      let pos = null;
+      for (let i = 0; i < series.length; i++) {
+        if (name == series[i]) {
+          pos = i;
+        }
+      }
+      this.dimChart.dispatchAction({
+        type: "showTip",
+        seriesIndex: 0,
+        dataIndex: pos
+      });
     },
     dimTimeSelect(e) {
       if (e) {
@@ -358,7 +367,7 @@ export default {
         let startDate = val[0].replace(/-/g, "") + "";
         let endDate = val[1].replace(/-/g, "") + "";
         this.$store.dispatch("report/getSaleDimCompare", {
-          storecode: this.storecode,
+          storecode: this.storeCode,
           startDate: startDate,
           endDate: endDate
         });

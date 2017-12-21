@@ -17,7 +17,7 @@
         <Home :currentMonthSeries="currentMonthSeries" :currentMonthNewDetail="currentMonthNewDetail" :guideNewSeries="guideNewSeries" :guideSaleSeries="guideSaleSeries" />
       </div>
       <div v-if="activePane === 'salesTotal'">
-        <SaleTotal :storeList="storeList"  :saleTotalSeries="saleTotalSeries" :saleTotalDimSeries="saleTotalDimSeries" />
+        <SaleTotal :storeList="storeList" :saleTotalSeries="saleTotalSeries" :saleTotalStore="saleTotalStore" :saleTotalDimSeries="saleTotalDimSeries" />
       </div>
       <div v-if="activePane === 'salesHot'">
         <Home :todaySeries="todaySeries" :guideSeries="guideSeries" :detailSeries="detailSeries" :yesterdaySeries="yesterdaySeries" />
@@ -26,7 +26,10 @@
         <SaleDim :saleDimensionSeries="saleDimensionSeries" :saleDimCompare="saleDimCompare" :saleDimStore="saleDimStore" :saleDimGuide="saleDimGuide" :storeList="storeList" :guideList="guideList" />
       </div>
       <div v-if="activePane === 'salesOrder'">
-        <SaleOrder :storeList="storeList" :saleOrderPrice="saleOrderPrice" :saleOrderPriceDim="saleOrderPriceDim" :slaeOrderTimes="slaeOrderTimes" :saleOrderTimeDim="saleOrderTimeDim" />
+        <SaleOrder :storeList="storeList" :saleOrderPrice="saleOrderPrice" :saleOrderSingleGuide="saleOrderSingleGuide" :saleOrderAvgamount="saleOrderAvgamount" :saleOrderPriceDim="saleOrderPriceDim" :slaeOrderTimes="slaeOrderTimes" :saleOrderTimeDim="saleOrderTimeDim" />
+      </div>
+      <div v-if="activePane==='salePrice'">
+        <SalePrice :storeList="storeList" :operaDealPriceSeries="operaDealPriceSeries" />
       </div>
       <div v-if="activePane === 'operaNew'">
         <OperaNew :storeList="storeList" :operaMainSeries="operaMainSeries" :operaGuideSeries="operaGuideSeries" :operaGuideCurrentMonth="operaGuideCurrentMonth" />
@@ -35,16 +38,13 @@
         <OperaNumber :storeList="storeList" :operDealNumSeries="operDealNumSeries" />
       </div>
       <div v-if="activePane === 'operaTimes'">
-        <OperaTimes :operDealTimesSeries="operDealTimesSeries" :storeList="storeList"/>
-      </div>
-      <div v-if="activePane === 'operaSingle'">
-        <OperaSingle :operaDealPriceSeries="operaDealPriceSeries" :storeList="storeList" />
+        <OperaTimes :operDealTimesSeries="operDealTimesSeries" :storeList="storeList" />
       </div>
       <div v-if="activePane === 'memberGeo'">
-        <MemberGeo :storeList="storeList" :memberGeoSeries="memberGeoSeries"/>
+        <MemberGeo :storeList="storeList" :memberGeoSeries="memberGeoSeries" />
       </div>
       <div v-if="activePane === 'memberLife'">
-        <MemberLife :todaySeries="todaySeries" :guideSeries="guideSeries" :detailSeries="detailSeries" :yesterdaySeries="yesterdaySeries" />
+        <MemberLife :storeList="storeList" :memberLifeAxis="memberLifeAxis" />
       </div>
       <div v-if="activePane === 'memberLoyal'">
         <MemberLoyal />
@@ -69,12 +69,12 @@ import SaleHot from "~components/reports/sales.hot.vue";
 import SaleTotal from "~components/reports/sales.total.vue";
 import SaleDim from "~components/reports/sales.dimension.vue";
 import SaleOrder from "~components/reports/sales.order.vue";
+import SalePrice from "~components/reports/sales.price.vue";
 
 //运营统计分析
 import OperaNew from "~components/reports/opera.new.vue";
 import OperaNumber from "~components/reports/opera.number.vue";
 import OperaTimes from "~components/reports/opera.times.vue";
-import OperaSingle from "~components/reports/opera.single.vue";
 
 //会员统计分析
 import MemberGeo from "~components/reports/member.geo.vue";
@@ -97,7 +97,7 @@ export default {
     OperaNew,
     OperaNumber,
     OperaTimes,
-    OperaSingle,
+    SalePrice,
     MemberGeo,
     MemberLife,
     MemberLoyal,
@@ -130,7 +130,7 @@ export default {
       case "operaTimes":
         isValidate = true;
         break;
-      case "operaSingle":
+      case "salePrice":
         isValidate = true;
         break;
       case "memberGeo":
@@ -207,10 +207,14 @@ export default {
         break;
       case "homePage":
         this.$store.dispatch("report/getMonthSale", {
-          storecode: this.storeCode
+          storecode: this.storeCode,
+          startDate: this.startDate,
+          endDate: this.endDate
         });
         this.$store.dispatch("report/getMonthNewmember", {
-          storecode: this.storeCode
+          storecode: this.storeCode,
+          startDate: this.startDate,
+          endDate: this.endDate
         });
         break;
       case "salesOrder":
@@ -218,6 +222,11 @@ export default {
           storecode: this.storeCode
         });
         this.$store.dispatch("report/getSaleOrder", {
+          storecode: this.storeCode,
+          startDate: this.startDate,
+          endDate: this.endDate
+        });
+        this.$store.dispatch("report/getSaleOrderAvgamount", {
           storecode: this.storeCode,
           startDate: this.startDate,
           endDate: this.endDate
@@ -258,7 +267,7 @@ export default {
           endDate: this.end_Date
         });
         break;
-      case "operaSingle":
+      case "salePrice":
         this.$store.dispatch("report/getStoreList", {
           storecode: this.storeCode
         });
@@ -293,6 +302,14 @@ export default {
           storecode: this.storeCode
         });
         this.$store.dispatch("report/getMemberGeo", {
+          storecode: this.storeCode
+        });
+        break;
+      case "memberLife":
+        this.$store.dispatch("report/getStoreList", {
+          storecode: this.storeCode
+        });
+        this.$store.dispatch("report/getMemberAxis", {
           storecode: this.storeCode
         });
         break;
@@ -455,8 +472,22 @@ export default {
       let datas = this.$store.state.report.datasource.saleTotal;
       datas.forEach(e => {
         option.data.push(e["member_trade_amount"].toFixed(2));
-        option.name.push(e["store_outlet_name"]);
-        option.outlet.push(e["store_outlet_id"]);
+        option.name.push(e["belong_store_outlet_name"]);
+        option.outlet.push(e["belong_store_outlet_id"]);
+        option.total += e["member_trade_amount"];
+      });
+      return option;
+    },
+    saleTotalStore() {
+      let option = {
+        data: [],
+        name: [],
+        total: null
+      };
+      let datas = this.$store.state.report.datasource.saleTotalStore;
+      datas.forEach(e => {
+        option.data.push(e["member_trade_amount"]);
+        option.name.push(e["store_outlet_guider_name"]);
         option.total += e["member_trade_amount"];
       });
       return option;
@@ -470,8 +501,8 @@ export default {
       let datas = this.$store.state.report.datasource.saleTotalDim;
       datas.forEach(e => {
         option.data.push(e["member_trade_amount"].toFixed(2));
-        option.name.push(e["store_outlet_name"]);
-        option.outlet.push(e["store_outlet_id"]);
+        option.name.push(e["belong_store_outlet_name"]);
+        option.outlet.push(e["belong_store_outlet_id"]);
       });
       return option;
     },
@@ -486,8 +517,19 @@ export default {
       };
       let datas = this.$store.state.report.datasource.saleDimension;
       datas.forEach(e => {
-        if (e["brand_offline_name"] == "不定") {
-          return;
+        if (
+          e["brand_offline_name"] == "不定" ||
+          e["brand_offline_name"] == "其他品牌" ||
+          e["brand_offline_name"] == "-"
+        ) {
+          // return;
+          option.data.push(e["member_trade_amount"].toFixed(2));
+          option.name.push("其他品牌");
+          option.brandId.push(e["brand_offline_id"]);
+          option.sel.push({
+            value: e["brand_offline_name"],
+            id: e["brand_offline_id"]
+          });
         } else {
           option.data.push(e["member_trade_amount"].toFixed(2));
           option.name.push(e["brand_offline_name"]);
@@ -541,8 +583,18 @@ export default {
       };
       let datas = this.$store.state.report.datasource.saleDimStore;
       datas.forEach(e => {
-        if (e["brand_offline_name"] == "不定") {
-          return;
+        if (
+          e["brand_offline_name"] == "不定" ||
+          e["brand_offline_name"] == "其他品牌" ||
+          e["brand_offline_name"] == "-"
+        ) {
+          option.data.push(e["member_trade_amount"].toFixed(2));
+          option.name.push("其他品牌");
+          option.brandId.push(e["brand_offline_id"]);
+          option.sel.push({
+            value: e["brand_offline_name"],
+            id: e["brand_offline_id"]
+          });
         } else {
           option.data.push(e["member_trade_amount"].toFixed(2));
           option.name.push(e["brand_offline_name"]);
@@ -567,15 +619,19 @@ export default {
         avg: null
       };
       let datas = this.$store.state.report.datasource.saleDimGuide;
-      datas.forEach(e => {
-        if (e["brand_offline_name"] == "不定") {
-          return;
-        } else {
-          option.data.push(e["member_trade_amount"]).toFixed(2);
-          option.name.push(e["brand_offline_name"]);
-        }
-        option.total += e["member_trade_amount"];
-      });
+      if (datas.length > 0) {
+        datas.forEach(e => {
+          if (e["brand_offline_name"] == "不定") {
+            return;
+          } else {
+            e["member_trade_amount"]
+              ? option.data.push(e["member_trade_amount"]).toFixed(2)
+              : option.data.push(0);
+            option.name.push(e["brand_offline_name"]);
+          }
+          option.total += e["member_trade_amount"];
+        });
+      }
       option.avg = (option.total / option.data.length).toFixed(2);
       return option;
     },
@@ -584,14 +640,37 @@ export default {
         avg: [],
         outlet: [],
         name: [],
-        total: null,
-        mean: null
       };
       let datas = this.$store.state.report.datasource.saleOrder;
       datas.forEach(e => {
         option.avg.push(e["avg_amount"].toFixed(2));
         option.outlet.push(e["store_outlet_id"]);
         option.name.push(e["store_outlet_name"]);
+        // option.total += e["avg_amount"];
+      });
+      // option.mean = (option.total / option.avg.length).toFixed(2);
+      return option;
+    },
+    saleOrderAvgamount() {
+      let amount = null;
+      let data = this.$store.state.report.datasource.orderAvgamount;
+      data.forEach(e => {
+        amount = e["avg_amount"];
+      });
+      return amount;
+    },
+    saleOrderSingleGuide() {
+      let option = {
+        avg: [],
+        outlet: [],
+        name: [],
+        total: null,
+        mean: null
+      };
+      let datas = this.$store.state.report.datasource.saleOrderGuide;
+      datas.forEach(e => {
+        option.avg.push(e["avg_amount"]).toFixed(2);
+        option.name.push(e["store_outlet_guider_name"]);
         option.total += e["avg_amount"];
       });
       option.mean = (option.total / option.avg.length).toFixed(2);
@@ -625,12 +704,12 @@ export default {
       let datas = this.$store.state.report.datasource.saleTimes;
       let totalTimes = null;
       datas.forEach(e => {
-        option.avg.push(e["avg_amount"].toFixed(1));
+        option.avg.push(e["avg_amount"].toFixed(2));
         option.outlet.push(e["store_outlet_id"]);
         option.name.push(e["store_outlet_name"]);
         totalTimes += e["avg_amount"];
       });
-      option.times = (totalTimes / option.avg.length).toFixed(1);
+      option.times = (totalTimes / option.avg.length).toFixed(2);
       return option;
     },
     saleOrderTimeDim() {
@@ -689,9 +768,15 @@ export default {
       };
       let datas = this.$store.state.report.datasource.operaGuide;
       datas.forEach(e => {
-        option.scan.push(e["sum(scanqr_amount)"]);
-        option.reg.push(e["sum(reg_amount)"]);
-        option.bind.push(e["sum(bind_amount)"]);
+        e["sum(scanqr_amount)"]
+          ? option.scan.push(e["sum(scanqr_amount)"])
+          : option.scan.push(0);
+        e["sum(reg_amount)"]
+          ? option.reg.push(e["sum(reg_amount)"])
+          : option.reg.push(0);
+        e["sum(bind_amount)"]
+          ? option.bind.push(e["sum(bind_amount)"])
+          : option.bind.push(0);
         option.name.push(e["store_user_name"]);
         option.sel.push({
           value: e["store_user_id"],
@@ -723,7 +808,12 @@ export default {
     },
     operDealNumSeries() {
       let option = {
-        data: [],
+        data: {
+          zero: [],
+          one: [],
+          two: [],
+          three: []
+        },
         name: [],
         type: [],
         outletId: [],
@@ -738,15 +828,65 @@ export default {
       };
       let datas = this.$store.state.report.datasource.operaDealNum;
       datas.forEach(e => {
-        if (e["back_type"] == 7) {
-          option.type.push("0-7天");
-          option.zero += e["count(*)"];
-          option.data.push(e["count(*)"]);
+        if (option.name.indexOf(e["name"]) < 0) {
+          option.name.push(e["name"]);
+          option.outletId.push(e["store_outlet_id"]);
+          if (e["back_type"] == 7) {
+            option.type.push("0-7天");
+            option.zero += e["count(*)"];
+            option.data.zero.push(e["count(*)"]);
+            option.data.one.push(0);
+            option.data.two.push(0);
+            option.data.three.push(0);
+          }
+          if (e["back_type"] == 15) {
+            option.type.push("7-15天");
+            option.one += e["count(*)"];
+            option.data.one.push(e["count(*)"]);
+            option.data.zero.push(0);
+            option.data.two.push(0);
+            option.data.three.push(0);
+          }
+          if (e["back_type"] == 30) {
+            option.type.push("15-30天");
+            option.two += e["count(*)"];
+            option.data.two.push(e["count(*)"]);
+            option.data.zero.push(0);
+            option.data.one.push(0);
+            option.data.three.push(0);
+          }
+        } else {
+          let index = this.findIndex(e["name"], option.name);
+          if (e["back_type"] == 7) {
+            option.zero += e["count(*)"];
+            option.data.zero[index] = e["count(*)"];
+          }
+          if (e["back_type"] == 15) {
+            option.one += e["count(*)"];
+            option.data.one[index] = e["count(*)"];
+          }
+          if (e["back_type"] == 30) {
+            option.two += e["count(*)"];
+            option.data.two[index] = e["count(*)"];
+          }
         }
-        option.name.push(e["name"]);
-        option.outletId.push(e["store_outlet_id"]);
       });
-      option.avgzero = (option.zero / option.data.length).toFixed(2);
+      option.avgzero =
+        option.zero / option.data.length
+          ? (option.zero / option.data.length).toFixed(2)
+          : 0;
+      option.avgone =
+        option.one / option.data.length
+          ? (option.one / option.data.length).toFixed(2)
+          : 0;
+      option.avgtwo =
+        option.two / option.data.length
+          ? (option.two / option.data.length).toFixed(2)
+          : 0;
+      option.avgthree =
+        option.three / option.data.length
+          ? (option.three / option.data.length).toFixed(2)
+          : 0;
       return option;
     },
     operDealTimesSeries() {
@@ -890,8 +1030,8 @@ export default {
       };
       let datas = this.$store.state.report.datasource.operaDealPrice;
       datas.forEach(e => {
-        if (!option.name.includes(e["belong_store_outlet_name"])) {
-          option.name.push(e["belong_store_outlet_name"]);
+        if (!option.name.includes(e["store_outlet_name"])) {
+          option.name.push(e["store_outlet_name"]);
         }
         let level = e["member_trade_amount_level"] + "";
         switch (level) {
@@ -910,6 +1050,7 @@ export default {
           case "500":
             option.fiveData.series.push(e["total"]);
             option.fiveData.total += e["total"];
+            ``;
             break;
           case "1000":
             option.tenData.series.push(e["total"]);
@@ -936,6 +1077,7 @@ export default {
       );
       option.thousandData.avg = (option.thousandData.total / option.name.length
       ).toFixed(2);
+      // console.log(option);
       return option;
     },
     memberGeoSeries() {
@@ -945,6 +1087,18 @@ export default {
       let datas = this.$store.state.report.datasource.memberGeo;
       datas.forEach(e => {
         option.data.push([e["baidu_lng"], e["baidu_lat"], e["elevation"]]);
+      });
+      return option;
+    },
+    memberLifeAxis() {
+      let option = {
+        data: [],
+        name: []
+      };
+      let datas = this.$store.state.report.datasource.mebmerAxis;
+      datas.forEach(e => {
+        option.name.push(e["remark"]);
+        option.data.push(e["renshu"]);
       });
       return option;
     },
@@ -2005,10 +2159,12 @@ export default {
       return option;
     },
     // 门店识别代码
-    // storeCode() {
-    //   return window.localStorage.getItem("storecode");
-    //   return this.$store.state.storeCode;
-    // },
+    storeCode() {
+      return (
+        this.$store.state.storeCode || window.localStorage.getItem("storecode")
+      );
+      //   return this.$store.state.storeCode;
+    },
     // 路由
     routerParams() {
       return this.$route.params.name;
@@ -2062,17 +2218,20 @@ export default {
   },
   data() {
     return {
-      storeCode: this.$store.state.storeCode,
+      // storeCode:
+      // window.localStorage.getItem("storecode") || this.$store.state.storeCode,
       dates: "",
       activeOutlet: "",
       activeEmp: "",
       activePane: this.$route.params.name,
       startDate: new Date().Format("yyyyMM") + "01",
       endDate: new Date().Format("yyyyMMdd"),
-      // startDate: "20171001",
-      // endDate: "20171031",
+      // startDate: "20171101",
+      // endDate: "20171130",
       start_Date: new Date().Format("yyyy-MM") + "-01",
       end_Date: new Date().Format("yyyy-MM") + "-" + (new Date().getDate() - 1)
+      // start_Date: "2017-11-01",
+      // end_Date: "2017-11-30"
     };
   },
   head() {

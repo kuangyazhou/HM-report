@@ -16,5 +16,15 @@ Date.prototype.Format = function(fmt) {
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
-
+Date.prototype.getCurrentMonthLast = function() {
+    var date = new Date();
+    var currentMonth = date.getMonth();
+    var nextMonth = ++currentMonth;
+    var nextMonthFirstDay = new Date(date.getFullYear(), nextMonth, 1);
+    var oneDay = 1000 * 60 * 60 * 24;
+    return new Date(nextMonthFirstDay - oneDay);
+}
+Array.prototype.max = function() {
+    return Math.max.apply({}, this)
+}
 module.exports = {};

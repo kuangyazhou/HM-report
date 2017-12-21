@@ -18,6 +18,7 @@
 import Vue from "vue";
 import echarts from "echarts";
 import bmap from "echarts/extension/bmap/bmap";
+import china from "echarts/map/js/china.js";
 
 import { Button, Col, Row, Tooltip, Card, Alert, Loading } from "element-ui";
 Vue.use(Button);
@@ -55,10 +56,28 @@ export default {
         animation: false,
         bmap: {
           center: [114.2522942178, 30.6054677499],
-          //   center: [120.13066322374, 30.240018034923],
+          // center: [120.13066322374, 30.240018034923],
           zoom: 11,
           roam: true
         },
+        // geo: {
+        //   map: "china",
+        //   label: {
+        //     emphasis: {
+        //       show: false
+        //     }
+        //   },
+        //   roam: true,
+        //   itemStyle: {
+        //     normal: {
+        //       areaColor: "#323c48",
+        //       borderColor: "#111"
+        //     },
+        //     emphasis: {
+        //       areaColor: "#2a333d"
+        //     }
+        //   }
+        // },
         visualMap: {
           show: false,
           top: "top",
@@ -67,7 +86,16 @@ export default {
           seriesIndex: 0,
           calculable: true,
           inRange: {
-            color: ["orange", "blue", "green", "yellow", "red"]
+            color: ["orange", "green", "yellow", "red"]
+            // color: [
+            //   "#012042",
+            //   "#022d5f",
+            //   "#04438b",
+            //   "#0053b1",
+            //   "#0876f5",
+            //   "#56a6ff",
+            //   "#0ef0f2"
+            // ]
           }
         },
         series: [
@@ -102,6 +130,13 @@ export default {
   },
   updated() {},
   activated() {},
+  computed: {
+    storeCode() {
+      return (
+        this.$store.state.storeCode || window.localStorage.getItem("storecode")
+      );
+    }
+  },
   methods: {
     // setMap() {
     //   let dom = document.getElementById("container");
