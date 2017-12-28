@@ -1,7 +1,7 @@
 <template>
   <el-row>
     <el-col :span="24">
-      <img class="hm-img-logo" src="../assets/img/logo-header.png"></img>
+      <img class="hm-img-logo" src="../assets/img/logo-header.png"/>
       <div class="grid-content">
         <p class="hm-logo-title">登录</p>
         <el-form ref="form" :rules="rules" :model="form" label-position="top" label-width="80px">

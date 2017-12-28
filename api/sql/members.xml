@@ -241,30 +241,18 @@
     <!-- select t.belong_store_outlet_id, t.belong_store_outlet_name, t.member_trade_amount_level, sum(t.countvalue) total from (select belong_store_outlet_id, store_outlet_name belong_store_outlet_name, member_trade_amount_level, count(member_trade_amount_level) countvalue from hemiaodata.hm_daystat_belong_guider_sales_details t, hemiaodata.hm_store_outlet_trim s where t.store_code = s.store_code and t.store_outlet_id = s.store_outlet_id and length(member_offline_id) > 0 and stat_day between :startDate and :endDate and t.store_code = :storecode and length(belong_store_outlet_id) > 1 and member_trade_amount_level <> '' and t.isvalid = 1 group by belong_store_outlet_id, member_trade_amount_level) t group by t.belong_store_outlet_id, t.member_trade_amount_level -->
     <sql-request id="QUERY-MEMBER-GEO" desc="会员地理分析图">
       <![CDATA[
-     SELECT FORMAT(baidu_lng, 10) baidu_lng,FORMAT(baidu_lat, 10) baidu_lat,COUNT(*) elevation FROM hemiaodata.hm_member_lbs_summary WHERE baidu_lng IS NOT NULL AND baidu_lng <> 0 AND baidu_lat IS NOT NULL AND baidu_lat <> 0 GROUP BY FORMAT(baidu_lng, 10),FORMAT(baidu_lat, 10)
+      SELECT FORMAT( baidu_lng, 10 ) baidu_lng,FORMAT( baidu_lat, 10 ) baidu_lat,COUNT( * ) elevation FROM hemiaodata.hm_member_lbs_summary WHERE store_code=:storecode and baidu_lng IS NOT NULL AND baidu_lng <> 0 AND baidu_lat IS NOT NULL AND baidu_lat <> 0 GROUP BY FORMAT( baidu_lng, 10 ),FORMAT( baidu_lat, 10 )
     ]]>
     </sql-request>
+    <!-- SELECT FORMAT(baidu_lng, 10) baidu_lng,FORMAT(baidu_lat, 10) baidu_lat,COUNT(*) elevation FROM hemiaodata.hm_member_lbs_summary WHERE baidu_lng IS NOT NULL AND baidu_lng <> 0 AND baidu_lat IS NOT NULL AND baidu_lat <> 0 GROUP BY FORMAT(baidu_lng, 10),FORMAT(baidu_lat, 10) -->
     <sql-request id="QUERY-LIFE-AXIS" desc="生理轴分布">
       <![CDATA[
-    select 1 seq_num, '怀孕12周以下' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=0 and ago_num < 84 
-    union select 1 seq_num, '怀孕12-27周' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=84 and ago_num < 189
-    union select 2 seq_num, '怀孕27周以上' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=189 and ago_num < 280
-    union select 3 seq_num, '0~3个月' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=280 and ago_num < 370
-    union select 4 seq_num, '3~6个月' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=370 and ago_num < 460
-    union select 5 seq_num, '6~9个月' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=460 and ago_num < 550
-    union select 6 seq_num, '9~12个月' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=550 and ago_num < 640
-    union select 7 seq_num, '1~1岁半' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=640 and ago_num < 820
-    union select 8 seq_num, '2~2岁半' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=820 and ago_num < 1000
-    union select 9 seq_num, '2岁半~3岁' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=1000 and ago_num < 1180
-    union select 10 seq_num, '3~4岁' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=1180 and ago_num < 1540
-    union select 11 seq_num, '4~5岁' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=1540 and ago_num < 1900
-    union select 12 seq_num, '5~6岁' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=1900 and ago_num < 2260
-    union select 13 seq_num, '6岁以上' remark ,count(*) renshu from hemiaodata.hm_member_birthday_summary where store_code='' and ago_num >=2620
+      select s.age_group,b.remark,count(s.id) renshu from hemiaodata.hm_age_group b left join hemiaodata.hm_member_birthday_summary s on b.age_group = s.age_group where b.age_group <> '-1' and store_code =:storecode group by b.age_group order by b.age_group;
     ]]>
     </sql-request>
     <sql-request id="QUERY-MEMBER-LOYAL" desc="忠诚度分析">
       <![CDATA[
-      select store_code,(latest_purchase_time_score + purchase_times_score + purchase_category_amount_score + average_pre_purchase_amount_score + comment_score) / 10 result,count(*) from hemiaodata.hm_member_loyalty_rating_details where store_code = '' group by ((latest_purchase_time_score + purchase_times_score + purchase_category_amount_score + average_pre_purchase_amount_score + comment_score) / 10)
+       select loyalty_level,count(*) num from hemiaodata.hm_member_loyalty_rating_details  where store_code =:storecode group by loyalty_level
       ]]>
     </sql-request>
   </sql-requests>

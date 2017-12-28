@@ -130,12 +130,15 @@ export const state = {
         operaDealPrice: [],
         memberGeo: [],
         mebmerAxis: [],
+        memberLoyal: [],
         storeList: [],
         guideList: [],
         // 大屏数据中心
         screenSaleroom: [],
         screenSalesingle: [],
         screenRelated: [],
+        screenOffered: [],
+        screenNew: [],
         screenBrand: [],
         topTen: [],
         // tenBynumber: [],
@@ -546,6 +549,9 @@ export const mutations = {
     setMemberAxis(state, datas) {
         state.datasource.mebmerAxis = datas;
     },
+    setMemberLoyal(state, datas) {
+        state.datasource.memberLoyal = datas;
+    },
     // 大屏数据中心
     setScreenSaleRoom(state, datas) {
         const data = [];
@@ -563,6 +569,7 @@ export const mutations = {
         data.unshift('客单价');
         state.datasource.screenSalesingle = data;
     },
+    //连带率
     setScreenRelated(state, datas) {
         const data = [];
         datas.forEach(e => {
@@ -571,6 +578,25 @@ export const mutations = {
         data.unshift('连带率');
         state.datasource.screenRelated = data;
     },
+    // 会员贡献率
+    setScreenOffered(state, datas) {
+        const data = [];
+        datas.forEach(e => {
+            e['rate'] ? data.push(e['rate'].toFixed(2) + "%") : data.push(0 + "%");
+        });
+        data.unshift('会员贡献率');
+        state.datasource.screenOffered = data;
+    },
+    // 线下新增会员
+    setScreenNewadd(state, datas) {
+        const data = [];
+        datas.forEach(e => {
+            e['new'] ? data.push(e['new']) : data.push(0);
+        });
+        data.unshift('线下新增会员');
+        state.datasource.screenNew = data;
+    },
+    //销售品类
     setScreenBrand(state, datas) {
         const data = [];
         datas.forEach(e => {
@@ -1506,9 +1532,20 @@ export const actions = {
     },
     //生理轴分布
     getMemberAxis({ commit }, { storecode }) {
-        return axios.get(`/api/report/member/axis`)
+        return axios.get(`/api/report/member/axis?storecode=${storecode}`)
             .then((resp) => {
                 commit('setMemberAxis', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    // 忠诚度
+    getMemberLoyal({ commit }, { storecode }) {
+        return axios.get(`/api/report/member/loyal?storecode=${storecode}`).then((resp) => {
+                commit('setMemberLoyal', resp.data.rows)
             })
             .catch((error) => {
                 if (error.response.status === 500) {
@@ -1600,6 +1637,30 @@ export const actions = {
         return axios.get(`/api/screen/related?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenRelated', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    // 会员贡献率
+    getScreenOffered({ commit }, { storecode }) {
+        return axios.get(`/api/screen/offered?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenOffered', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
+    // 线下新增会员
+    getScreenNewadd({ commit }, { storecode }) {
+        return axios.get(`/api/screen/newAdd?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setScreenNewadd', resp.data.rows)
             })
             .catch((error) => {
                 if (error.response.status === 500) {

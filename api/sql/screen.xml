@@ -16,23 +16,34 @@
         SELECT 'today_amount' type,count(order_id) / count(DISTINCT order_id) apr FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND order_status = 0 AND date_format(add_time, '%Y%m%d') = date_format(curdate(), '%Y%m%d') UNION SELECT 'yesterday_amount',count(order_id) / count(DISTINCT order_id) apr FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND order_status = 0 AND date_format(add_time, '%Y%m%d') = date_format(date_sub(curdate(), INTERVAL 1 DAY),'%Y%m%d')UNION SELECT 'last7day_amount',count(order_id) / count(DISTINCT order_id) apr FROM	hemiaoshadow.hm_order_goods_offline WHERE	store_code = :storecode AND order_status = 0 AND date_format(add_time, '%Y%m%d') >= date_format(date_sub(curdate(), INTERVAL 8 DAY),'%Y%m%d')AND date_format(add_time, '%Y%m%d') <= date_format(date_sub(curdate(), INTERVAL 1 DAY),'%Y%m%d')UNION SELECT 'lastmonth_amount',count(order_id) / count(DISTINCT order_id) apr FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND order_status = 0 AND date_format(add_time, '%Y%m') = date_format(date_sub(curdate(), INTERVAL 1 MONTH),'%Y%m');
       ]]>
   </sql-request>
+  <sql-request id="SCEENR-OFFERD" desc="会员贡献率">
+    <![CDATA[
+        select 'today_amount' type,sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day = curdate() union select 'yesterday_amount',sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day = curdate() - 1 union select 'last7day_amount',sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day >= curdate() - 8 and trade_day <= curdate() - 1 union select 'lastmonth_amount',sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day = date_sub(curdate(), interval 1 month);
+      ]]>
+  </sql-request>
+  <sql-request id="SCEENR-NEW" desc="线下新增会员">
+    <![CDATA[
+        select 'today_amount' type,count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') = date_format(curdate(),'%Y%m%d') union select 'yesterday_amount',count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') = date_format(curdate() - 1, '%Y%m%d') union select 'last7day_amount',count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') >= date_format(curdate() - 8, '%Y%m%d') and date_format(reg_time, '%Y%m%d') <= date_format(curdate() - 1, '%Y%m%d') union select 'lastmonth_amount',count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') = date_format(date_sub(curdate(), interval 1 month), '%Y%m%d');
+      ]]>
+  </sql-request>
+
 
   <sql-request id="SCEENR-BRANDRANK" desc="大屏品类销售排行">
     <![CDATA[
         select top_category_offline_name,sum(tot_price) amount,sum(goods_number) num from hemiaoshadow.hm_order_goods_offline ord,hemiaoshadow.hm_chart_info_connect c where ord.store_code = :storecode and ord.store_code = c.store_code and ord.cat_id = c.offline_id and ord.trade_day = curdate() group by top_category_offline_name;
       ]]>
   </sql-request>
-  <sql-request id="SCEENR-top10-money" desc="top10">
+  <sql-request id="SCEENR-top10-money" desc="销售top10">
     <![CDATA[
         select offline_name,sum(tot_price) amount,sum(goods_number) num,count(distinct user_id) user_num from hemiaoshadow.hm_order_goods_offline ord,hemiaoshadow.hm_brand_offline b where ord.store_code = :storecode and ord.store_code = b.store_code and ord.brand_id = b.offline_id and ord.trade_day = curdate() group by ord.brand_id order by sum(tot_price) desc limit 10
       ]]>
   </sql-request>
-  <sql-request id="SCEENR-top10-number" desc="top10">
+  <sql-request id="SCEENR-top10-number" desc="销量top10">
     <![CDATA[
         select offline_name,sum(tot_price) amount,sum(goods_number) num,count(distinct user_id) user_num from hemiaoshadow.hm_order_goods_offline ord,hemiaoshadow.hm_brand_offline b where ord.store_code = :storecode and ord.store_code = b.store_code and ord.brand_id = b.offline_id and ord.trade_day = curdate() group by ord.brand_id order by sum(goods_number) desc limit 10
       ]]>
   </sql-request>
-  <sql-request id="SCEENR-top10-member" desc="top10">
+  <sql-request id="SCEENR-top10-member" desc="交易会员数top10">
     <![CDATA[
         select offline_name,sum(tot_price) amount,sum(goods_number) num,count(distinct user_id) user_num from hemiaoshadow.hm_order_goods_offline ord,hemiaoshadow.hm_brand_offline b where ord.store_code = :storecode and ord.store_code = b.store_code and ord.brand_id = b.offline_id and ord.trade_day = curdate() group by ord.brand_id order by count(distinct user_id) desc limit 10
       ]]>
@@ -69,7 +80,7 @@
   </sql-request>
   <sql-request id="SCEENR-MEMBERCONSUM" desc="会员消费贡献分布">
     <![CDATA[
-        SELECT age_group,sum(ord.tot_price) amount,count(DISTINCT ord.order_id) ord_num,count(DISTINCT ord.user_id) mem_num FROM hemiaodata.hm_member_birthday_summary mbs,hemiaodata.hm_member_summary ms,hemiaoshadow.hm_member_offline mo,hemiaoshadow.hm_order_goods_offline ord WHERE mbs.store_code = :storecode AND ms.store_code = :storecode AND mo.store_code = :storecode AND ord.store_code = :storecode AND mbs.member_summary_id = ms.id AND ms.member_offline_id = mo.id AND ord.user_id = mo.id_old AND date_format(ord.add_time, '%Y-%m-%d') = curdate() and age_group <> 15 GROUP BY age_group order by sum(ord.tot_price) desc;
+    select age_group,sum( ord.tot_price ) amount,count( distinct ord.order_id ) ord_num,count( distinct ord.user_id ) mem_num from hemiaodata.hm_member_birthday_summary mbs,hemiaodata.hm_member_summary ms,hemiaoshadow.hm_member_offline mo,hemiaoshadow.hm_order_goods_offline ord where mbs.store_code = '42010616031788' and ms.store_code = '42010616031788' and mo.store_code = '42010616031788' and ord.store_code = '42010616031788' and mbs.member_summary_id = ms.id and ms.member_offline_id = mo.id and ord.user_id = mo.id_old and date_format(ord.add_time,'%Y-%m-%d') = curdate() group by age_group order by amount desc;
       ]]>
   </sql-request>
   </sql-requests>

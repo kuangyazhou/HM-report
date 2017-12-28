@@ -1527,6 +1527,24 @@ router.get(`/report/member/axis`, function(req, res, next) {
     })
 })
 
+//忠诚度分析
+router.get(`/report/member/loyal`, function(req, res, next) {
+    const storecode = req.query.storecode;
+    db.queryXml({
+        file: MEMBERS_XML_PATH,
+        key: 'QUERY-MEMBER-LOYAL',
+        values: { storecode },
+        cacheKey: `QUERY-MEMBER-LOYAL-${storecode}`,
+        done: (rows) => {
+            if (rows.length > 0) {
+                res.status(200).json({ rows })
+            } else {
+                res.status(200).json({ rows: [] })
+            }
+        }
+    })
+})
+
 //数据中心大屏 销售额
 router.get(`/screen/saleroom`, function(req, res, next) {
     const storecode = req.query.storecode;
@@ -1571,6 +1589,42 @@ router.get(`/screen/related`, function(req, res, next) {
         key: 'SCEENR-RELATED',
         values: { storecode },
         cacheKey: `SCREEN-RELATED-${storecode}-${timestamp}`,
+        done: (rows) => {
+            if (rows.length > 0) {
+                res.status(200).json({ rows })
+            } else {
+                res.status(200).json({ rows: [] })
+            }
+        }
+    })
+})
+
+//会员贡献率
+router.get(`/screen/offered`, function(req, res, next) {
+    const storecode = req.query.storecode;
+    db.queryXml({
+        file: SCREEN_XML_PATH,
+        key: 'SCEENR-OFFERD',
+        values: { storecode },
+        cacheKey: `SCREEN-OFFERD-${storecode}-${timestamp}`,
+        done: (rows) => {
+            if (rows.length > 0) {
+                res.status(200).json({ rows })
+            } else {
+                res.status(200).json({ rows: [] })
+            }
+        }
+    })
+})
+
+//线下新增会员
+router.get(`/screen/newAdd`, function(req, res, next) {
+    const storecode = req.query.storecode;
+    db.queryXml({
+        file: SCREEN_XML_PATH,
+        key: 'SCEENR-NEW',
+        values: { storecode },
+        cacheKey: `SCREEN-NEW-${storecode}-${timestamp}`,
         done: (rows) => {
             if (rows.length > 0) {
                 res.status(200).json({ rows })

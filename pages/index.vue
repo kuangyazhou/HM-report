@@ -33,7 +33,7 @@
           <div slot="header" class="clearfix" style="text-align:center">
             <span style="line-height: 18px;">品牌top10</span>
           </div>
-          <Vtable :title="topTenTitle" :tableData="topTenData" :activeRow="3"></Vtable>
+          <Vtable :title="topTenTitle" :width="90" :tableData="topTenData" :activeRow="3"></Vtable>
         </el-card>
       </el-col>
       <el-col :span="8" class="margin1">
@@ -51,7 +51,9 @@
               <span class="flex today-sale">{{Sale}}</span>
               <!-- <el-progress style="width:50%" :stroke-width="18" :percentage="percentage"></el-progress> -->
               <Vprogress :percentage="percentage"></Vprogress>
-              <span class="flex today-target" title="双击自定义目标" @dblclick="defineTarget">{{Target}}</span>
+              <span class="flex today-target center">{{Target}}
+                <i class="fa fa-edit left5" @click="defineTarget" aria-hidden="true"></i>
+              </span>
             </div>
             <!-- <div class="flex">
               <el-button size="mini">自定义目标</el-button>
@@ -80,13 +82,15 @@
             <div class="flex row around">
               <span class="flex">今日新增会员(人)</span>
               <span class="flex" style="{width:'50%',justify-content:'center'}">{{newpercentage+'%'}}</span>
-              <span class="flex">今日新客目标(元)</span>
+              <span class="flex">今日新客目标(人)</span>
             </div>
             <div class="flex around">
               <span class="flex today-add">{{newMom+newBaby}}</span>
               <!-- <el-progress style="width:50%" :stroke-width="18" :percentage="70" status="success"></el-progress> -->
               <Vprogress :percentage="newpercentage"></Vprogress>
-              <span class="flex today-target" title="双击自定义目标" @dblclick="memberTarget">{{newMemberTarget}}</span>
+              <span class="flex today-target">{{newMemberTarget}}
+                <i class="fa fa-edit left5" @click="memberTarget" aria-hidden="true"></i>
+              </span>
             </div>
             <div class="flex column">
               <span class="felx font14">
@@ -94,7 +98,7 @@
               </span>
             </div>
             <div class="flex">
-              <span class="felx font14">
+              <span class="flex font14">
                 <i class="fa fa-child icon-blue"></i>新增萌宝(人):{{newBaby}}
               </span>
             </div>
@@ -151,25 +155,33 @@ Vue.use(Progress);
 export default {
   watch: {
     saleroom: function(val) {
-      deep:true;
+      deep: true;
       this.saleTableData = [];
       this.saleTableData.push(val);
+      // this.saleTableData[0] = val;
     },
-    // saleroom:{
-    //   deep:true;
-    //   this.saleTableData = [];
-    //   this.saleTableData.push(val);
-    // },
     saleSingle: function(val) {
-      deep:true;
+      deep: true;
       // this.saleTableData = [];
       this.saleTableData.push(val);
+      // this.saleTableData[1] = val;
     },
     related: function(val) {
-      deep:true;
+      deep: true;
       // console.log(val);
       // this.saleTableData = [];
       this.saleTableData.push(val);
+      // this.saleTableData[2] = val;
+    },
+    offered: function(val) {
+      deep: true;
+      this.saleTableData.push(val);
+      // this.saleTableData[3] = val;
+    },
+    newAdd: function(val) {
+      deep: true;
+      this.saleTableData.push(val);
+      // this.saleTableData[4] = val;
     },
     brand: function(val) {
       // console.log(val);
@@ -662,6 +674,12 @@ export default {
     related() {
       return this.$store.state.report.datasource.screenRelated;
     },
+    offered() {
+      return this.$store.state.report.datasource.screenOffered;
+    },
+    newAdd() {
+      return this.$store.state.report.datasource.screenNew;
+    },
     brand() {
       return this.$store.state.report.datasource.screenBrand;
     },
@@ -886,6 +904,12 @@ export default {
       this.$store.dispatch("report/getScreenRelated", {
         storecode: this.storeCode
       });
+      this.$store.dispatch("report/getScreenOffered", {
+        storecode: this.storeCode
+      });
+      this.$store.dispatch("report/getScreenNewadd", {
+        storecode: this.storeCode
+      });
       this.$store.dispatch("report/getScreenBrand", {
         storecode: this.storeCode
       });
@@ -935,7 +959,7 @@ export default {
   padding: 8px;
   background: radial-gradient(circle at 50%, #004c9e, #002259);
 }
-.icon-blue{
+.icon-blue {
   color: #8fbaff;
 }
 .sand-clock {
@@ -948,6 +972,11 @@ export default {
 .el-col-8 {
   width: 32.6%;
 }
+.left5 {
+  margin-left: 5px;
+  color: #f1f1f1;
+}
+
 .screen-logo,
 .title,
 .time {

@@ -520,7 +520,7 @@
 .el-input {
     position: relative;
     font-size: 14px;
-    width: 100%
+    /* width: 100% */
 }
 
 .el-input-group__append .el-button,

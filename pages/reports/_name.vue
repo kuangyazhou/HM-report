@@ -47,7 +47,10 @@
         <MemberLife :storeList="storeList" :memberLifeAxis="memberLifeAxis" />
       </div>
       <div v-if="activePane === 'memberLoyal'">
-        <MemberLoyal />
+        <MemberLoyal :storeList="storeList" :memberLoyalAxis="memberLoyalAxis" />
+      </div>
+      <div v-if="activePane==='search'">
+        <Search />
       </div>
     </el-row>
   </div>
@@ -81,6 +84,9 @@ import MemberGeo from "~components/reports/member.geo.vue";
 import MemberLife from "~components/reports/member.life.vue";
 import MemberLoyal from "~components/reports/member.loyal.vue";
 
+// 搜索
+import Search from "~components/reports/search.vue";
+
 Vue.use(Button);
 Vue.use(Col);
 Vue.use(Row);
@@ -101,6 +107,7 @@ export default {
     MemberGeo,
     MemberLife,
     MemberLoyal,
+    Search,
     Filters
   },
   validate({ params, query, store }) {
@@ -140,6 +147,9 @@ export default {
         isValidate = true;
         break;
       case "memberLoyal":
+        isValidate = true;
+        break;
+      case "search":
         isValidate = true;
         break;
       default:
@@ -310,6 +320,14 @@ export default {
           storecode: this.storeCode
         });
         this.$store.dispatch("report/getMemberAxis", {
+          storecode: this.storeCode
+        });
+        break;
+      case "memberLoyal":
+        this.$store.dispatch("report/getStoreList", {
+          storecode: this.storeCode
+        });
+        this.$store.dispatch("report/getMemberLoyal", {
           storecode: this.storeCode
         });
         break;
@@ -639,7 +657,7 @@ export default {
       let option = {
         avg: [],
         outlet: [],
-        name: [],
+        name: []
       };
       let datas = this.$store.state.report.datasource.saleOrder;
       datas.forEach(e => {
@@ -1099,6 +1117,46 @@ export default {
       datas.forEach(e => {
         option.name.push(e["remark"]);
         option.data.push(e["renshu"]);
+      });
+      return option;
+    },
+    memberLoyalAxis() {
+      let option = [];
+      let datas = this.$store.state.report.datasource.memberLoyal;
+      datas.forEach(e => {
+        switch (e["loyalty_level"]) {
+          case null:
+          case "0":
+            option.push({
+              value: e["num"],
+              name: "流失型客户"
+            });
+            break;
+          case "1":
+            option.push({
+              value: e["num"],
+              name: "游离型客户"
+            });
+            break;
+          case "2":
+            option.push({
+              value: e["num"],
+              name: "比较忠诚型客户"
+            });
+            break;
+          case "3":
+            option.push({
+              value: e["num"],
+              name: "惯性忠诚型客户"
+            });
+            break;
+          case "4":
+            option.push({
+              value: e["num"],
+              name: "感情忠诚型客户"
+            });
+            break;
+        }
       });
       return option;
     },

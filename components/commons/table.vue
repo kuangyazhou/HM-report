@@ -1,5 +1,5 @@
 <template>
-  <div class="v-table">
+  <div class="v-table" :style="{width:width+'%'}">
     <div class="v-title">
       <span class="title-ceil" v-for="item in title" v-bind:key="item.index">{{item}}</span>
     </div>
@@ -18,6 +18,10 @@ export default {
       default: () => {
         return ["项目", "今日", "昨日", "最近7日", "上月同期"];
       }
+    },
+    width: {
+      type: Number,
+      default: 80
     },
     tableData: {
       type: Array,
@@ -82,7 +86,7 @@ export default {
 .v-table {
   display: flex;
   flex-direction: column;
-  width: 80%;
+  /* width: 80%; */
   margin: 0 auto;
   background: transparent;
   color: #e5e5e5;
