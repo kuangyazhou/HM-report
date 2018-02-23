@@ -1,10 +1,10 @@
 <template>
   <div class="v-table" :style="{width:width+'%'}">
     <div class="v-title">
-      <span class="title-ceil" v-for="item in title" v-bind:key="item.index">{{item}}</span>
+      <span class="title-ceil" v-for="item in title" :style="{width:itemWidth}" v-bind:key="item.index ">{{item}}</span>
     </div>
-    <div class="v-content" v-for="(e,index) in tableData" v-bind:key="e.index" :class="{active:activeLine==index+1}">
-      <span class="content-ceil" v-for="(ceil,index) in e" v-bind:key="ceil.index" :class="{active:activeRow==index+1}">{{ceil}}</span>
+    <div class="v-content " v-for="(e,index) in tableData" v-bind:key="e.index " :class="{active:activeLine==index+1} ">
+      <span class="content-ceil " v-for="(ceil,index) in e" :style="{width:itemWidth}" v-bind:key="ceil.index " :class="{active:activeRow==index+1} ">{{ceil}}</span>
     </div>
   </div>
 </template>
@@ -48,7 +48,7 @@ export default {
     },
     activeRow: {
       type: Number,
-      default: 0
+      default: 2
     },
     showIndex: {
       type: Boolean,
@@ -64,6 +64,7 @@ export default {
     return {
       // title: ,
       // tableData:
+      itemWidth: 100 / this.title.length + "%"
     };
   },
   created() {

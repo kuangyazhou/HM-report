@@ -104,20 +104,45 @@ export default {
   props: ["storeList", "operDealTimesSeries"],
   watch: {
     storeList: function(val) {
-      console.log(val);
+      // console.log(val);
     },
     operDealTimesSeries: function(val) {
       // console.log(val);
       this.timesData.xAxis[0].data = val.name;
       this.timesData.series[0].data = val.zero;
+      this.timesData.series[1].data = val.one;
+      this.timesData.series[2].data = val.two;
+      this.timesData.series[3].data = val.three;
+      this.timesData.series[4].data = val.four;
+      this.timesData.series[5].data = val.five;
       this.setTimes();
       this.closeLoad();
       let zerototal = null;
+      let onetotal = null;
+      let twototal = null;
+      let threetotal = null;
+      let fourtotal = null;
+      let fivetotal = null;
       for (let i = 0; i < val.zero.length; i++) {
         zerototal += val.zero[i];
+        onetotal += val.one[i];
+        twototal += val.two[i];
+        threetotal += val.three[i];
+        fourtotal += val.four[i];
+        fivetotal += val.five[i];
       }
       this.zeroTotal = zerototal;
+      this.oneTotal = onetotal;
+      this.twoTotal = twototal;
+      this.threeTotal = threetotal;
+      this.fourTotal = fourtotal;
+      this.fiveTotal = fivetotal;
       this.zeroAvg = (zerototal / val.zero.length).toFixed(2);
+      this.oneAvg = (onetotal / val.one.length).toFixed(2);
+      this.twoAvg = (twototal / val.two.length).toFixed(2);
+      this.threeAvg = (threetotal / val.three.length).toFixed(2);
+      this.fourAvg = (fourtotal / val.four.length).toFixed(2);
+      this.fiveAvg = (fivetotal / val.five.length).toFixed(2);
     }
   },
   computed: {},

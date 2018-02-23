@@ -28,7 +28,7 @@
         "connect-redis": "^3.3.0",
         "currency-formatter": "^1.2.1",
         "echarts": "^3.7.1",
-        "element-ui": "1.4.4",
+        "element-ui": "^1.4.4",
         "font-awesome": "^4.7.0",
         "highcharts": "^5.0.12",
         "lodash": "^4.17.4",

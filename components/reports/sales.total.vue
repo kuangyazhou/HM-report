@@ -7,20 +7,21 @@
             <span style="line-height: 36px;">
               <i class="fa fa-line-chart" aria-hidden="true"></i>
               <span class="chart-title">总销售数据分析</span>
+              <vBread :options="breadData" @breadClick="breadClick"></vBread>
             </span>
             <!-- <el-button style="float: right;" icon="star-off" type="primary">收藏</el-button> -->
           </div>
           <div class="flex column dim">
             <div class="flex btns center">
               <!-- <el-button size="small" @click="lastWeek">上周</el-button> -->
-              <el-button size="small" @click="currentMonth" type="primary">本月</el-button>
+              <!-- <el-button size="small" @click="currentMonth">本月</el-button> -->
               <el-button size="small" @click="lastMonth">上月</el-button>
               <el-button size="small" @click="lastYear">去年</el-button>
               <el-date-picker v-model="dateTime" type="daterange" @change="timeSelect" placeholder="自定义时间" size="small" class="distance w200">
               </el-date-picker>
-              <el-checkbox v-model="checked" type="info" class="distance">数据对比</el-checkbox>
+              <!-- <el-checkbox v-model="checked" type="info" class="distance">数据对比</el-checkbox>
               <el-date-picker v-model="dimTime" v-if="checked" type="daterange" placeholder="自定义时间" @change="dimTimeSelect" size="small" class="distance w200">
-              </el-date-picker>
+              </el-date-picker> -->
             </div>
             <div class="flex row main">
               <div class="note flex column" :style="{width:'16%'}">
@@ -58,6 +59,7 @@
 import Vue from "vue";
 import echarts from "echarts";
 import { currency, getPreMonth } from "./../../utils/currency";
+import vBread from "~components/commons/bread";
 
 import {
   Button,
@@ -79,7 +81,7 @@ Vue.use(Alert);
 Vue.use(Checkbox);
 Vue.use(DatePicker);
 export default {
-  components: {},
+  components: { vBread },
   props: [
     "storeList",
     "saleTotalSeries",
@@ -104,6 +106,7 @@ export default {
         height: this.containerHeight
       });
       this.saleTotalChart.setOption(this.optionData);
+      this.stepData = val;
     },
     saleTotalStore: function(val) {
       // console.log(val);
@@ -132,15 +135,17 @@ export default {
       containerHeight: 1,
       saleTotal: 0,
       average: 0,
-      checked: false,
+      // checked: false,
       currentMonthSeries: null,
       loading: null,
-      dimSwitch: false,
+      dimSwitch: true,
       storeId: [],
       saleTotalChart: null,
       value: "",
       dateTime: "",
-      dimTime: "",
+      breadData: [],
+      stepData: null,
+      // dimTime: "",
       loadAttr: {
         target: "#total",
         fullscreen: false,
@@ -154,7 +159,7 @@ export default {
           }
         },
         legend: {
-          data: ["销售数据", "对比数据"]
+          data: ["本月销售数据", "对比销售数据"]
         },
         grid: {
           left: "3%",
@@ -173,7 +178,7 @@ export default {
         },
         series: [
           {
-            name: "销售数据",
+            name: "本月销售数据",
             type: "bar",
             itemStyle: {
               normal: {
@@ -186,7 +191,7 @@ export default {
             data: this.saleTotalSeries.data
           },
           {
-            name: "对比数据",
+            name: "对比销售数据",
             type: "bar",
             itemStyle: {
               normal: {
@@ -227,8 +232,8 @@ export default {
       // console.log(val);
     }
     this.saleTotalChart.on("click", e => {
-      this.dimSwitch = true;
       this.optionData.series[1].data = [];
+      this.dimSwitch = false;
       this.storeSelect(e);
       this.saleTotalChart.off("click");
     });
@@ -248,35 +253,27 @@ export default {
       this.loading.close();
     },
     storeSelect(e) {
+      // console.log(e);
       let id = this.storeId[e.dataIndex];
       let startDate = new Date().Format("yyyyMM") + "01";
       let endDate = new Date().Format("yyyyMMdd");
       // let startDate = "20171101";
       // let endDate = "20171130";
       // console.log(id, startDate, endDate);
-      // if (this.dimSwitch) {
-      // } else {
       this.$store.dispatch("report/getSaleToalStore", {
         storecode: this.storeCode,
         outletId: id,
         startDate: startDate,
         endDate: endDate
       });
-      // }
+      this.breadData.push({
+        label: e.name,
+        value: e.name,
+        level: 1
+      });
     },
     timeSelect(e) {
-      if (e) {
-        let val = e.split(" - ");
-        let startDate = val[0].replace(/-/g, "") + "";
-        let endDate = val[1].replace(/-/g, "") + "";
-        this.$store.dispatch("report/getSaleTotal", {
-          storecode: this.storeCode,
-          startDate: startDate,
-          endDate: endDate
-        });
-      }
-    },
-    dimTimeSelect(e) {
+      if (!this.dimSwitch) return;
       if (e) {
         let val = e.split(" - ");
         let startDate = val[0].replace(/-/g, "") + "";
@@ -288,42 +285,79 @@ export default {
         });
       }
     },
-    currentMonth(e) {
-      this.containerHeight =
-        this.currentMonthSeries.data.length / 25 * 400 + 200;
-      this.saleTotal = currency(this.currentMonthSeries.total, "￥");
-      this.average = currency(
-        this.currentMonthSeries.total / this.currentMonthSeries.data.length,
-        "￥"
-      );
-      this.optionData.yAxis.data = this.currentMonthSeries.name;
-      this.optionData.series[0].data = this.currentMonthSeries.data;
-      this.storeId = this.currentMonthSeries.outlet;
-      // this.closeLoad();
-      this.saleTotalChart.resize({
-        height: this.containerHeight
-      });
-      this.saleTotalChart.setOption(this.optionData);
-    },
+    // dimTimeSelect(e) {
+    //   if (e) {
+    //     let val = e.split(" - ");
+    //     let startDate = val[0].replace(/-/g, "") + "";
+    //     let endDate = val[1].replace(/-/g, "") + "";
+    //     this.$store.dispatch("report/getSaleTotalDim", {
+    //       storecode: this.storeCode,
+    //       startDate: startDate,
+    //       endDate: endDate
+    //     });
+    //   }
+    // },
+    // currentMonth(e) {
+    //   this.containerHeight =
+    //     this.currentMonthSeries.data.length / 25 * 400 + 200;
+    //   this.saleTotal = currency(this.currentMonthSeries.total, "￥");
+    //   this.average = currency(
+    //     this.currentMonthSeries.total / this.currentMonthSeries.data.length,
+    //     "￥"
+    //   );
+    //   this.optionData.yAxis.data = this.currentMonthSeries.name;
+    //   this.optionData.series[0].data = this.currentMonthSeries.data;
+    //   this.storeId = this.currentMonthSeries.outlet;
+    //   // this.closeLoad();
+    //   this.saleTotalChart.resize({
+    //     height: this.containerHeight
+    //   });
+    //   this.saleTotalChart.setOption(this.optionData);
+    // },
     lastMonth(e) {
+      if (!this.dimSwitch) return;
       let date = new Date().Format("yyyy-MM-dd");
       let preMonth = new Date(getPreMonth(date)).Format("yyyyMM");
       let startDate = preMonth + "01";
       let endDate = preMonth + "31";
-      this.$store.dispatch("report/getSaleTotal", {
+      this.$store.dispatch("report/getSaleTotalDim", {
         storecode: this.storeCode,
         startDate: startDate,
         endDate: endDate
       });
     },
     lastYear(e) {
+      if (!this.dimSwitch) return;
       let date = new Date().Format("yyyy") - 1;
       let startDate = date + "0101";
       let endDate = date + "1231";
-      this.$store.dispatch("report/getSaleTotal", {
+      this.$store.dispatch("report/getSaleTotalDim", {
         storecode: this.storeCode,
         startDate: startDate,
         endDate: endDate
+      });
+    },
+    breadClick(e) {
+      this.containerHeight = this.stepData.data.length / 25 * 400 + 200;
+      this.saleTotal = currency(this.stepData.total, "￥");
+      this.average = currency(
+        this.stepData.total / this.stepData.data.length,
+        "￥"
+      );
+      this.optionData.yAxis.data = this.stepData.name;
+      this.optionData.series[0].data = this.stepData.data;
+      this.storeId = this.stepData.outlet;
+      this.saleTotalChart.resize({
+        height: this.containerHeight
+      });
+      this.saleTotalChart.setOption(this.optionData);
+      this.breadData = [];
+      this.dimSwitch = true;
+      this.saleTotalChart.on("click", e => {
+        this.dimSwitch = false;
+        this.optionData.series[1].data = [];
+        this.storeSelect(e);
+        this.saleTotalChart.off("click");
       });
     }
   }

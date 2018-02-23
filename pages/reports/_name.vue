@@ -41,7 +41,7 @@
         <OperaTimes :operDealTimesSeries="operDealTimesSeries" :storeList="storeList" />
       </div>
       <div v-if="activePane === 'memberGeo'">
-        <MemberGeo :storeList="storeList" :memberGeoSeries="memberGeoSeries" />
+        <MemberGeo :storeList="storeList" :memberGeoSeries="memberGeoSeries" :geoCenter="geoCenter" />
       </div>
       <div v-if="activePane === 'memberLife'">
         <MemberLife :storeList="storeList" :memberLifeAxis="memberLifeAxis" />
@@ -55,8 +55,9 @@
     </el-row>
   </div>
 </template>
-
 <script>
+// 这个公司没有年终奖。。还经常改需求，需求直接提给开发人员，不经过评审。
+
 import Vue from "vue";
 import moment from "moment";
 import Filters from "~components/commons/Filters.vue";
@@ -312,6 +313,9 @@ export default {
           storecode: this.storeCode
         });
         this.$store.dispatch("report/getMemberGeo", {
+          storecode: this.storeCode
+        });
+        this.$store.dispatch("report/getGeoCenter", {
           storecode: this.storeCode
         });
         break;
@@ -917,99 +921,85 @@ export default {
         four: [],
         five: []
       };
-      let buy = [];
-      let no = [];
-      let xAxis = [];
-      let data = [];
-      let accum = [];
-      let accumData = [];
-      let acount = [];
-      let orderid = [];
       let datas = this.$store.state.report.datasource.operaDealTimes;
-      // for (let i in datas[0]) {
-      //   if (!option.name.includes(datas[0][i].name)) {
-      //     option.name.push(datas[0][i].name);
-      //   }
-      // }
-      for (let i in datas[1]) {
-        for (let j in datas[0]) {
-          if (
-            datas[1][i].member_offline_id == datas[0][j].mb_offline_id &&
-            new Date(datas[0][j].contact_time) < new Date(datas[1][i].add_time)
-          ) {
-            buy.push({
-              memberid: datas[0][j].mb_offline_id,
-              name: datas[0][j].name,
-              store_outlet_id: datas[0][j].store_outlet_id,
-              store_user_id: datas[0][j].store_user_id,
-              name: datas[1][i].belong_store_outlet_name,
-              userid: datas[1][i].belong_store_user_id,
-              memberid: datas[1][i].member_offline_id,
-              orderid: datas[1][i].order_id,
-              name: datas[1][i].belong_store_outlet_name,
-              guide: datas[1][i].belong_store_user_id,
-              user: datas[1][i].member_offline_id
-            });
-            orderid.push(datas[1][i].order_id);
+      datas.forEach((e, i) => {
+        if (option.name.indexOf(e["store_outlet_name"]) < 0) {
+          if (e["trade_freq_type"] == "0") {
+            option.name.push(e["store_outlet_name"]);
+            option.zero.push(e["num"]);
+            option.one.push(0);
+            option.two.push(0);
+            option.three.push(0);
+            option.four.push(0);
+            option.five.push(0);
           }
-        }
-      }
-      for (let i in datas[1]) {
-        if (!orderid.includes(datas[1][i].order_id)) {
-          no.push({
-            name: datas[1][i].belong_store_outlet_name,
-            guide: datas[1][i].belong_store_user_id,
-            user: datas[1][i].member_offline_id,
-            addtime: datas[1][i].add_time,
-            guide: datas[1][i].store_outlet_id,
-            user: datas[1][i].member_offline_id
-          });
-        }
-      }
-      no.forEach(e => {
-        if (e.name) {
-          if (!xAxis.includes(e.name)) {
-            xAxis.push(e.name);
+          if (e["trade_freq_type"] == "1") {
+            option.name.push(e["store_outlet_name"]);
+            option.zero.push(0);
+            option.one.push(e["num"]);
+            option.two.push(0);
+            option.three.push(0);
+            option.four.push(0);
+            option.five.push(0);
+          }
+          if (e["trade_freq_type"] == "2") {
+            option.name.push(e["store_outlet_name"]);
+            option.zero.push(0);
+            option.one.push(0);
+            option.two.push(e["num"]);
+            option.three.push(0);
+            option.four.push(0);
+            option.five.push(0);
+          }
+          if (e["trade_freq_type"] == "3") {
+            option.name.push(e["store_outlet_name"]);
+            option.zero.push(0);
+            option.one.push(0);
+            option.two.push(0);
+            option.three.push(e["num"]);
+            option.four.push(0);
+            option.five.push(0);
+          }
+          if (e["trade_freq_type"] == "4") {
+            option.name.push(e["store_outlet_name"]);
+            option.zero.push(0);
+            option.one.push(0);
+            option.two.push(0);
+            option.three.push(0);
+            option.four.push(e["num"]);
+            option.five.push(0);
+          }
+          if (e["trade_freq_type"] == "4+") {
+            option.name.push(e["store_outlet_name"]);
+            option.zero.push(0);
+            option.one.push(0);
+            option.two.push(0);
+            option.three.push(0);
+            option.four.push(0);
+            option.five.push(e["num"]);
+          }
+        } else {
+          let index = this.findIndex(e["store_outlet_name"], option.name);
+          if (e["trade_freq_type"] == "0") {
+            option.zero[index] = e["num"];
+          }
+          if (e["trade_freq_type"] == "1") {
+            option.one[index] = e["num"];
+          }
+          if (e["trade_freq_type"] == "2") {
+            option.two[index] = e["num"];
+          }
+          if (e["trade_freq_type"] == "3") {
+            option.three[index] = e["num"];
+          }
+          if (e["trade_freq_type"] == "4") {
+            option.four[index] = e["num"];
+          }
+          if (e["trade_freq_type"] == "4+") {
+            option.five[index] = e["num"];
           }
         }
       });
-      for (let i = 0; i < xAxis.length; i++) {
-        data.push(0);
-        option.one.push(0);
-        option.two.push(0);
-        option.three.push(0);
-        option.four.push(0);
-        option.five.push(0);
-        acount.push(0);
-      }
-      no.forEach((e, i) => {
-        if (e.name) {
-          if (xAxis.includes(e.name)) {
-            let index = this.findIndex(e.name, xAxis);
-            // console.log(index);
-            data[index] += 1;
-          }
-        }
-      });
-      buy.forEach(e => {
-        if (e.name) {
-          accum.push({
-            name: e.name,
-            memberid: e.memberid,
-            userid: e.userid
-          });
-        }
-      });
-      accum.forEach((e, i) => {
-        accumData.forEach((item, index) => {
-          if (e.memberid == item.memberid && e.userid == item.userid) {
-            acount[index]++;
-          }
-        });
-      });
-      option.name = xAxis;
-      option.zero = data;
-      // console.log(accum,acount,accumData);
       return option;
     },
     operaDealPriceSeries() {
@@ -1086,14 +1076,17 @@ export default {
       option.twoData.avg = (option.twoData.total / option.name.length).toFixed(
         2
       );
-      option.threeData.avg = (option.threeData.total / option.name.length
+      option.threeData.avg = (
+        option.threeData.total / option.name.length
       ).toFixed(2);
-      option.fiveData.avg = (option.fiveData.total / option.name.length
+      option.fiveData.avg = (
+        option.fiveData.total / option.name.length
       ).toFixed(2);
       option.tenData.avg = (option.tenData.total / option.name.length).toFixed(
         2
       );
-      option.thousandData.avg = (option.thousandData.total / option.name.length
+      option.thousandData.avg = (
+        option.thousandData.total / option.name.length
       ).toFixed(2);
       // console.log(option);
       return option;
@@ -1105,6 +1098,16 @@ export default {
       let datas = this.$store.state.report.datasource.memberGeo;
       datas.forEach(e => {
         option.data.push([e["baidu_lng"], e["baidu_lat"], e["elevation"]]);
+      });
+      return option;
+    },
+    geoCenter() {
+      let option = {
+        data: []
+      };
+      let datas = this.$store.state.report.datasource.geoCenter;
+      datas.forEach(e => {
+        option.data.push([e["baidu_lng"], e["baidu_lat"]]);
       });
       return option;
     },

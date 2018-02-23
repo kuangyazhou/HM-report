@@ -57,6 +57,14 @@ router.post('/login', function(req, res) {
     })
 })
 
+router.post('/geo', function(req, res) {
+    const storecode = req.body.storecode;
+    db.query({
+        sql: 'select `baidu_lat`,`baidu_lng`,baidu_level from hemiaoshadow.hm_store where store_code=`:storecode`',
+        values: { storecode }
+    })
+})
+
 router.post('/comLogin', function(req, res) {
     axios.post('http://192.168.188.128:8090/hemiao-crm-backservice/data/login.htm', {
             account,

@@ -129,6 +129,7 @@ export const state = {
         operaDealTimes: [],
         operaDealPrice: [],
         memberGeo: [],
+        geoCenter: [],
         mebmerAxis: [],
         memberLoyal: [],
         storeList: [],
@@ -161,12 +162,12 @@ export const mutations = {
         const currentMonth = parseInt(moment().format('M'), 10)
         const currents = []
         const past = []
-            // let currentTotalAmount = 0
+        // let currentTotalAmount = 0
         let pastTotalAmount = 0
         datas.forEach((data) => {
             if (data.hemiao_month === currentMonth) {
                 currents.push(data)
-                    // currentTotalAmount += data.day_price
+                // currentTotalAmount += data.day_price
             } else {
                 past.push(data)
                 pastTotalAmount += data.day_price
@@ -174,19 +175,19 @@ export const mutations = {
         })
         state.datasource.currentAndLastMonthSaleAmount.current = currents
         state.datasource.currentAndLastMonthSaleAmount.past = past
-            // state.datasource.currentAndLastMonthSaleAmount.totalAmount.current = currentTotalAmount
+        // state.datasource.currentAndLastMonthSaleAmount.totalAmount.current = currentTotalAmount
         state.datasource.currentAndLastMonthSaleAmount.totalAmount.past = pastTotalAmount
     },
     setCurrentAndLastYearSaleAmount(state, datas) {
         const currentYear = moment().format('YYYY')
         const currents = []
         const past = []
-            // let currentTotalAmount = 0
+        // let currentTotalAmount = 0
         let pastTotalAmount = 0
         datas.forEach((data) => {
             if (data.hemiao_year === currentYear) {
                 currents.push(data)
-                    // currentTotalAmount += data.hemiao_amount
+                // currentTotalAmount += data.hemiao_amount
             } else {
                 past.push(data)
                 pastTotalAmount += data.hemiao_amount
@@ -194,7 +195,7 @@ export const mutations = {
         })
         state.datasource.currentAndLastYearSaleAmount.current = currents
         state.datasource.currentAndLastYearSaleAmount.past = past
-            // state.datasource.currentAndLastYearSaleAmount.totalAmount.current = currentTotalAmount
+        // state.datasource.currentAndLastYearSaleAmount.totalAmount.current = currentTotalAmount
         state.datasource.currentAndLastYearSaleAmount.totalAmount.past = pastTotalAmount
     },
     setCurrentAndLastYearMemberCounts(state, datas) {
@@ -545,6 +546,9 @@ export const mutations = {
     setMemberGeo(state, datas) {
         state.datasource.memberGeo = datas;
     },
+    setGeoCenter(state, datas) {
+        state.datasource.geoCenter = datas;
+    },
     //会员生理轴分布
     setMemberAxis(state, datas) {
         state.datasource.mebmerAxis = datas;
@@ -610,13 +614,20 @@ export const mutations = {
     setTopTen(state, datas) {
         const data = [];
         datas.forEach((e, i) => {
-            data.push({
-                index: i + 1,
-                brandName: e['offline_name'],
-                saleroom: e['amount'],
-                salevolume: e['num'],
-                member: e['user_num']
-            })
+            // data.push({
+            //     index: i + 1,
+            //     brandName: e['offline_name'],
+            //     saleroom: e['amount'],
+            //     salevolume: e['num'],
+            //     member: e['user_num']
+            // })
+            data.push([
+                i + 1,
+                e['offline_name'],
+                e['amount'],
+                e['num'],
+                e['user_num']
+            ])
         });
         state.datasource.topTen = data;
     },
@@ -682,13 +693,17 @@ export const mutations = {
         const option = [
             [],
             [],
+            [],
             []
         ];
         datas.forEach(e => {
-            option[0].push(e['day_amount']);
-            option[1].push(e['day_target'].toFixed(2))
-                // option[1].push(1)
-            option[2].push(e['store_outlet_name'])
+            const amount = e['day_amount'];
+            const target = e['day_target'].toFixed(2);
+            const progress = target ? (amount / target * 100).toFixed(2) + '%' : 0;
+            option[0].push(amount);
+            option[1].push(target);
+            option[2].push(e['store_outlet_name']);
+            option[3].push(progress);
         })
         state.datasource.screenSaleSpread = option;
     },
@@ -701,52 +716,65 @@ export const mutations = {
     },
     setScreenMemberconsum(state, datas) {
         const data = [];
-        datas.forEach((e, index) => {
-            switch (e['age_group']) {
-                case '1':
-                    data.push(['孕早期', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+        let totalAmount = null;
+        let totalOrder = null;
+        let totalNum = null;
+        datas.map((e, index) => {
+            totalAmount += e['amount'];
+            totalOrder += e['ord_num'];
+            totalNum += e['mem_num'];
+        });
+        datas.map((e, i) => {
+            const type = e['age_group'];
+            const amount = `${e['amount'].toFixed(2)} (${(e['amount'] / totalAmount * 100).toFixed()}%)`;
+            // `${amount}(${(amount / totalAmount * 100).toFixed(2)}%)`, `${order}(${(order / totalOrder * 100).toFixed(2)}%)`, `${num}(${(num / totalNum * 100).toFixed(2)}%)`
+            const order = `${e['ord_num']} (${(e['ord_num'] / totalOrder * 100).toFixed()}%)`;
+            const num = `${e['mem_num']} (${(e['mem_num'] / totalNum * 100).toFixed()}%)`;
+            switch (type) {
+                case '01':
+                    data.push(['孕早期', amount, order, num])
                     break;
-                case '2':
-                    data.push(['孕中期', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                case '02':
+                    data.push(['孕中期', amount, order, num])
                     break;
-                case '3':
-                    data.push(['孕晚期', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                case '03':
+                    data.push(['孕晚期', amount, order, num])
                     break;
-                case '4':
-                    data.push(['0-3个月', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                case '04':
+                    data.push(['0-3个月', amount, order, num])
                     break;
-                case '5':
-                    data.push(['3-6个月', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                case '05':
+                    data.push(['3-6个月', amount, order, num])
                     break;
-                case '6':
-                    data.push(['6-9个月', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                case '06':
+                    data.push(['6-9个月', amount, order, num])
                     break;
-                case '7':
-                    data.push(['9-12个月', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                case '07':
+                    data.push(['9-12个月', amount, order, num])
                     break;
-                case '8':
-                    data.push(['1岁-1岁半', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                case '08':
+                    data.push(['1岁-1岁半', amount, order, num])
                     break;
-                case '9':
-                    data.push(['1岁半-2岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                case '09':
+                    data.push(['1岁半-2岁', amount, order, num])
                     break;
                 case '10':
-                    data.push(['2岁-2岁半', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    data.push(['2岁-2岁半', amount, order, num])
                     break;
                 case '11':
-                    data.push(['2岁半-3岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    data.push(['2岁半-3岁', amount, order, num])
                     break;
                 case '12':
-                    data.push(['3岁-4岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    data.push(['3岁-4岁', amount, order, num])
                     break;
                 case '13':
-                    data.push(['4岁-5岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    data.push(['4岁-5岁', amount, order, num])
                     break;
                 case '14':
-                    data.push(['5岁-6岁', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    data.push(['5岁-6岁', amount, order, num])
                     break;
                 case '15':
-                    data.push(['6岁以上', e['amount'].toFixed(2), e['ord_num'], e['mem_num']])
+                    data.push(['6岁以上', amount, order, num])
                     break;
             }
         })
@@ -755,12 +783,18 @@ export const mutations = {
 }
 
 export const actions = {
-    jump({ commit }, storecode) {
+    jump({
+        commit
+    }, storecode) {
         // console.log(storecode);
         commit('SET_STORE_CODE', storecode);
         // commit('SET_USER', user);
     },
-    getCurrentTotalAmount({ commit }, { storecode }) {
+    getCurrentTotalAmount({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/sales/total/amount?storecode=${storecode}`)
             .then((resp) => {
                 commit('setCurrentTotalAmount', resp.data.rows)
@@ -771,7 +805,11 @@ export const actions = {
                 }
             })
     },
-    getCurrLastMonthSaleAmount({ commit }, { storecode }) {
+    getCurrLastMonthSaleAmount({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/sales/months/amounts?storecode=${storecode}`)
             .then((resp) => {
                 commit('setCurrentAndLastMonthSaleAmount', resp.data.rows)
@@ -782,7 +820,11 @@ export const actions = {
                 }
             })
     },
-    getCurrLastYearSaleAmount({ commit }, { storecode }) {
+    getCurrLastYearSaleAmount({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/sales/year/amounts?storecode=${storecode}`)
             .then((resp) => {
                 commit('setCurrentAndLastYearSaleAmount', resp.data.rows)
@@ -793,7 +835,11 @@ export const actions = {
                 }
             })
     },
-    getTOP20BrandSale({ commit }, { storecode }) {
+    getTOP20BrandSale({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/sales/brand/top20?storecode=${storecode}`)
             .then((resp) => {
                 commit('setTop20BrandsSales', resp.data.rows)
@@ -804,7 +850,11 @@ export const actions = {
                 }
             })
     },
-    getTOP20OutletSale({ commit }, { storecode }) {
+    getTOP20OutletSale({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/sales/outlet/top20?storecode=${storecode}`)
             .then((resp) => {
                 commit('setTop20OutletsSales', resp.data.rows)
@@ -815,7 +865,11 @@ export const actions = {
                 }
             })
     },
-    getOldAndNewMembersCounts({ commit }, { storecode }) {
+    getOldAndNewMembersCounts({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/members/month/counts/newandold?storecode=${storecode}`)
             .then((resp) => {
                 commit('setOldAndNewMemberCounts', resp.data.rows)
@@ -826,7 +880,11 @@ export const actions = {
                 }
             })
     },
-    getNewMembersCounts({ commit }, { storecode }) {
+    getNewMembersCounts({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/members/month/counts/new?storecode=${storecode}`)
             .then((resp) => {
                 commit('setCurrentAndLastYearMemberCounts', resp.data.rows)
@@ -837,7 +895,11 @@ export const actions = {
                 }
             })
     },
-    getCurrentMonthMemberLevel({ commit }, { storecode }) {
+    getCurrentMonthMemberLevel({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/members/month/level/pencent?storecode=${storecode}`)
             .then((resp) => {
                 commit('setCurrentMonthMemberLevel', resp.data.rows)
@@ -848,7 +910,12 @@ export const actions = {
                 }
             })
     },
-    getCurrentAndLastYearSaleAmountByOutlet({ commit }, { storecode, outlet }) {
+    getCurrentAndLastYearSaleAmountByOutlet({
+        commit
+    }, {
+        storecode,
+        outlet
+    }) {
         return axios.get(`/api/report/sales/year/amounts/outlet?storecode=${storecode}&outlet=${outlet}`)
             .then((resp) => {
                 commit('setCurrentAndLastYearSaleAmountByOutlet', resp.data.rows)
@@ -859,7 +926,12 @@ export const actions = {
                 }
             })
     },
-    getCurrentAndLastMonthSaleAmountByOutlet({ commit }, { storecode, outlet }) {
+    getCurrentAndLastMonthSaleAmountByOutlet({
+        commit
+    }, {
+        storecode,
+        outlet
+    }) {
         return axios.get(`/api/report/sales/month/amounts/outlet?storecode=${storecode}&outlet=${outlet}`)
             .then((resp) => {
                 commit('setCurrentAndLastMonthSaleAmountByOutlet', resp.data.rows)
@@ -870,7 +942,12 @@ export const actions = {
                 }
             })
     },
-    getTOP20BrandSaleByOutlet({ commit }, { storecode, outlet }) {
+    getTOP20BrandSaleByOutlet({
+        commit
+    }, {
+        storecode,
+        outlet
+    }) {
         return axios.get(`/api/report/sales/brand/top20/outlet?storecode=${storecode}&outlet=${outlet}`)
             .then((resp) => {
                 commit('setTop20BrandsSalesByOutlet', resp.data.rows)
@@ -881,7 +958,12 @@ export const actions = {
                 }
             })
     },
-    getNewMembersCountsByOutlet({ commit }, { storecode, outlet }) {
+    getNewMembersCountsByOutlet({
+        commit
+    }, {
+        storecode,
+        outlet
+    }) {
         return axios.get(`/api/report/members/month/counts/new/outlet?storecode=${storecode}&outlet=${outlet}`)
             .then((resp) => {
                 commit('setNewMembersByYearAndOutlet', resp.data.rows)
@@ -892,7 +974,12 @@ export const actions = {
                 }
             })
     },
-    getCurrentMonthMemberLevelByOutlet({ commit }, { storecode, outlet }) {
+    getCurrentMonthMemberLevelByOutlet({
+        commit
+    }, {
+        storecode,
+        outlet
+    }) {
         return axios.get(`/api/report/members/month/level/pencent/outlet?storecode=${storecode}&outlet=${outlet}`)
             .then((resp) => {
                 commit('setCurrentMonthMemberLevelByOutlet', resp.data.rows)
@@ -903,7 +990,12 @@ export const actions = {
                 }
             })
     },
-    getOldAndNewMembersCountsByOutlet({ commit }, { storecode, outlet }) {
+    getOldAndNewMembersCountsByOutlet({
+        commit
+    }, {
+        storecode,
+        outlet
+    }) {
         return axios.get(`/api/report/members/month/counts/newandold/outlet?storecode=${storecode}&outlet=${outlet}`)
             .then((resp) => {
                 commit('setOldAndNewMemberCountsByOutlet', resp.data.rows)
@@ -914,7 +1006,13 @@ export const actions = {
                 }
             })
     },
-    getCurrentAndLastMonthSaleAmountByEmp({ commit }, { storecode, outlet, empname }) {
+    getCurrentAndLastMonthSaleAmountByEmp({
+        commit
+    }, {
+        storecode,
+        outlet,
+        empname
+    }) {
         return axios.get(`/api/report/sales/months/amounts/employee?storecode=${storecode}&outlet=${outlet}&empname=${empname}`)
             .then((resp) => {
                 commit('setCurrentAndLastMonthSaleAmountByEmp', resp.data.rows)
@@ -925,7 +1023,13 @@ export const actions = {
                 }
             })
     },
-    getNewMembersCountsByEmp({ commit }, { storecode, outlet, empname }) {
+    getNewMembersCountsByEmp({
+        commit
+    }, {
+        storecode,
+        outlet,
+        empname
+    }) {
         return axios.get(`/api/report/members/month/counts/new/employee?storecode=${storecode}&outlet=${outlet}&empname=${empname}`)
             .then((resp) => {
                 commit('setNewMembersByYearAndEmp', resp.data.rows)
@@ -936,7 +1040,13 @@ export const actions = {
                 }
             })
     },
-    getCurrentAndLastMonthSaleTaskProcessByEmp({ commit }, { storecode, outlet, empname }) {
+    getCurrentAndLastMonthSaleTaskProcessByEmp({
+        commit
+    }, {
+        storecode,
+        outlet,
+        empname
+    }) {
         return axios.get(`/api/report/sales/month/pencent/employee?storecode=${storecode}&outlet=${outlet}&empname=${empname}`)
             .then((resp) => {
                 commit('setCurrentAndLastMonthSaleTaskProcessByEmp', resp.data.rows)
@@ -947,7 +1057,13 @@ export const actions = {
                 }
             })
     },
-    getOldAndNewMemberCountsByEmp({ commit }, { storecode, outlet, empname }) {
+    getOldAndNewMemberCountsByEmp({
+        commit
+    }, {
+        storecode,
+        outlet,
+        empname
+    }) {
         return axios.get(`/api/report/members/month/counts/newandold/employee?storecode=${storecode}&outlet=${outlet}&empname=${empname}`)
             .then((resp) => {
                 commit('setOldAndNewMemberCountsByEmp', resp.data.rows)
@@ -958,7 +1074,13 @@ export const actions = {
                 }
             })
     },
-    getCurrentMonthMemberLevelByEmp({ commit }, { storecode, outlet, empname }) {
+    getCurrentMonthMemberLevelByEmp({
+        commit
+    }, {
+        storecode,
+        outlet,
+        empname
+    }) {
         return axios.get(`/api/report/members/month/level/pencent/employee?storecode=${storecode}&outlet=${outlet}&empname=${empname}`)
             .then((resp) => {
                 commit('setCurrentMonthMemberLevelByEmp', resp.data.rows)
@@ -969,7 +1091,13 @@ export const actions = {
                 }
             })
     },
-    getTOP20BrandSaleByEmp({ commit }, { storecode, outlet, empname }) {
+    getTOP20BrandSaleByEmp({
+        commit
+    }, {
+        storecode,
+        outlet,
+        empname
+    }) {
         return axios.get(`/api/report/sales/brand/top20/employee?storecode=${storecode}&outlet=${outlet}&empname=${empname}`)
             .then((resp) => {
                 commit('setTop20BrandsSalesByEmp', resp.data.rows)
@@ -980,7 +1108,13 @@ export const actions = {
                 }
             })
     },
-    getTOP20GoodsSaleByEmp({ commit }, { storecode, outlet, empname }) {
+    getTOP20GoodsSaleByEmp({
+        commit
+    }, {
+        storecode,
+        outlet,
+        empname
+    }) {
         return axios.get(`/api/report/sales/goods/top20/employee?storecode=${storecode}&outlet=${outlet}&empname=${empname}`)
             .then((resp) => {
                 commit('setTop20GoodsSalesByEmp', resp.data.rows)
@@ -993,7 +1127,11 @@ export const actions = {
     },
 
     // 会员特征全量数据
-    getFeatureByAll({ commit }, { storecode }) {
+    getFeatureByAll({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/members/feature/all?storecode=${storecode}`)
             .then((resp) => {
                 commit('getMemberFeatureAll', resp.data.rows)
@@ -1017,7 +1155,11 @@ export const actions = {
     // },
 
     //会员复购数据
-    getMemberReBuy({ commit }, { storecode }) {
+    getMemberReBuy({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/members/rebuy?storecode=${storecode}`)
             .then((resp) => {
                 commit('getMemberRebuy', resp.data.rows)
@@ -1029,7 +1171,11 @@ export const actions = {
             })
     },
     // 复购商品
-    getRebuyGoods({ commit }, { storecode }) {
+    getRebuyGoods({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/members/rebuy/goods?storecode=${storecode}`)
             .then((resp) => {
                 commit('setRebuyGoods', resp.data.rows)
@@ -1041,7 +1187,11 @@ export const actions = {
             })
     },
     // 复购品类
-    getRebuyType({ commit }, { storecode }) {
+    getRebuyType({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/members/rebuy/type?storecode=${storecode}`)
             .then((resp) => {
                 commit('setRebuyType', resp.data.rows)
@@ -1053,7 +1203,11 @@ export const actions = {
             })
     },
     // 复购品牌
-    getRebuyBrand({ commit }, { storecode }) {
+    getRebuyBrand({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/members/rebuy/brand?storecode=${storecode}`)
             .then((resp) => {
                 commit('setRebuyBrand', resp.data.rows)
@@ -1064,7 +1218,13 @@ export const actions = {
                 }
             })
     },
-    getDetail({ commit }, { storecode, type, number }) {
+    getDetail({
+        commit
+    }, {
+        storecode,
+        type,
+        number
+    }) {
         return axios.get(`/api/report/members/detail?storecode=${storecode}&type=${type}&number=${number}`)
             .then((resp) => {
                 commit('getsexDetail', resp.data.rows)
@@ -1075,7 +1235,12 @@ export const actions = {
                 }
             })
     },
-    getCount({ commit }, { storecode, type }) {
+    getCount({
+        commit
+    }, {
+        storecode,
+        type
+    }) {
         return axios.get(`/api/report/members/total?storecode=${storecode}&type=${type}`)
             .then((resp) => {
                 commit('getTotal', resp.data.rows)
@@ -1087,7 +1252,11 @@ export const actions = {
             })
     },
 
-    getTodayNew({ commit }, { storecode }) {
+    getTodayNew({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/newmember/today?storecode=${storecode}`)
             .then((resp) => {
                 commit('setTodayNewMember', resp.data.rows)
@@ -1109,7 +1278,11 @@ export const actions = {
     //             }
     //         })
     // },
-    getMonthNewMember({ commit }, { storecode }) {
+    getMonthNewMember({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/newmember/month?storecode=${storecode}`)
             .then((resp) => {
                 commit('setMonthNewMember', resp.data.rows)
@@ -1121,7 +1294,12 @@ export const actions = {
             })
     },
 
-    getGuideByStore({ commit }, { storecode, outlet }) {
+    getGuideByStore({
+        commit
+    }, {
+        storecode,
+        outlet
+    }) {
         return axios.get(`/api/report/newmember/guide?storecode=${storecode}&outlet=${outlet}`)
             .then((resp) => {
                 commit('setNewMemberGuide', resp.data.rows)
@@ -1143,7 +1321,11 @@ export const actions = {
     //             }
     //         })
     // },
-    getAxis({ commit }, { storecode }) {
+    getAxis({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/axis?storecode=${storecode}`)
             .then((resp) => {
                 commit('setAxis', resp.data.rows)
@@ -1155,7 +1337,11 @@ export const actions = {
             })
     },
 
-    getSingleMoneyAll({ commit }, { storecode }) {
+    getSingleMoneyAll({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/singleMoneyAll?storecode=${storecode}`)
             .then((resp) => {
                 commit('setSingle', resp.data.rows)
@@ -1166,7 +1352,13 @@ export const actions = {
                 }
             })
     },
-    getSingleMoney({ commit }, { storecode, age, type }) {
+    getSingleMoney({
+        commit
+    }, {
+        storecode,
+        age,
+        type
+    }) {
         // console.log(storecode, type, age);
         return axios.get(`/api/report/singleMoney?storecode=${storecode}&age=${age}&type=${type}`)
             .then((resp) => {
@@ -1189,7 +1381,11 @@ export const actions = {
     //             }
     //         })
     // },
-    getExTimeAll({ commit }, { storecode }) {
+    getExTimeAll({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/exTimeAll?storecode=${storecode}`)
             .then((resp) => {
                 commit('setTime', resp.data.rows)
@@ -1200,7 +1396,13 @@ export const actions = {
                 }
             })
     },
-    getExTime({ commit }, { storecode, age, type }) {
+    getExTime({
+        commit
+    }, {
+        storecode,
+        age,
+        type
+    }) {
         // console.log(storecode, type, age);
         return axios.get(`/api/report/exTime?storecode=${storecode}&age=${age}&type=${type}`)
             .then((resp) => {
@@ -1223,7 +1425,11 @@ export const actions = {
     //             }
     //         })
     // },
-    getTransfrom({ commit }, { storecode }) {
+    getTransfrom({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/transform?storecode=${storecode}`)
             .then((resp) => {
                 commit('setTransform', resp.data.rows)
@@ -1255,7 +1461,13 @@ export const actions = {
     //             }
     //         })
     // },
-    getMonthSale({ commit }, { storecode, startDate, endDate }) {
+    getMonthSale({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/home/saleDetail?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setMonthChart', resp.data.rows)
@@ -1265,7 +1477,13 @@ export const actions = {
                 }
             })
     },
-    getMonthNewmember({ commit }, { storecode, startDate, endDate }) {
+    getMonthNewmember({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/home/newDetail?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setMonthNewDetail', resp.data.rows)
@@ -1276,7 +1494,14 @@ export const actions = {
                 }
             })
     },
-    getGuideNew({ commit }, { storecode, outletId, startDate, endDate }) {
+    getGuideNew({
+        commit
+    }, {
+        storecode,
+        outletId,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/home/getGuide?storecode=${storecode}&outletId=${outletId}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setGuideSeries', resp.data.rows)
@@ -1287,7 +1512,14 @@ export const actions = {
                 }
             })
     },
-    getGuideSale({ commit }, { storecode, outletId, startDate, endDate }) {
+    getGuideSale({
+        commit
+    }, {
+        storecode,
+        outletId,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/home/getSaleGuide?storecode=${storecode}&outletId=${outletId}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleGuideSeries', resp.data.rows)
@@ -1299,7 +1531,13 @@ export const actions = {
             })
     },
     //总销售数据分析
-    getSaleTotal({ commit }, { storecode, startDate, endDate }) {
+    getSaleTotal({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/sale/total?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleTotal', resp.data.rows)
@@ -1310,7 +1548,14 @@ export const actions = {
                 }
             })
     },
-    getSaleToalStore({ commit }, { storecode, startDate, endDate, outletId }) {
+    getSaleToalStore({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate,
+        outletId
+    }) {
         return axios.get(`/api/report/saleTotal/store?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}&outletId=${outletId}`)
             .then((resp) => {
                 commit('setSaleTotalStore', resp.data.rows)
@@ -1322,7 +1567,13 @@ export const actions = {
             })
     },
     //总销售对比数据
-    getSaleTotalDim({ commit }, { storecode, startDate, endDate }) {
+    getSaleTotalDim({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/sale/totalDim?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleTotalDim', resp.data.rows)
@@ -1334,7 +1585,13 @@ export const actions = {
             })
     },
     //多维度销售数据
-    getSaleDimension({ commit }, { storecode, startDate, endDate }) {
+    getSaleDimension({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/sale/dimension?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleDimension', resp.data.rows)
@@ -1346,7 +1603,13 @@ export const actions = {
             })
     },
     //多维度销售对比数据
-    getSaleDimCompare({ commit }, { storecode, startDate, endDate }) {
+    getSaleDimCompare({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/sale/dimension?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleDimCompare', resp.data.rows)
@@ -1358,7 +1621,12 @@ export const actions = {
             })
     },
     //多维度销售数据-门店
-    getSaleDimStore({ commit }, { storecode, outletId }) {
+    getSaleDimStore({
+        commit
+    }, {
+        storecode,
+        outletId
+    }) {
         return axios.get(`/api/report/sale/dim/store?storecode=${storecode}&outletId=${outletId}`)
             .then((resp) => {
                 commit('setSaleDimStore', resp.data.rows)
@@ -1370,7 +1638,13 @@ export const actions = {
             })
     },
     //多维度销售数据-导购
-    getSaleDimGuide({ commit }, { storecode, outletId, userId }) {
+    getSaleDimGuide({
+        commit
+    }, {
+        storecode,
+        outletId,
+        userId
+    }) {
         return axios.get(`/api/report/sale/dim/guide?storecode=${storecode}&outletId=${outletId}&userId=${userId}`)
             .then((resp) => {
                 commit('setSaleDimGuide', resp.data.rows)
@@ -1382,7 +1656,13 @@ export const actions = {
             })
     },
     //客户订单分析-门店平均客单价
-    getSaleOrder({ commit }, { storecode, startDate, endDate }) {
+    getSaleOrder({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/sale/order?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleOrder', resp.data.rows)
@@ -1393,7 +1673,13 @@ export const actions = {
                 }
             })
     },
-    getSaleOrderAvgamount({ commit }, { storecode, startDate, endDate }) {
+    getSaleOrderAvgamount({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/sale/orderAmount?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setOrderAvgamount', resp.data.rows)
@@ -1405,7 +1691,14 @@ export const actions = {
     },
 
     //客户订单分析-门店平均客单价-导购
-    getSaleOrderGuide({ commit }, { storecode, startDate, endDate, outletId }) {
+    getSaleOrderGuide({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate,
+        outletId
+    }) {
         return axios.get(`/api/report/saleOrderSingle?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}&outletId=${outletId}`)
             .then((resp) => {
                 commit('setSaleOrderGuide', resp.data.rows)
@@ -1416,7 +1709,13 @@ export const actions = {
                 }
             })
     },
-    getSaleOrderDim({ commit }, { storecode, startDate, endDate }) {
+    getSaleOrderDim({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/sale/orderDim?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleOrderDim', resp.data.rows)
@@ -1427,7 +1726,13 @@ export const actions = {
                 }
             })
     },
-    getSaleOrderTimes({ commit }, { storecode, startDate, endDate }) {
+    getSaleOrderTimes({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/sale/times?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleTimes', resp.data.rows)
@@ -1438,7 +1743,13 @@ export const actions = {
                 }
             })
     },
-    getSaleTimeDim({ commit }, { storecode, startDate, endDate }) {
+    getSaleTimeDim({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/sale/timeDim?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setSaleTimeDim', resp.data.rows)
@@ -1449,7 +1760,13 @@ export const actions = {
                 }
             })
     },
-    getOperaMain({ commit }, { storecode, startDate, endDate }) {
+    getOperaMain({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/opera/scanRegBind?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setOperaMain', resp.data.rows);
@@ -1460,7 +1777,14 @@ export const actions = {
                 }
             })
     },
-    getOperaGuide({ commit }, { storecode, outlet, startDate, endDate }) {
+    getOperaGuide({
+        commit
+    }, {
+        storecode,
+        outlet,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/operaGuide?storecode=${storecode}&outlet=${outlet}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setOperaGuide', resp.data.rows);
@@ -1471,7 +1795,15 @@ export const actions = {
                 }
             })
     },
-    getOperaGuideDetail({ commit }, { storecode, outlet, userid, startDate, endDate }) {
+    getOperaGuideDetail({
+        commit
+    }, {
+        storecode,
+        outlet,
+        userid,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/opera/guideDetail?storecode=${storecode}&outlet=${outlet}&userid=${userid}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setGuideDetail', resp.data.rows);
@@ -1483,7 +1815,13 @@ export const actions = {
             })
     },
     //客户维护交易人数
-    getOperaDealNum({ commit }, { storecode, startDate, endDate }) {
+    getOperaDealNum({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/opera/dealnum?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setOperaDealNum', resp.data.rows);
@@ -1495,7 +1833,13 @@ export const actions = {
             })
     },
     //维护客户购买次数
-    getOperaDealTimes({ commit }, { storecode, startDate, endDate }) {
+    getOperaDealTimes({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/opera/dealtimes?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setOperaDealTimes', resp.data.rows);
@@ -1507,7 +1851,13 @@ export const actions = {
             })
     },
     //客户维护交易单价
-    getOperaDealPrice({ commit }, { storecode, startDate, endDate }) {
+    getOperaDealPrice({
+        commit
+    }, {
+        storecode,
+        startDate,
+        endDate
+    }) {
         return axios.get(`/api/report/opera/dealprice?storecode=${storecode}&startDate=${startDate}&endDate=${endDate}`)
             .then((resp) => {
                 commit('setOperaDealPrice', resp.data.rows);
@@ -1519,7 +1869,11 @@ export const actions = {
             })
     },
     //会员地理分布
-    getMemberGeo({ commit }, { storecode }) {
+    getMemberGeo({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/member/geo?storecode=${storecode}`)
             .then((resp) => {
                 commit('setMemberGeo', resp.data.rows)
@@ -1530,8 +1884,28 @@ export const actions = {
                 }
             })
     },
+    //地图中心点坐标
+    getGeoCenter({
+        commit
+    }, {
+        storecode
+    }) {
+        return axios.get(`/api/report/member/center?storecode=${storecode}`)
+            .then((resp) => {
+                commit('setGeoCenter', resp.data.rows)
+            })
+            .catch((error) => {
+                if (error.response.status === 500) {
+                    throw new Error('服务器错误')
+                }
+            })
+    },
     //生理轴分布
-    getMemberAxis({ commit }, { storecode }) {
+    getMemberAxis({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/member/axis?storecode=${storecode}`)
             .then((resp) => {
                 commit('setMemberAxis', resp.data.rows)
@@ -1543,7 +1917,11 @@ export const actions = {
             })
     },
     // 忠诚度
-    getMemberLoyal({ commit }, { storecode }) {
+    getMemberLoyal({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/member/loyal?storecode=${storecode}`).then((resp) => {
                 commit('setMemberLoyal', resp.data.rows)
             })
@@ -1553,7 +1931,11 @@ export const actions = {
                 }
             })
     },
-    getStoreList({ commit }, { storecode }) {
+    getStoreList({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/report/sale/sotreList?storecode=${storecode}`)
             .then((resp) => {
                 commit('setStoreList', resp.data.rows)
@@ -1564,7 +1946,12 @@ export const actions = {
                 }
             })
     },
-    getGuideList({ commit }, { storecode, outletId }) {
+    getGuideList({
+        commit
+    }, {
+        storecode,
+        outletId
+    }) {
         return axios.get(`/api/report/sale/guideList?storecode=${storecode}&outletId=${outletId}`)
             .then((resp) => {
                 commit('setGuideList', resp.data.rows)
@@ -1609,7 +1996,11 @@ export const actions = {
             .catch(err => console.log(err));
     },
     // 大屏数据中心
-    getScreenSaleRoom({ commit }, { storecode }) {
+    getScreenSaleRoom({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/saleroom?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenSaleRoom', resp.data.rows)
@@ -1621,7 +2012,11 @@ export const actions = {
             })
     },
     //客单价
-    getScreenSaleSingle({ commit }, { storecode }) {
+    getScreenSaleSingle({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/saleSingle?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenSaleSingle', resp.data.rows)
@@ -1633,7 +2028,11 @@ export const actions = {
             })
     },
     //连带率
-    getScreenRelated({ commit }, { storecode }) {
+    getScreenRelated({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/related?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenRelated', resp.data.rows)
@@ -1645,7 +2044,11 @@ export const actions = {
             })
     },
     // 会员贡献率
-    getScreenOffered({ commit }, { storecode }) {
+    getScreenOffered({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/offered?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenOffered', resp.data.rows)
@@ -1657,7 +2060,11 @@ export const actions = {
             })
     },
     // 线下新增会员
-    getScreenNewadd({ commit }, { storecode }) {
+    getScreenNewadd({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/newAdd?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenNewadd', resp.data.rows)
@@ -1669,7 +2076,11 @@ export const actions = {
             })
     },
     //品类销售排行
-    getScreenBrand({ commit }, { storecode }) {
+    getScreenBrand({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/brand?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenBrand', resp.data.rows)
@@ -1681,7 +2092,11 @@ export const actions = {
             })
     },
     //品牌top10
-    getTopTen({ commit }, { storecode }) {
+    getTopTen({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/topten?storecode=${storecode}`)
             .then((resp) => {
                 commit('setTopTen', resp.data.rows)
@@ -1693,7 +2108,11 @@ export const actions = {
             })
     },
     //top10-销量
-    getTenBynumber({ commit }, { storecode }) {
+    getTenBynumber({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/tenbynumber?storecode=${storecode}`)
             .then((resp) => {
                 commit('setTopTen', resp.data.rows)
@@ -1705,7 +2124,11 @@ export const actions = {
             })
     },
     //top10-会员交易数
-    getTenBymember({ commit }, { storecode }) {
+    getTenBymember({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/tenbymember?storecode=${storecode}`)
             .then((resp) => {
                 commit('setTopTen', resp.data.rows)
@@ -1717,7 +2140,11 @@ export const actions = {
             })
     },
     //今日销售额
-    getScreenTodaySale({ commit }, { storecode }) {
+    getScreenTodaySale({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/todaysale?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenTodaysale', resp.data.rows)
@@ -1729,7 +2156,11 @@ export const actions = {
             })
     },
     //今日销目标
-    getScreenTodayTarget({ commit }, { storecode }) {
+    getScreenTodayTarget({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/todaytarget?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenTodaytarget', resp.data.rows)
@@ -1741,7 +2172,11 @@ export const actions = {
             })
     },
     //小时销售
-    getScreenHourSale({ commit }, { storecode }) {
+    getScreenHourSale({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/hoursale?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenHourSale', resp.data.rows)
@@ -1753,7 +2188,11 @@ export const actions = {
             })
     },
     //最近七天销售
-    getScreenSevenSale({ commit }, { storecode }) {
+    getScreenSevenSale({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/sevensale?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenSevensale', resp.data.rows)
@@ -1765,7 +2204,11 @@ export const actions = {
             })
     },
     //门店销售分布
-    getScreenSaleSpread({ commit }, { storecode }) {
+    getScreenSaleSpread({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/salespread?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenSalespread', resp.data.rows)
@@ -1777,7 +2220,11 @@ export const actions = {
             })
     },
     //今日新客目标
-    getScreenNewtarget({ commit }, { storecode }) {
+    getScreenNewtarget({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/newTarget?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenNewtarget', resp.data.rows)
@@ -1789,7 +2236,11 @@ export const actions = {
             })
     },
     //会员消费贡献分布
-    getScreenMemberconsum({ commit }, { storecode }) {
+    getScreenMemberconsum({
+        commit
+    }, {
+        storecode
+    }) {
         return axios.get(`/api/screen/memberconsum?storecode=${storecode}`)
             .then((resp) => {
                 commit('setScreenMemberconsum', resp.data.rows)

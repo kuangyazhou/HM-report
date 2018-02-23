@@ -146,7 +146,7 @@
     </sql-request>
     <sql-request id="QUERY-SALETOTAL-STORE" desc="总销售数据-门店详情">
     <![CDATA[
-    select  s.store_outlet_guider_name ,  sum(member_trade_amount) member_trade_amount from  hemiaodata.hm_daystat_belong_guider_sales_details t,  hemiaodata.hm_store_outlet_guider_trim s where t.store_code = s.store_code  and t.belong_store_outlet_id = s.store_outlet_id and t.belong_store_user_id = s.store_outlet_guider_id and t.store_code = :storecode  and stat_day >= :startDate  and stat_day <= :endDate  and belong_store_outlet_id = :outletId  and t.isvalid = 1 group by t.belong_store_user_id
+    select  s.store_outlet_guider_name,sum(member_trade_amount) member_trade_amount from  hemiaodata.hm_daystat_belong_guider_sales_details t,  hemiaodata.hm_store_outlet_guider_trim s where t.store_code = s.store_code  and t.belong_store_outlet_id = s.store_outlet_id and t.belong_store_user_id = s.store_outlet_guider_id and t.store_code = :storecode  and stat_day >= :startDate  and stat_day <= :endDate  and belong_store_outlet_id = :outletId  and t.isvalid = 1 group by t.belong_store_user_id
     ]]>
     </sql-request>
     <sql-request id="QUERY-SALE-DIMENSION" desc="多维度销售数据">
@@ -228,8 +228,7 @@
     </sql-request>
     <sql-request id="QUERY-OPERA-DEALTIMES" desc="维护客户购买次数">
       <![CDATA[
-    SELECT hgcme.store_code,store_outlet_id,hso.`name`,store_user_id,mb_offline_id,contact_time FROM hemiaodata.hm_guider_contact_member_extrecord hgcme LEFT JOIN hemiaoshadow.hm_store_outlet hso on hgcme.store_outlet_id=hso.id WHERE contact_time >= :startDate AND hgcme.store_code = :storecode;
-    select distinct order_id, t.store_code, belong_store_outlet_id, s.store_outlet_name belong_store_outlet_name, belong_store_user_id, member_offline_id, add_time from hemiaodata.hm_order_goods_offline_extrecord t inner join hemiaodata.hm_store_outlet_trim s on t.store_code = s.store_code and t.store_outlet_id = s.store_outlet_id and belong_store_user_id is not null and add_time >= :startDate and t.store_code = :storecode and order_status = 0;
+    select so.name store_outlet_name,record.trade_freq_type,count( * ) num from hemiaodata.hm_guider_contact_member_range_record record,hemiaoshadow.hm_member_offline mo,hemiaoshadow.sys_store_user ssu,hemiaoshadow.hm_store_outlet so where record.store_code = :storecode and mo.store_code = :storecode and ssu.store_code = :storecode and so.store_code = :storecode and record.mb_offline_id = mo.id and mo.guider_id = ssu.id and ssu.store_outlet_id = so.id and ssu.position in ( 0, 1 ) and ssu.status = 1 and contact_time >=:startDate and contact_time < :endDate and trade_freq_type is not null group by so.id,record.trade_freq_type;
     ]]>
     </sql-request>
     <!-- select DISTINCT order_id,store_code,belong_store_outlet_id,belong_store_outlet_name,belong_store_user_id,member_offline_id,add_time from hemiaodata.hm_order_goods_offline_extrecord where belong_store_user_id is not null and add_time>=:startDate and store_code = :storecode and order_status=0; -->
@@ -244,6 +243,11 @@
       SELECT FORMAT( baidu_lng, 10 ) baidu_lng,FORMAT( baidu_lat, 10 ) baidu_lat,COUNT( * ) elevation FROM hemiaodata.hm_member_lbs_summary WHERE store_code=:storecode and baidu_lng IS NOT NULL AND baidu_lng <> 0 AND baidu_lat IS NOT NULL AND baidu_lat <> 0 GROUP BY FORMAT( baidu_lng, 10 ),FORMAT( baidu_lat, 10 )
     ]]>
     </sql-request>
+    <sql-request id="QUERY-MEMBER-CENTER" desc="地图中心点坐标">
+    <![CDATA[
+      select baidu_lat,baidu_lng,baidu_level from hemiaoshadow.hm_store where store_code=:storecode;
+    ]]>
+    </sql-request>
     <!-- SELECT FORMAT(baidu_lng, 10) baidu_lng,FORMAT(baidu_lat, 10) baidu_lat,COUNT(*) elevation FROM hemiaodata.hm_member_lbs_summary WHERE baidu_lng IS NOT NULL AND baidu_lng <> 0 AND baidu_lat IS NOT NULL AND baidu_lat <> 0 GROUP BY FORMAT(baidu_lng, 10),FORMAT(baidu_lat, 10) -->
     <sql-request id="QUERY-LIFE-AXIS" desc="生理轴分布">
       <![CDATA[
@@ -252,7 +256,7 @@
     </sql-request>
     <sql-request id="QUERY-MEMBER-LOYAL" desc="忠诚度分析">
       <![CDATA[
-       select loyalty_level,count(*) num from hemiaodata.hm_member_loyalty_rating_details  where store_code =:storecode group by loyalty_level
+       select loyalty_level,count(*) num from hemiaodata.hm_member_loyalty_rating_details where store_code =:storecode and isvalid = 1 group by loyalty_level
       ]]>
     </sql-request>
   </sql-requests>

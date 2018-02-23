@@ -31,9 +31,9 @@
       <el-menu-item index="operaNumber">
         <i class="fa fa-handshake-o"></i>维护客户交易人数
       </el-menu-item>
-      <!-- <el-menu-item index="operaTimes">
+      <el-menu-item index="operaTimes">
         <i class="fa fa-shopping-cart"></i>客户购买次数分析
-      </el-menu-item> -->
+      </el-menu-item>
       <!-- <el-menu-item index="operaSingle">
         <i class="fa fa-money"></i>维护客户购买单价
       </el-menu-item> -->

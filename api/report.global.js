@@ -1509,6 +1509,24 @@ router.get(`/report/member/geo`, function(req, res, next) {
     })
 })
 
+// 地图中心点坐标
+router.get(`/report/member/center`, function(req, res, next) {
+    const storecode = req.query.storecode;
+    db.queryXml({
+        file: MEMBERS_XML_PATH,
+        key: 'QUERY-MEMBER-CENTER',
+        values: { storecode },
+        cacheKey: `QUERY-MEMBER-CENTER-${storecode}`,
+        done: (rows) => {
+            if (rows.length > 0) {
+                res.status(200).json({ rows })
+            } else {
+                res.status(200).json({ rows: [] })
+            }
+        }
+    })
+})
+
 //生理轴分布
 router.get(`/report/member/axis`, function(req, res, next) {
     const storecode = req.query.storecode;
@@ -1731,7 +1749,7 @@ router.get(`/screen/todaytarget`, function(req, res, next) {
     db.queryXml({
         file: SCREEN_XML_PATH,
         key: 'SCEENR-TODAYTARGET',
-        values: { storecode },
+        values: { storecode, _currentMonth },
         cacheKey: `SCREEN-TODAYTARGET-${storecode}-${timestamp}`,
         done: (rows) => {
             if (rows.length > 0) {
@@ -1785,7 +1803,7 @@ router.get(`/screen/salespread`, function(req, res, next) {
     db.queryXml({
         file: SCREEN_XML_PATH,
         key: 'SCEENR-SALESPREAD',
-        values: { storecode },
+        values: { storecode, _currentMonth },
         cacheKey: `SCREEN-SALESPREAD-${storecode}-${timestamp}`,
         done: (rows) => {
             if (rows.length > 0) {

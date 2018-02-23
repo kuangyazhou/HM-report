@@ -3,12 +3,12 @@
   <sql-requests>
     <sql-request id="SCEENR-SALEROOM" desc="大屏销售额">
     <![CDATA[
-        select'today_amount' type,sum(member_trade_amount) amount from hemiaodata.hm_hourstat_store_outlet_sales_details where store_code = :storecode and stat_day = curdate() union select 'yesterday_amount',sum(member_trade_amount) amount from hemiaodata.hm_daystat_store_outlet_details where store_code = :storecode and isvalid = 1 and stat_day = curdate() - 1 union select 'last7day_amount',sum(member_trade_amount)/7 amount from hemiaodata.hm_daystat_store_outlet_details where store_code = :storecode and isvalid = 1 and stat_day >= curdate() - 8 and stat_day <= curdate() - 1 union select 'lastmonth_amount',sum(member_trade_amount) amount from hemiaodata.hm_daystat_store_outlet_details where store_code = :storecode and isvalid = 1 and stat_day = date_sub(curdate(), interval 1 month);
+        select'today_amount' type,sum(member_trade_amount) amount from hemiaodata.hm_hourstat_store_outlet_sales_details where store_code = :storecode and stat_day = curdate() union select 'yesterday_amount',sum(member_trade_amount) amount from hemiaodata.hm_daystat_store_outlet_details where store_code = :storecode and isvalid = 1 and stat_day = date_sub(curdate(),INTERVAL 1 day) union select 'last7day_amount',sum(member_trade_amount)/7 amount from hemiaodata.hm_daystat_store_outlet_details where store_code = :storecode and isvalid = 1 and stat_day >= date_sub(curdate(),INTERVAL 7 day) and stat_day <= date_sub(curdate(),INTERVAL 1 day) union select 'lastmonth_amount',sum(member_trade_amount) amount from hemiaodata.hm_daystat_store_outlet_details where store_code = :storecode and isvalid = 1 and stat_day = date_sub(curdate(), interval 1 month);
       ]]>
   </sql-request>
   <sql-request id="SCEENR-SINGLE" desc="大屏客单价">
     <![CDATA[
-        SELECT 'today_amount' type,sum(tot_price) / count(DISTINCT order_id) kedanjia FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND trade_day = curdate() UNION SELECT 'yesterday_amount',sum(tot_price) / count(DISTINCT order_id) kedanjia FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND trade_day = curdate() - 1 UNION SELECT 'last7day_amount',sum(tot_price) / count(DISTINCT order_id) kedanjia FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND trade_day >= curdate() - 8 AND trade_day <= curdate() - 1 UNION SELECT 'lastmonth_amount',sum(tot_price) / count(DISTINCT order_id) kedanjia FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND trade_day = date_sub(curdate(), INTERVAL 1 MONTH);
+        SELECT 'today_amount' type,sum(tot_price) / count(DISTINCT order_id) kedanjia FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND trade_day = curdate() UNION SELECT 'yesterday_amount',sum(tot_price) / count(DISTINCT order_id) kedanjia FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND trade_day = date_sub(curdate(),INTERVAL 1 day) UNION SELECT 'last7day_amount',sum(tot_price) / count(DISTINCT order_id) kedanjia FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND trade_day >= date_sub(curdate(),INTERVAL 7 day) AND trade_day <= date_sub(curdate(),INTERVAL 1 day) UNION SELECT 'lastmonth_amount',sum(tot_price) / count(DISTINCT order_id) kedanjia FROM hemiaoshadow.hm_order_goods_offline WHERE store_code = :storecode AND trade_day = date_sub(curdate(), INTERVAL 1 MONTH);
       ]]>
   </sql-request>
   <sql-request id="SCEENR-RELATED" desc="连带率">
@@ -18,12 +18,12 @@
   </sql-request>
   <sql-request id="SCEENR-OFFERD" desc="会员贡献率">
     <![CDATA[
-        select 'today_amount' type,sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day = curdate() union select 'yesterday_amount',sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day = curdate() - 1 union select 'last7day_amount',sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day >= curdate() - 8 and trade_day <= curdate() - 1 union select 'lastmonth_amount',sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day = date_sub(curdate(), interval 1 month);
+        select 'today_amount' type,sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day = curdate() union select 'yesterday_amount',sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day = date_sub(curdate(),INTERVAL 1 day) union select 'last7day_amount',sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day >= date_sub(curdate(),INTERVAL 7 day) and trade_day <= date_sub(curdate(),INTERVAL 1 day) union select 'lastmonth_amount',sum(if(user_id is null,0,tot_price))/sum(tot_price)*100 rate from hemiaoshadow.hm_order_goods_offline where store_code = :storecode and trade_day = date_sub(curdate(), interval 1 month);
       ]]>
   </sql-request>
   <sql-request id="SCEENR-NEW" desc="线下新增会员">
     <![CDATA[
-        select 'today_amount' type,count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') = date_format(curdate(),'%Y%m%d') union select 'yesterday_amount',count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') = date_format(curdate() - 1, '%Y%m%d') union select 'last7day_amount',count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') >= date_format(curdate() - 8, '%Y%m%d') and date_format(reg_time, '%Y%m%d') <= date_format(curdate() - 1, '%Y%m%d') union select 'lastmonth_amount',count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') = date_format(date_sub(curdate(), interval 1 month), '%Y%m%d');
+        select 'today_amount' type,count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') = date_format(curdate(),'%Y%m%d') union select 'yesterday_amount',count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') = date_format(date_sub(curdate(),INTERVAL 1 day), '%Y%m%d') union select 'last7day_amount',count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') >= date_format(date_sub(curdate(),INTERVAL 7 day), '%Y%m%d') and date_format(reg_time, '%Y%m%d') <= date_format(date_sub(curdate(),INTERVAL 1 day), '%Y%m%d') union select 'lastmonth_amount',count(id) new from hemiaoshadow.hm_member_offline where store_code = :storecode and date_format(reg_time, '%Y%m%d') = date_format(date_sub(curdate(), interval 1 month), '%Y%m%d');
       ]]>
   </sql-request>
 
@@ -55,7 +55,7 @@
   </sql-request>
   <sql-request id="SCEENR-TODAYTARGET" desc="大屏今日目标">
     <![CDATA[
-        select sum(target_value) / (select day(last_day(curdate()))) day_target_value from hemiaodata.hm_guider_appraisal_target_newest t where t.store_code = :storecode and t.target_object = 1 and t.target_type = 1 and t.time_rank = 1 and t.target_time = '2017-12'
+        select sum(target_value) / (select day(last_day(curdate()))) day_target_value from hemiaodata.hm_guider_appraisal_target_newest t where t.store_code = :storecode and t.target_object = 1 and t.target_type = 1 and t.time_rank = 1 and t.target_time =:_currentMonth
       ]]>
   </sql-request>
   <sql-request id="SCEENR-HOURSALE" desc="小时销售">
@@ -70,7 +70,7 @@
   </sql-request>
   <sql-request id="SCEENR-SALESPREAD" desc="门店销售分布">
     <![CDATA[
-        select a.store_outlet_name,ifnull(b.day_target, 0) day_target,ifnull(c.day_amount, 0) day_amount from (select store_outlet_id,store_outlet_name from hemiaodata.hm_store_outlet_trim where store_code = :storecode and store_outlet_id <> '-' and status = 1) a left join (select store_outlet_id,sum(target_value)/day(last_day(curdate())) day_target from hemiaodata.hm_guider_appraisal_target_newest hat where store_code = :storecode and hat.target_object = 1 and hat.target_type = 1 and hat.time_rank = 1 and target_time = '2017-12' group by store_outlet_id) b on a.store_outlet_id = b.store_outlet_id left join (select store_outlet_id,sum(member_trade_amount) day_amount from hemiaodata.hm_hourstat_store_outlet_sales_details where store_code = :storecode and stat_day = curdate() group by store_outlet_id) c on a.store_outlet_id = c.store_outlet_id
+        select a.store_outlet_name,ifnull(b.day_target, 0) day_target,ifnull(c.day_amount, 0) day_amount from (select store_outlet_id,store_outlet_name from hemiaodata.hm_store_outlet_trim where store_code = :storecode and store_outlet_id <> '-' and status = 1) a left join (select store_outlet_id,sum(target_value)/day(last_day(curdate())) day_target from hemiaodata.hm_guider_appraisal_target_newest hat where store_code = :storecode and hat.target_object = 1 and hat.target_type = 1 and hat.time_rank = 1 and target_time =:_currentMonth group by store_outlet_id) b on a.store_outlet_id = b.store_outlet_id left join (select store_outlet_id,sum(member_trade_amount) day_amount from hemiaodata.hm_hourstat_store_outlet_sales_details where store_code = :storecode and stat_day = curdate() group by store_outlet_id) c on a.store_outlet_id = c.store_outlet_id ORDER BY day_amount
       ]]>
   </sql-request>
   <sql-request id="SCEENR-NEWTARGET" desc="今日新客目标">
@@ -80,7 +80,7 @@
   </sql-request>
   <sql-request id="SCEENR-MEMBERCONSUM" desc="会员消费贡献分布">
     <![CDATA[
-    select age_group,sum( ord.tot_price ) amount,count( distinct ord.order_id ) ord_num,count( distinct ord.user_id ) mem_num from hemiaodata.hm_member_birthday_summary mbs,hemiaodata.hm_member_summary ms,hemiaoshadow.hm_member_offline mo,hemiaoshadow.hm_order_goods_offline ord where mbs.store_code = '42010616031788' and ms.store_code = '42010616031788' and mo.store_code = '42010616031788' and ord.store_code = '42010616031788' and mbs.member_summary_id = ms.id and ms.member_offline_id = mo.id and ord.user_id = mo.id_old and date_format(ord.add_time,'%Y-%m-%d') = curdate() group by age_group order by amount desc;
+    select age_group,sum( ord.tot_price ) amount,count( distinct ord.order_id ) ord_num,count( distinct ord.user_id ) mem_num from hemiaodata.hm_member_birthday_summary mbs,hemiaodata.hm_member_summary ms,hemiaoshadow.hm_member_offline mo,hemiaoshadow.hm_order_goods_offline ord where mbs.store_code = :storecode and ms.store_code = :storecode and mo.store_code = :storecode and ord.store_code = :storecode and mbs.member_summary_id = ms.id and ms.member_offline_id = mo.id and ord.user_id = mo.id_old and date_format(ord.add_time,'%Y-%m-%d') = curdate() group by age_group order by amount desc;
       ]]>
   </sql-request>
   </sql-requests>

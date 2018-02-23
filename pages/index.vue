@@ -33,7 +33,7 @@
           <div slot="header" class="clearfix" style="text-align:center">
             <span style="line-height: 18px;">品牌top10</span>
           </div>
-          <Vtable :title="topTenTitle" :width="90" :tableData="topTenData" :activeRow="3"></Vtable>
+          <Vtable :title="topTenTitle" :width="90" :tableData="topTenData" :activeRow="topTenRow"></Vtable>
         </el-card>
       </el-col>
       <el-col :span="8" class="margin1">
@@ -86,7 +86,6 @@
             </div>
             <div class="flex around">
               <span class="flex today-add">{{newMom+newBaby}}</span>
-              <!-- <el-progress style="width:50%" :stroke-width="18" :percentage="70" status="success"></el-progress> -->
               <Vprogress :percentage="newpercentage"></Vprogress>
               <span class="flex today-target">{{newMemberTarget}}
                 <i class="fa fa-edit left5" @click="memberTarget" aria-hidden="true"></i>
@@ -158,33 +157,24 @@ export default {
       deep: true;
       this.saleTableData = [];
       this.saleTableData.push(val);
-      // this.saleTableData[0] = val;
     },
     saleSingle: function(val) {
       deep: true;
-      // this.saleTableData = [];
       this.saleTableData.push(val);
-      // this.saleTableData[1] = val;
     },
     related: function(val) {
       deep: true;
-      // console.log(val);
-      // this.saleTableData = [];
       this.saleTableData.push(val);
-      // this.saleTableData[2] = val;
     },
     offered: function(val) {
       deep: true;
       this.saleTableData.push(val);
-      // this.saleTableData[3] = val;
     },
     newAdd: function(val) {
       deep: true;
       this.saleTableData.push(val);
-      // this.saleTableData[4] = val;
     },
     brand: function(val) {
-      // console.log(val);
       let name = [];
       val.forEach(e => {
         name.push(e.name);
@@ -195,36 +185,32 @@ export default {
       this.typeSaleChart.setOption(this.brandOption);
     },
     topTen: function(val) {
+      // console.log(val);
+      deep: true;
       this.topTenData = val;
     },
     todaySale: function(val) {
-      // console.log(val);
       this.Sale = val[0] ? val[0].toFixed(2) : 0;
-      // this.percentage = (this.Sale / this.Target).toFixed(2);
     },
     todayTarget: function(val) {
       this.Target = val[0] ? val[0].toFixed(2) : 0;
-      // console.log(val);
-      // this.percentage = Number((this.Sale / this.Target * 100).toFixed(2));
-      this.Target
-        ? (this.percentage = Number((this.Sale / this.Target * 100).toFixed(2)))
-        : 0;
-      // console.log(typeof this.percentage);
+      if (this.Target) {
+        this.percentage = Number((this.Sale / this.Target * 100).toFixed(2));
+      } else {
+        this.percentage = 0;
+      }
     },
     hourSale: function(val) {
-      // console.log(val);
       this.hourDisOption.series[0].data = val[0];
       this.hourDisOption.xAxis.data = val[1];
       this.hourLength = val[0].length;
       this.hourDisChart.setOption(this.hourDisOption);
     },
     sevenSale: function(val) {
-      // console.log(val);
       this.hourDisOption.series[1].data = val;
       this.hourDisChart.setOption(this.hourDisOption);
     },
     saleSpread: function(val) {
-      // console.log(val);
       this.storeSaleOption.yAxis[0].data = val[2];
       this.storeSaleOption.yAxis[1].data = val[2];
       this.storeSaleOption.series[0].data = val[1];
@@ -235,25 +221,23 @@ export default {
       });
       this.storeLength = val[0].length;
       this.storeSaleChart.setOption(this.storeSaleOption);
-      // this.memberAddChart.setOption(this.storeSaleOption);
     },
     newTarget: function(val) {
-      // console.log(val);
       this.newMemberTarget = Math.ceil(val);
       this.newpercentage = val
         ? Number(((this.newMom + this.newBaby) / val * 100).toFixed(2))
         : 0;
     },
     memberConsum: function(val) {
-      // console.log(val);
       this.memberconsumData = val;
     },
     Timestamp: function(val) {
-      // console.log(val);
-      val ? "" : this.refreshData();
+      if (!val) {
+        this.refreshData();
+        this.getDataByAPI();
+      }
       this.typeSaleChart.setOption(this.brandOption);
       this.hourDisChart.setOption(this.hourDisOption);
-      // this.memberAddChart.setOption(this.memberAddOption);
     }
   },
   components: { Vprogress, Vtable },
@@ -287,11 +271,17 @@ export default {
       memberAddChart: null,
       newMom: 0,
       newBaby: 0,
+      topTenRow: 3,
       saleTitle: ["项目", "今日", "昨日", "最近7日", "上月同期"],
       saleTableData: [],
       topTenTitle: ["品牌", "销售额", "销量", "交易会员数"],
       topTenData: [],
-      memberconsumTitle: ["年龄段", "产生销售额", "产生订单量", "交易客户数"],
+      memberconsumTitle: [
+        "年龄段",
+        "销售额(占比)",
+        "订单量(占比)",
+        "交易客户数(占比)"
+      ],
       memberconsumData: [],
       storeSaleOption: {
         title: {
@@ -305,7 +295,8 @@ export default {
           trigger: "axis",
           axisPointer: {
             type: "shadow"
-          }
+          },
+          formatter: "销售额{c},销售目标{c1}"
         },
         legend: {
           right: 20,
@@ -389,6 +380,21 @@ export default {
             barCategoryGap: "50%",
             data: []
           }
+          // {
+          //   name: "完成率",
+          //   type: "bar",
+          //   yAxisIndex: 2,
+          //   stack: "总量",
+          //   barGap: "0%",
+          //   barCategoryGap: "50%",
+          //   label: {
+          //     normal: {
+          //       position: "right",
+          //       show: true
+          //     }
+          //   },
+          //   data: []
+          // }
         ]
       },
       hourDisOption: {
@@ -658,9 +664,8 @@ export default {
   },
   computed: {
     storeCode() {
-      return (
-        this.$store.state.storeCode || window.localStorage.getItem("storecode")
-      );
+      return this.$store.state.storeCode;
+      // this.$store.state.storeCode || window.localStorage.getItem("storecode")
     },
     // testData() {
     //   return this.$store.state.report.datasource.saleTotal;
@@ -721,67 +726,13 @@ export default {
   },
   created() {
     this.refreshData();
-    // 会员全量信息
-    axios
-      .get(
-        `http://crmbackservice.hemiao100.com/crm/data/today_member_info.json?token=5510,6666,1,${this
-          .storeCode},11161`
-      )
-      .then(response => {
-        // console.log(response);
-        if (response.data.code == 0) {
-          this.newMom = response.data.data.mom;
-          this.newBaby = response.data.data.baby;
-          this.newMemberTarget
-            ? (this.percentage = Number(
-                (this.mom + this.baby) / this.newMemberTarget * 100
-              ).toFixed(2))
-            : (this.percentage = 0);
-        }
-      });
-    // 门店会员信息
-    axios
-      .get(
-        `http://crmbackservice.hemiao100.com/crm/data/today_member_outlet_info.json?token=5510,6666,1,${this
-          .storeCode},11161`
-      )
-      .then(response => {
-        if (response.data.code == 0) {
-          let storeName = new Set(
-            Object.keys(response.data.data.baby),
-            Object.keys(response.data.data.mom)
-          );
-          let baby = Array.from(Object.keys(response.data.data.baby));
-          let mom = Array.from(Object.keys(response.data.data.mom));
-          let babyValue = Array.from(Object.values(response.data.data.baby));
-          let momValue = Array.from(Object.values(response.data.data.mom));
-          let name = Array.from(storeName);
-          // console.log(name);
-          let data = {
-            baby: [],
-            mom: []
-          };
-          name.forEach(n => {
-            let bindex = baby.findIndex(function(value, index, arr) {
-              return value == n;
-            });
-            let mindex = mom.findIndex(function(value, index, arr) {
-              return value == n;
-            });
-            bindex > -1 ? data.baby.push(babyValue[bindex]) : data.baby.push(0);
-            mindex > -1 ? data.mom.push(momValue[mindex]) : data.mom.push(0);
-          });
-          // console.log(baby, mom, data);
-          this.memberAddOption.yAxis.data = name;
-          this.memberAddOption.series[0].data = data.mom;
-          this.memberAddOption.series[1].data = data.baby;
-          // console.log
-          this.memberAddChart.setOption(this.memberAddOption);
-        }
-      });
+    this.getDataByAPI();
   },
   updated() {},
   mounted() {
+    if (!this.storeCode) {
+      this.$router.push("login");
+    }
     // setInterval(() => {
     //   this.refreshData();
     // }, 1000 * 60 * 3);
@@ -835,19 +786,70 @@ export default {
         this.storeIndex = 0;
       }
     },
-    // headerClick(e) {
-    //   // console.log(e);
-    //   if (e.label == "销量") {
-    //     this.$store.dispatch("report/getTopTen", {
-    //       storecode: "233"
-    //     });
-    //   }
-    //   if (e.label == "交易会员数") {
-    //     this.$store.dispatch("report/getTopTen", {
-    //       storecode: "233"
-    //     });
-    //   }
-    // },
+    getDataByAPI() {
+      // 会员全量信息
+      axios
+        .get(
+          `http://crmbackservice.hemiao100.com/crm/data/today_member_info.json?token=5510,6666,1,${
+            this.storeCode
+          },11161`
+        )
+        .then(response => {
+          // console.log(response);
+          if (response.data.code == 0) {
+            this.newMom = response.data.data.mom;
+            this.newBaby = response.data.data.baby;
+            this.newMemberTarget
+              ? (this.percentage = Number(
+                  (this.mom + this.baby) / this.newMemberTarget * 100
+                ).toFixed(2))
+              : (this.percentage = 0);
+          }
+        });
+      // 门店会员信息
+      axios
+        .get(
+          `http://crmbackservice.hemiao100.com/crm/data/today_member_outlet_info.json?token=5510,6666,1,${
+            this.storeCode
+          },11161`
+        )
+        .then(response => {
+          if (response.data.code == 0) {
+            let storeName = new Set(
+              Object.keys(response.data.data.baby),
+              Object.keys(response.data.data.mom)
+            );
+            let baby = Array.from(Object.keys(response.data.data.baby));
+            let mom = Array.from(Object.keys(response.data.data.mom));
+            let babyValue = Array.from(Object.values(response.data.data.baby));
+            let momValue = Array.from(Object.values(response.data.data.mom));
+            let name = Array.from(storeName);
+            // console.log(name);
+            let data = {
+              baby: [],
+              mom: []
+            };
+            name.forEach(n => {
+              let bindex = baby.findIndex(function(value, index, arr) {
+                return value == n;
+              });
+              let mindex = mom.findIndex(function(value, index, arr) {
+                return value == n;
+              });
+              bindex > -1
+                ? data.baby.push(babyValue[bindex])
+                : data.baby.push(0);
+              mindex > -1 ? data.mom.push(momValue[mindex]) : data.mom.push(0);
+            });
+            // console.log(baby, mom, data);
+            this.memberAddOption.yAxis.data = name;
+            this.memberAddOption.series[0].data = data.mom;
+            this.memberAddOption.series[1].data = data.baby;
+            // console.log
+            this.memberAddChart.setOption(this.memberAddOption);
+          }
+        });
+    },
     defineTarget(e) {
       // console.log(e);
       this.dialogSaleVisible = true;
@@ -865,7 +867,8 @@ export default {
     },
     setNewTarget(e) {
       this.newpercentage = Number(
-        ((this.newMom + this.newBaby) /
+        (
+          (this.newMom + this.newBaby) /
           Number(this.newAddTarget) *
           100
         ).toFixed(2)
@@ -879,21 +882,25 @@ export default {
           this.$store.dispatch("report/getTopTen", {
             storecode: this.storeCode
           });
+          this.topTenRow = 3;
           break;
         case 2:
           this.$store.dispatch("report/getTenBynumber", {
             storecode: this.storeCode
           });
+          this.topTenRow = 4;
           break;
         case 3:
           this.$store.dispatch("report/getTenBymember", {
             storecode: this.storeCode
           });
+          this.topTenRow = 5;
           break;
         default:
           this.$store.dispatch("report/getTopTen", {
             storecode: this.storeCode
           });
+          this.topTenRow = 3;
       }
       this.$store.dispatch("report/getScreenSaleRoom", {
         storecode: this.storeCode

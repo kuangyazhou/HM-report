@@ -1,18 +1,18 @@
 <template>
-    <div class="container">
-        <el-row :gutter="15" style="margin-top: 20px;">
-            <el-col :span="24">
-                <el-card>
-                    <div slot="header" class="clearfix">
-                        <span style="line-height: 36px;">
-                            <i class="fa fa-globe" aria-hidden="true"></i>会员地理分析图
-                        </span>
-                    </div>
-                    <div id="container" :style="{width:'100%',height:'700px'}"></div>
-                </el-card>
-            </el-col>
-        </el-row>
-    </div>
+  <div class="container">
+    <el-row :gutter="15" style="margin-top: 20px;">
+      <el-col :span="24">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">
+              <i class="fa fa-globe" aria-hidden="true"></i>会员地理分析图
+            </span>
+          </div>
+          <div id="container" :style="{width:'100%',height:'700px'}"></div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 <script>
 import Vue from "vue";
@@ -29,7 +29,7 @@ Vue.use(Tooltip);
 Vue.use(Alert);
 export default {
   components: {},
-  props: ["storeList", "memberGeoSeries"],
+  props: ["storeList", "memberGeoSeries", "geoCenter"],
   watch: {
     storeList: function(val) {
       console.log(val);
@@ -39,6 +39,11 @@ export default {
       this.bmapData.series[0].data = val.data;
       //   this.setMap();
       this.loading.close();
+      this.myChart.setOption(this.bmapData);
+    },
+    geoCenter: function(val) {
+      // console.log(val.data[0]);
+      this.bmapData.bmap.center = val.data[0];
       this.myChart.setOption(this.bmapData);
     }
   },
@@ -55,29 +60,11 @@ export default {
       bmapData: {
         animation: false,
         bmap: {
-          center: [114.2522942178, 30.6054677499],
-          // center: [120.13066322374, 30.240018034923],
+          center: ["114.2522942178", "30.6054677499"],
+          // || [116.404844, 39.921354]
           zoom: 11,
           roam: true
         },
-        // geo: {
-        //   map: "china",
-        //   label: {
-        //     emphasis: {
-        //       show: false
-        //     }
-        //   },
-        //   roam: true,
-        //   itemStyle: {
-        //     normal: {
-        //       areaColor: "#323c48",
-        //       borderColor: "#111"
-        //     },
-        //     emphasis: {
-        //       areaColor: "#2a333d"
-        //     }
-        //   }
-        // },
         visualMap: {
           show: false,
           top: "top",
@@ -137,27 +124,7 @@ export default {
       );
     }
   },
-  methods: {
-    // setMap() {
-    //   let dom = document.getElementById("container");
-    //   let myChart = echarts.init(dom);
-    //   let option = null;
-    //   let app = {};
-    //   app.title = "热力图与百度地图扩展";
-    //   myChart.setOption(this.bmapData);
-    //   if (!app.inNode) {
-    //     // 添加百度地图插件
-    //     var bmap = myChart
-    //       .getModel()
-    //       .getComponent("bmap")
-    //       .getBMap();
-    //     bmap.addControl(new BMap.MapTypeControl());
-    //   }
-    //   if (option && typeof option === "object") {
-    //     myChart.setOption(option, true);
-    //   }
-    // }
-  }
+  methods: {}
 };
 </script>
 
